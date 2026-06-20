@@ -71,6 +71,8 @@ Esta capa "sabe" que estamos usando Firebase o Mocks y convierte los JSON.
   * **Recibe:** Lo mismo que el datasource de Firebase.
   * **Da:** Arrays estáticos precargados en memoria simulando un `Future.delayed`.
 
+> 💡 **Nota sobre Firestore:** La aplicación está configurada explícitamente para conectarse a una base de datos nombrada (`databaseId: 'hostsigchos'`) en lugar de la base de datos `(default)`. Para ello, todos los DataSources de Firebase instancian Firestore usando `FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'hostsigchos')`.
+
 ### `data/repositories/` (ej. `reserva_repository_impl.dart`)
 * **Función:** Es la implementación real del contrato del Dominio. Une los DataSources con los Casos de Uso.
 * **Recibe:** Un DataSource (Inyectado en constructor).
@@ -100,9 +102,10 @@ Esta capa "sabe" que estamos usando Firebase o Mocks y convierte los JSON.
 ## 5. El Punto de Entrada `lib/main.dart`
 * **Función:** Es el corazón configurador de la app.
   1. Inicializa Firebase.
-  2. Lee la constante `useMocks` para decidir si conectar Firebase real o datos de prueba.
-  3. **Inyección de Dependencias Manual:** Instancia los *DataSources*, se los pasa a los *Repositories*, que a su vez van a los *UseCases*, y finalmente los entrega a los *ViewModels*.
-  4. Inyecta todos los ViewModels usando `MultiProvider` para que estén disponibles en toda la app.
+  2. Ajusta las configuraciones de entorno (Ej. apaga la persistencia en caché local para Flutter Web con `persistenceEnabled: false` para evitar que la plataforma Web lance errores de `client is offline` con el túnel WebSocket).
+  3. Lee la constante `useMocks` para decidir si conectar Firebase real o datos de prueba.
+  4. **Inyección de Dependencias Manual:** Instancia los *DataSources*, se los pasa a los *Repositories*, que a su vez van a los *UseCases*, y finalmente los entrega a los *ViewModels*.
+  5. Inyecta todos los ViewModels usando `MultiProvider` para que estén disponibles en toda la app.
 * **Recibe:** El estado inicial del SO.
 * **Da:** El árbol de widgets principal `MaterialApp`, rutas registradas y temas globales.
 
