@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "344844210027",
+    "project_id": "hostsigchos",
+    "storage_bucket": "hostsigchos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344844210027:android:f08802e0a185fd07b2c62e",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344844210027-6nm86tmhkph0l9vktdu57i9ndtt8f7kj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyGNq3gQlKbgVo_xayPNRG4AZHcRPn_fg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344844210027-6nm86tmhkph0l9vktdu57i9ndtt8f7kj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "344844210027-s6ckho6clpvo1de40ku2qtp78s2aj16p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.frontend"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
