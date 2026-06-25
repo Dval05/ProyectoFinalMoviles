@@ -11,7 +11,7 @@ HostSigchos es una aplicación móvil desarrollada en **Flutter** diseñada para
 5. [Configuración Inicial y Firebase](#configuración-inicial-y-firebase)
 6. [Configuración de APIs (Google Maps)](#configuración-de-apis)
 7. [Instalación y Ejecución](#instalación-y-ejecución)
-8. [Modo Mock (Pruebas Locales)](#modo-mock-pruebas-locales)
+
 
 ---
 
@@ -70,13 +70,13 @@ El proyecto sigue los principios de **Clean Architecture**, dividiendo la aplica
 ## 📂 Estructura del Proyecto
 
 ```text
-frontend/
+HostSigchos/
 ├── android/               # Configuración nativa de Android
 ├── ios/                   # Configuración nativa de iOS
 ├── assets/                # Imágenes e íconos locales
 ├── lib/
 │   ├── core/              # Constantes (app_constants), utilidades, errores
-│   ├── data/              # Modelos, Repositories Impl, y DataSources (Firebase y Mocks)
+│   ├── data/              # Modelos, Repositories Impl, y DataSources (Firebase)
 │   ├── domain/            # Entidades, Repositories interfaces, UseCases
 │   ├── presentation/      # Pantallas (views), ViewModels (provider) y Widgets
 │   ├── themes/            # Configuración visual global de la app (colores, tipografía)
@@ -97,7 +97,7 @@ La aplicación utiliza **Firebase** como Backend as a Service (BaaS). Para que l
    - Colecciones requeridas (se crearán automáticamente según los modelos): `usuarios`, `hosterias`, `habitaciones`, `reservas`, `pagos`.
 4. **Almacenamiento (Firebase Storage):** Habilita Storage para alojar las imágenes de las hosterías y habitaciones.
 5. **Configurar FlutterFire:**
-   Para conectar el código con tu proyecto de Firebase, utiliza FlutterFire CLI en la raíz de `frontend/`:
+   Para conectar el código con tu proyecto de Firebase, utiliza FlutterFire CLI en la raíz del proyecto (`HostSigchos/`):
    ```bash
    dart pub global activate flutterfire_cli
    flutterfire configure --project=TU_PROYECTO_ID
@@ -106,30 +106,23 @@ La aplicación utiliza **Firebase** como Backend as a Service (BaaS). Para que l
 
 ---
 
-## 🗺 Configuración de APIs (Google Maps)
+## 🗺 Configuración de Mapas y Geocoding
 
-La aplicación requiere la **API de Google Maps** y la **Geocoding API**.
+La aplicación utiliza **OpenStreetMap** (a través de `flutter_map`) para la visualización interactiva de mapas. No se requieren SDKs nativos ni claves de API para cargar el mapa.
 
+Sin embargo, para el servicio de búsqueda de direcciones y coordenadas, se utiliza la **Geocoding API** de Google. 
+
+Para configurarlo:
 1. Ingresa a la [Consola de Google Cloud](https://console.cloud.google.com/).
 2. Crea un proyecto o selecciona el proyecto vinculado a Firebase.
-3. Habilita las siguientes APIs:
-   - **Maps SDK for Android**
-   - **Maps SDK for iOS**
-   - **Geocoding API**
-4. Genera una clave de API (API Key) en *Credenciales*.
+3. Habilita la **Geocoding API**.
+4. Genera una clave de API (API Key) en la sección de *Credenciales*.
 5. **Agrega la API Key al código:**
-   - En `lib/core/constants/app_constants.dart`, reemplaza la variable:
+   - En el archivo `lib/core/constants/app_constants.dart`, reemplaza la variable con tu clave:
      ```dart
      static const String googleMapsApiKey = 'TU_GOOGLE_MAPS_API_KEY_AQUI';
      ```
-   - **Android:** En `android/app/src/main/AndroidManifest.xml`, dentro de `<application>`:
-     ```xml
-     <meta-data android:name="com.google.android.geo.API_KEY" android:value="TU_GOOGLE_MAPS_API_KEY_AQUI"/>
-     ```
-   - **iOS:** En `ios/Runner/AppDelegate.swift`:
-     ```swift
-     GMSServices.provideAPIKey("TU_GOOGLE_MAPS_API_KEY_AQUI")
-     ```
+   *(No es necesario modificar el AndroidManifest.xml ni el AppDelegate.swift para los mapas)*
 
 ---
 
@@ -140,7 +133,7 @@ Sigue estos pasos para clonar e iniciar el proyecto localmente:
 1. **Clonar el repositorio:**
    ```bash
    git clone <URL_DEL_REPOSITORIO>
-   cd ProyectoFinal/frontend
+   cd ProyectoFinal/HostSigchos
    ```
 
 2. **Instalar dependencias:**
@@ -162,14 +155,3 @@ Sigue estos pasos para clonar e iniciar el proyecto localmente:
 
 ---
 
-## 🧪 Modo Mock (Pruebas Locales)
-
-Si aún no has configurado Firebase pero deseas probar la interfaz y la lógica de la aplicación inmediatamente, el proyecto está configurado para ejecutarse con **Mock Data** (datos falsos locales).
-
-Para activar o desactivar este modo, ve al archivo `lib/main.dart` y busca la constante en la parte superior:
-
-```dart
-const bool useMocks = true; // Cambiar a false para usar Firebase en producción
-```
-
-Al estar en `true`, la inyección de dependencias utilizará implementaciones falsas (`MockAuthDataSource`, `MockHosteriaDataSource`, etc.) permitiéndote navegar por la app sin dependencias externas de red. Para conectar el app a Firebase en producción, cambia el valor a `false`.

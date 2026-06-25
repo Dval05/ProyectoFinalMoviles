@@ -60,22 +60,18 @@ La capa más interna. No depende de Flutter, Firebase ni de APIs.
 ---
 
 ## 3. Capa `lib/data/` (Manejo de Datos y API)
-Esta capa "sabe" que estamos usando Firebase o Mocks y convierte los JSON.
+Esta capa "sabe" que estamos usando Firebase y convierte los JSON.
 
 ### `data/models/` (ej. `reserva_model.dart`)
 * **Función:** Son extensiones de las *Entities* del dominio. Agregan la habilidad de serialización de la base de datos.
 * **Recibe:** JSON desde Firestore (método `fromJson()` o `fromMap()`).
 * **Da:** Objetos JSON hacia Firestore (método `toJson()`) e instancias de Entidades hacia el Dominio.
 
-### `data/datasources/` (Firebase y Mocks)
+### `data/datasources/` (Firebase)
 * **`firebase/hosteria_datasource.dart`**:
   * **Función:** Comunicarse directamente con Firebase Cloud Firestore.
   * **Recibe:** IDs, JSONs y consultas de Firebase.
   * **Da:** Documentos de Firestore convertidos en *Models*.
-* **`mock/mock_hosteria_datasource.dart`**:
-  * **Función:** Simular respuestas de red en local.
-  * **Recibe:** Lo mismo que el datasource de Firebase.
-  * **Da:** Arrays estáticos precargados en memoria simulando un `Future.delayed`.
 
 > 💡 **Nota sobre Firestore:** La aplicación está configurada explícitamente para conectarse a una base de datos nombrada (`databaseId: 'hostsigchos'`) en lugar de la base de datos `(default)`. Para ello, todos los DataSources de Firebase instancian Firestore usando `FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'hostsigchos')`.
 
@@ -109,9 +105,8 @@ Esta capa "sabe" que estamos usando Firebase o Mocks y convierte los JSON.
 * **Función:** Es el corazón configurador de la app.
   1. Inicializa Firebase y Servicios como `notification_service`.
   2. Ajusta las configuraciones de entorno (Ej. apaga la persistencia en caché local para Flutter Web con `persistenceEnabled: false` para evitar que la plataforma Web lance errores de `client is offline` con el túnel WebSocket).
-  3. Lee la constante `useMocks` para decidir si conectar Firebase real o datos de prueba.
-  4. **Inyección de Dependencias Manual:** Instancia los *DataSources*, se los pasa a los *Repositories*, que a su vez van a los *UseCases*, y finalmente los entrega a los *ViewModels*.
-  5. Inyecta todos los ViewModels usando `MultiProvider` para que estén disponibles en toda la app.
+  3. **Inyección de Dependencias Manual:** Instancia los *DataSources*, se los pasa a los *Repositories*, que a su vez van a los *UseCases*, y finalmente los entrega a los *ViewModels*.
+  4. Inyecta todos los ViewModels usando `MultiProvider` para que estén disponibles en toda la app.
 * **Recibe:** El estado inicial del SO.
 * **Da:** El árbol de widgets principal `MaterialApp`, rutas registradas y temas globales.
 

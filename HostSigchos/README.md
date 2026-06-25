@@ -46,11 +46,13 @@ El proyecto sigue los principios de **Clean Architecture**, dividiendo el códig
 
 ## 📦 Tecnologías Clave
 
-- `firebase_core`, `firebase_auth`, `cloud_firestore`: Backend y Base de datos (NoSQL).
-- `provider`: Manejo de estados e inyección de dependencias simples.
-- `local_auth` & `flutter_secure_storage`: Para inicio de sesión seguro y biométrico.
-- `flutter_local_notifications`: Para notificaciones offline programadas.
-- `google_maps_flutter` & `geolocator`: Mapas y geolocalización.
+- **Firebase**: `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage` para backend, base de datos y almacenamiento de archivos.
+- **Gestión de Estado**: `provider` para manejo de estados e inyección de dependencias.
+- **Seguridad**: `local_auth` y `flutter_secure_storage` para inicio de sesión seguro y biométrico.
+- **Notificaciones**: `flutter_local_notifications` para notificaciones en segundo plano.
+- **Mapas y Localización**: `flutter_map`, `latlong2` y `geolocator` para mapas (OpenStreetMap) y geolocalización. Además de `http` para consumo de APIs de Geocoding.
+- **UI & Multimedia**: `image_picker` para captura de fotos, `cached_network_image`, `carousel_slider`, `shimmer` y `google_fonts` para una interfaz fluida.
+- **Utilidades adicionales**: `intl` para formateo de fechas y precios, `country_picker` para selección de países, y `flutter_rating_bar` para reseñas.
 
 ## 👥 Contribución
 
