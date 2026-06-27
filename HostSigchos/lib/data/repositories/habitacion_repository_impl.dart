@@ -22,11 +22,13 @@ class HabitacionRepositoryImpl implements HabitacionRepository {
     String habitacionId,
     DateTime checkIn,
     DateTime checkOut,
+    int cantidadSolicitada,
   ) async {
     return _dataSource.verificarDisponibilidad(
       habitacionId,
       checkIn,
       checkOut,
+      cantidadSolicitada,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/l10n/app_localizations.dart';
@@ -26,12 +27,26 @@ class _PagoScreenState extends State<PagoScreen> {
   final _cvvController = TextEditingController();
 
   String _metodoPago = 'tarjeta';
-  String? _reservaId;
+  List<Reserva>? _reservasAPagar;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _reservaId ??= ModalRoute.of(context)?.settings.arguments as String?;
+    if (_reservasAPagar == null) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is List<Reserva>) {
+        _reservasAPagar = args;
+      } else if (args is String) {
+        final rVm = context.read<ReservaViewModel>();
+        final res = rVm.reservas.cast<Reserva?>().firstWhere(
+          (r) => r?.id == args,
+          orElse: () => rVm.reservaActual,
+        );
+        if (res != null) {
+          _reservasAPagar = [res];
+        }
+      }
+    }
   }
 
   @override
@@ -46,31 +61,33 @@ class _PagoScreenState extends State<PagoScreen> {
     if (_metodoPago == 'tarjeta' && !_formKey.currentState!.validate()) {
       return;
     }
-    if (_reservaId == null) return;
+    if (_reservasAPagar == null || _reservasAPagar!.isEmpty) return;
 
     final usuarioId = context.read<AuthViewModel>().usuarioActual?.id;
     if (usuarioId == null) return;
 
-    // Obtener el monto (simulado, buscar de la reserva)
-    final reservas = context.read<ReservaViewModel>().reservas;
-    final reserva = reservas.cast<Reserva>().firstWhere(
-      (r) => r.id == _reservaId,
-      orElse: () => context.read<ReservaViewModel>().reservaActual!,
-    );
+    final referencia = 'TRX-${DateTime.now().millisecondsSinceEpoch}';
+    bool allSuccess = true;
 
-    final pago = Pago(
-      id: '', // Se genera en BD
-      reservaId: _reservaId!,
-      usuarioId: usuarioId,
-      monto: reserva.precioTotal,
-      metodo: _metodoPago,
-      referencia: 'TRX-${DateTime.now().millisecondsSinceEpoch}',
-      fechaPago: DateTime.now(),
-    );
+    for (final reserva in _reservasAPagar!) {
+      final pago = Pago(
+        id: '', // Se genera en BD
+        reservaId: reserva.id,
+        usuarioId: usuarioId,
+        monto: reserva.precioTotal,
+        metodo: _metodoPago,
+        referencia: referencia,
+        fechaPago: DateTime.now(),
+      );
 
-    final exito = await context.read<PagoViewModel>().procesarPago(pago);
+      final exito = await context.read<PagoViewModel>().procesarPago(pago);
+      if (!exito) {
+        allSuccess = false;
+        break; // Detener si hay un fallo
+      }
+    }
 
-    if (exito && mounted) {
+    if (allSuccess && mounted) {
       // Para métodos no-tarjeta, mostrar mensaje de revisión
       if (_metodoPago != 'tarjeta') {
         _mostrarDialogoEnRevision();
@@ -179,6 +196,9 @@ class _PagoScreenState extends State<PagoScreen> {
   Widget build(BuildContext context) {
     final isLoading = context.watch<PagoViewModel>().isLoading;
     final l10n = AppLocalizations.of(context)!;
+    
+    // Calcular el monto total
+    final montoTotal = _reservasAPagar?.fold<double>(0, (sum, r) => sum + r.precioTotal) ?? 0;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.payment)),
@@ -191,6 +211,35 @@ class _PagoScreenState extends State<PagoScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Resumen de pago
+                if (_reservasAPagar != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: ColorSchemeApp.sandBeige.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Monto a pagar (${_reservasAPagar!.length} reserva${_reservasAPagar!.length > 1 ? 's' : ''})',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '\$${montoTotal.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: ColorSchemeApp.darkGreen,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                 Text(
                   l10n.paymentMethod,
                   style: const TextStyle(
@@ -285,6 +334,7 @@ class _PagoScreenState extends State<PagoScreen> {
                     keyboardType: TextInputType.number,
                     validator: (value) =>
                         value == null || value.length < 16 ? l10n.error : null,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   Row(
                     children: [
@@ -310,6 +360,7 @@ class _PagoScreenState extends State<PagoScreen> {
                               value == null || value.length < 3
                               ? l10n.error
                               : null,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/biometric_service.dart';
 import '../../domain/entities/usuario.dart';
+import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/auth/actualizar_perfil_usecase.dart';
 import '../../domain/usecases/auth/google_signin_usecase.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
@@ -24,6 +25,7 @@ class AuthViewModel extends ChangeNotifier {
     required this.vincularPasswordUseCase,
     required this.verificarEmailUseCase,
     required this.verificarTelefonoUseCase,
+    required this.authRepository,
   }) {
     _checkBiometricStatus();
   }
@@ -35,6 +37,7 @@ class AuthViewModel extends ChangeNotifier {
   final VincularPasswordUseCase vincularPasswordUseCase;
   final VerificarEmailUseCase verificarEmailUseCase;
   final VerificarTelefonoUseCase verificarTelefonoUseCase;
+  final AuthRepository authRepository;
 
   Usuario? _usuarioActual;
   bool _isLoading = false;
@@ -65,6 +68,18 @@ class AuthViewModel extends ChangeNotifier {
     _isBiometricAvailable = await service.isBiometricAvailable();
     _hasSavedCredentials = await service.hasSavedCredentials();
     notifyListeners();
+  }
+
+  Future<void> checkCurrentSession() async {
+    _setLoading(true);
+    try {
+      _usuarioActual = await authRepository.getUsuarioActual();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error comprobando sesion actual: $e');
+    } finally {
+      _setLoading(false);
+    }
   }
 
   void setUsuarioActual(Usuario? usuario) {
@@ -100,6 +115,7 @@ class AuthViewModel extends ChangeNotifier {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
+    String rol = 'usuario',
   }) async {
     _setLoading(true);
     try {
@@ -112,6 +128,7 @@ class AuthViewModel extends ChangeNotifier {
         telefono: telefono,
         ubicacion: ubicacion,
         fotoBytes: fotoBytes,
+        rol: rol,
       );
       _errorMessage = null;
       return true;

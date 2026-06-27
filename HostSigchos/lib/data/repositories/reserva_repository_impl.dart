@@ -21,6 +21,16 @@ class ReservaRepositoryImpl implements ReservaRepository {
   }
 
   @override
+  Future<List<Reserva>> getTodasLasReservas() async {
+    return _dataSource.getTodasLasReservas();
+  }
+
+  @override
+  Future<List<Reserva>> getReservasPorHabitacion(String habitacionId) async {
+    return _dataSource.getReservasPorHabitacion(habitacionId);
+  }
+
+  @override
   Future<Reserva> getReservaById(String id) async {
     return _dataSource.getReservaById(id);
   }

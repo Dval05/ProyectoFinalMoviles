@@ -16,6 +16,7 @@ abstract class AuthRepository {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
+    String rol = 'usuario',
   });
 
   /// Login con Google Sign-In

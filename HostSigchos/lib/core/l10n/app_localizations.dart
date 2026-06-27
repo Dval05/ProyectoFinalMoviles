@@ -943,6 +943,192 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Te recordaremos realizar tu pago para confirmar la reserva.'**
   String get paymentReminderScheduled;
+
+  /// No description provided for @hotelMap.
+  ///
+  /// In es, this message translates to:
+  /// **'Mapa de Hosterías'**
+  String get hotelMap;
+
+  /// No description provided for @getDirections.
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo llegar'**
+  String get getDirections;
+
+  /// No description provided for @whatDates.
+  ///
+  /// In es, this message translates to:
+  /// **'¿En qué fechas deseas hospedarte?'**
+  String get whatDates;
+
+  /// No description provided for @availableDatesTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponibles para tus fechas'**
+  String get availableDatesTitle;
+
+  /// No description provided for @helloUser.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Hola, {name}!'**
+  String helloUser(String name);
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda y Soporte'**
+  String get helpAndSupport;
+
+  /// No description provided for @noPaymentHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes pagos registrados.'**
+  String get noPaymentHistory;
+
+  /// No description provided for @reference.
+  ///
+  /// In es, this message translates to:
+  /// **'Referencia'**
+  String get reference;
+
+  /// No description provided for @method.
+  ///
+  /// In es, this message translates to:
+  /// **'Método'**
+  String get method;
+
+  /// No description provided for @amount.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto'**
+  String get amount;
+
+  /// No description provided for @code.
+  ///
+  /// In es, this message translates to:
+  /// **'Código'**
+  String get code;
+
+  /// No description provided for @total.
+  ///
+  /// In es, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @areYouSureCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.'**
+  String get areYouSureCancel;
+
+  /// No description provided for @yesCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar reserva'**
+  String get yesCancel;
+
+  /// No description provided for @noKeep.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get noKeep;
+
+  /// No description provided for @cancelSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva cancelada exitosamente'**
+  String get cancelSuccess;
+
+  /// No description provided for @cancelError.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cancelar: '**
+  String get cancelError;
+
+  /// No description provided for @supportInfoText.
+  ///
+  /// In es, this message translates to:
+  /// **'Para soporte técnico, contacta a:\n\nEmail: soporte@hostsigchos.com\nTeléfono: +593 99 123 4567'**
+  String get supportInfoText;
+
+  /// No description provided for @advancedFilters.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros Avanzados'**
+  String get advancedFilters;
+
+  /// No description provided for @priceRange.
+  ///
+  /// In es, this message translates to:
+  /// **'Rango de Precios (\$)'**
+  String get priceRange;
+
+  /// No description provided for @locationFilterHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación (Ej: Latacunga)'**
+  String get locationFilterHint;
+
+  /// No description provided for @clear.
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar'**
+  String get clear;
+
+  /// No description provided for @apply.
+  ///
+  /// In es, this message translates to:
+  /// **'Aplicar'**
+  String get apply;
+
+  /// No description provided for @sortTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ordenar por'**
+  String get sortTitle;
+
+  /// No description provided for @sortNone.
+  ///
+  /// In es, this message translates to:
+  /// **'Ninguno'**
+  String get sortNone;
+
+  /// No description provided for @sortPriceAsc.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio: Menor a Mayor'**
+  String get sortPriceAsc;
+
+  /// No description provided for @sortPriceDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio: Mayor a Menor'**
+  String get sortPriceDesc;
+
+  /// No description provided for @sortNameAsc.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre: A - Z'**
+  String get sortNameAsc;
+
+  /// No description provided for @sortNameDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre: Z - A'**
+  String get sortNameDesc;
+
+  /// No description provided for @sortRatingDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Mejor valorados'**
+  String get sortRatingDesc;
+
+  /// No description provided for @sortRatingAsc.
+  ///
+  /// In es, this message translates to:
+  /// **'Peor valorados'**
+  String get sortRatingAsc;
 }
 
 class _AppLocalizationsDelegate

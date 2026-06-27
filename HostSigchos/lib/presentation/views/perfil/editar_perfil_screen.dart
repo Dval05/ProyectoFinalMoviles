@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -306,6 +307,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                   prefixIcon: Icons.person_outline,
                   controller: _nombreController,
                   validator: Validators.nombre,
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
                 ),
 
                 Row(
@@ -323,6 +325,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                             borderSide: BorderSide.none,
                           ),
                         ),
+                        isExpanded: true,
                         items: ['Cédula', 'Pasaporte']
                             .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                             .toList(),
@@ -345,6 +348,9 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                             ? TextInputType.number 
                             : TextInputType.text,
                         validator: (val) => Validators.identificacion(val, _tipoIdentificacion),
+                        inputFormatters: _tipoIdentificacion == 'Cédula' 
+                            ? [FilteringTextInputFormatter.digitsOnly] 
+                            : [FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]'))],
                       ),
                     ),
                   ],
@@ -405,6 +411,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
                         controller: _telefonoController,
                         keyboardType: TextInputType.phone,
                         validator: Validators.telefono,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       ),
                     ),
                   ],

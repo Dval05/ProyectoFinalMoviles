@@ -6,7 +6,11 @@ abstract class ReservaRepository {
   Future<Reserva> crearReserva(Reserva reserva);
 
   /// Obtener historial de reservas del usuario
+  Future<List<Reserva>> getTodasLasReservas();
   Future<List<Reserva>> getReservasPorUsuario(String usuarioId);
+
+  /// Obtener reservas por habitacion
+  Future<List<Reserva>> getReservasPorHabitacion(String habitacionId);
 
   /// Obtener detalle de una reserva
   Future<Reserva> getReservaById(String id);

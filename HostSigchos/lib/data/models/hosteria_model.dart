@@ -17,7 +17,29 @@ class HosteriaModel extends Hosteria {
     super.imagenes,
     super.servicios,
     super.activa,
+    super.propietarioId,
+    super.precioPorNoche,
   });
+
+  factory HosteriaModel.fromEntity(Hosteria entity) {
+    return HosteriaModel(
+      id: entity.id,
+      nombre: entity.nombre,
+      descripcion: entity.descripcion,
+      direccion: entity.direccion,
+      latitud: entity.latitud,
+      longitud: entity.longitud,
+      telefono: entity.telefono,
+      email: entity.email,
+      sitioWeb: entity.sitioWeb,
+      rating: entity.rating,
+      imagenes: entity.imagenes,
+      servicios: entity.servicios,
+      activa: entity.activa,
+      propietarioId: entity.propietarioId,
+      precioPorNoche: entity.precioPorNoche,
+    );
+  }
 
   factory HosteriaModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data()! as Map<String, dynamic>;
@@ -35,7 +57,28 @@ class HosteriaModel extends Hosteria {
       imagenes: List<String>.from(data['imagenes'] ?? []),
       servicios: List<String>.from(data['servicios'] ?? []),
       activa: data['activa'] ?? true,
+      propietarioId: data['propietarioId'],
+      precioPorNoche: (data['precioPorNoche'] as num?)?.toDouble() ?? 50.0,
     );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'nombre': nombre,
+      'descripcion': descripcion,
+      'direccion': direccion,
+      'latitud': latitud,
+      'longitud': longitud,
+      'telefono': telefono,
+      'email': email,
+      'sitioWeb': sitioWeb,
+      'rating': rating,
+      'imagenes': imagenes,
+      'servicios': servicios,
+      'activa': activa,
+      'propietarioId': propietarioId,
+      'precioPorNoche': precioPorNoche,
+    };
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +95,7 @@ class HosteriaModel extends Hosteria {
       'imagenes': imagenes,
       'servicios': servicios,
       'activa': activa,
+      'propietarioId': propietarioId,
     };
   }
 }

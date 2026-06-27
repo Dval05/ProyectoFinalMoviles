@@ -12,10 +12,14 @@ class ReservaModel extends Reserva {
     required super.fechaCheckOut,
     required super.numHuespedes,
     required super.precioTotal,
-    required super.fechaCreacion, super.estado,
+    required super.fechaCreacion,
+    super.numHabitaciones = 1,
+    super.estado,
     super.notas,
     super.nombreHosteria,
     super.tipoHabitacion,
+    super.esParaOtraPersona = false,
+    super.nombreOtraPersona,
   });
 
   factory ReservaModel.fromFirestore(DocumentSnapshot doc) {
@@ -28,6 +32,7 @@ class ReservaModel extends Reserva {
       fechaCheckIn: (data['fechaCheckIn'] as Timestamp).toDate(),
       fechaCheckOut: (data['fechaCheckOut'] as Timestamp).toDate(),
       numHuespedes: (data['numHuespedes'] as num?)?.toInt() ?? 1,
+      numHabitaciones: (data['numHabitaciones'] as num?)?.toInt() ?? 1,
       precioTotal: (data['precioTotal'] as num?)?.toDouble() ?? 0.0,
       estado: data['estado'] ?? 'pendiente',
       fechaCreacion:
@@ -35,6 +40,8 @@ class ReservaModel extends Reserva {
       notas: data['notas'],
       nombreHosteria: data['nombreHosteria'],
       tipoHabitacion: data['tipoHabitacion'],
+      esParaOtraPersona: data['esParaOtraPersona'] ?? false,
+      nombreOtraPersona: data['nombreOtraPersona'],
     );
   }
 
@@ -47,12 +54,15 @@ class ReservaModel extends Reserva {
       fechaCheckIn: entity.fechaCheckIn,
       fechaCheckOut: entity.fechaCheckOut,
       numHuespedes: entity.numHuespedes,
+      numHabitaciones: entity.numHabitaciones,
       precioTotal: entity.precioTotal,
       estado: entity.estado,
       fechaCreacion: entity.fechaCreacion,
       notas: entity.notas,
       nombreHosteria: entity.nombreHosteria,
       tipoHabitacion: entity.tipoHabitacion,
+      esParaOtraPersona: entity.esParaOtraPersona,
+      nombreOtraPersona: entity.nombreOtraPersona,
     );
   }
 
@@ -64,12 +74,15 @@ class ReservaModel extends Reserva {
       'fechaCheckIn': Timestamp.fromDate(fechaCheckIn),
       'fechaCheckOut': Timestamp.fromDate(fechaCheckOut),
       'numHuespedes': numHuespedes,
+      'numHabitaciones': numHabitaciones,
       'precioTotal': precioTotal,
       'estado': estado,
       'fechaCreacion': Timestamp.fromDate(fechaCreacion),
       'notas': notas,
       'nombreHosteria': nombreHosteria,
       'tipoHabitacion': tipoHabitacion,
+      'esParaOtraPersona': esParaOtraPersona,
+      'nombreOtraPersona': nombreOtraPersona,
     };
   }
 }

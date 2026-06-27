@@ -51,6 +51,7 @@ class HabitacionDataSource {
     String habitacionId,
     DateTime checkIn,
     DateTime checkOut,
+    int cantidadSolicitada,
   ) async {
     try {
       // 1. Verificar si la habitación existe y está activa
@@ -63,30 +64,30 @@ class HabitacionDataSource {
         return false;
       }
 
+      final cantidadTotal = (doc.data()?['cantidadTotal'] as num?)?.toInt() ?? 10;
+
       // 2. Verificar cruce de fechas en reservas existentes
-      // Para simplificar, buscamos reservas de esta habitación
-      // que estén activas (pendiente o confirmada)
       final reservasSnapshot = await _firestore
           .collection(FirestorePaths.reservas)
           .where('habitacionId', isEqualTo: habitacionId)
           .where('estado', whereIn: ['pendiente', 'confirmada'])
           .get();
 
+      int habitacionesOcupadas = 0;
+
       for (final reservaDoc in reservasSnapshot.docs) {
         final rCheckIn = (reservaDoc.data()['fechaCheckIn'] as Timestamp)
             .toDate();
         final rCheckOut = (reservaDoc.data()['fechaCheckOut'] as Timestamp)
             .toDate();
+        final numHabitaciones = (reservaDoc.data()['numHabitaciones'] as num?)?.toInt() ?? 1;
 
-        // Lógica de cruce de fechas:
-        // Una reserva se cruza si el checkIn propuesto es ANTES del checkOut existente,
-        // Y el checkOut propuesto es DESPUÉS del checkIn existente.
         if (checkIn.isBefore(rCheckOut) && checkOut.isAfter(rCheckIn)) {
-          return false; // Hay choque, no disponible
+          habitacionesOcupadas += numHabitaciones;
         }
       }
 
-      return true; // Disponible
+      return (cantidadTotal - habitacionesOcupadas) >= cantidadSolicitada;
     } catch (e) {
       throw const FirestoreFailure('Error al verificar disponibilidad');
     }

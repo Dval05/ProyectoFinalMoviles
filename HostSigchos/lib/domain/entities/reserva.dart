@@ -12,10 +12,14 @@ class Reserva {
     required this.fechaCheckOut,
     required this.numHuespedes,
     required this.precioTotal,
-    required this.fechaCreacion, this.estado = 'pendiente',
+    required this.fechaCreacion,
+    this.numHabitaciones = 1,
+    this.estado = 'pendiente',
     this.notas,
     this.nombreHosteria,
     this.tipoHabitacion,
+    this.esParaOtraPersona = false,
+    this.nombreOtraPersona,
   });
   final String id;
   final String usuarioId;
@@ -24,12 +28,15 @@ class Reserva {
   final DateTime fechaCheckIn;
   final DateTime fechaCheckOut;
   final int numHuespedes;
+  final int numHabitaciones;
   final double precioTotal;
   final String estado;
   final DateTime fechaCreacion;
   final String? notas;
   final String? nombreHosteria;
   final String? tipoHabitacion;
+  final bool esParaOtraPersona;
+  final String? nombreOtraPersona;
 
   int get noches => fechaCheckOut.difference(fechaCheckIn).inDays;
   bool get esCancelable => estado == 'pendiente' || estado == 'confirmada';
@@ -43,12 +50,15 @@ class Reserva {
     DateTime? fechaCheckIn,
     DateTime? fechaCheckOut,
     int? numHuespedes,
+    int? numHabitaciones,
     double? precioTotal,
     String? estado,
     DateTime? fechaCreacion,
     String? notas,
     String? nombreHosteria,
     String? tipoHabitacion,
+    bool? esParaOtraPersona,
+    String? nombreOtraPersona,
   }) {
     return Reserva(
       id: id ?? this.id,
@@ -58,12 +68,15 @@ class Reserva {
       fechaCheckIn: fechaCheckIn ?? this.fechaCheckIn,
       fechaCheckOut: fechaCheckOut ?? this.fechaCheckOut,
       numHuespedes: numHuespedes ?? this.numHuespedes,
+      numHabitaciones: numHabitaciones ?? this.numHabitaciones,
       precioTotal: precioTotal ?? this.precioTotal,
       estado: estado ?? this.estado,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
       notas: notas ?? this.notas,
       nombreHosteria: nombreHosteria ?? this.nombreHosteria,
       tipoHabitacion: tipoHabitacion ?? this.tipoHabitacion,
+      esParaOtraPersona: esParaOtraPersona ?? this.esParaOtraPersona,
+      nombreOtraPersona: nombreOtraPersona ?? this.nombreOtraPersona,
     );
   }
 }

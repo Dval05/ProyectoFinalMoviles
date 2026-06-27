@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,20 +34,25 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkAuth() async {
     // Simulamos tiempo mínimo de splash
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
+
+    final user = await FirebaseAuth.instance.authStateChanges().first;
+    
     if (!mounted) return;
 
     final authViewModel = context.read<AuthViewModel>();
 
-    // Verificamos si hay una sesión activa, aquí puedes invocar
-    // un método en el ViewModel si tienes persistencia local rápida
-    // Para simplificar, asumimos que si no hay usuario, va al login.
-    // (Firebase Auth restaurará la sesión mediante el stream que
-    // podrías estar escuchando en un Wrapper más arriba)
-
-    if (authViewModel.usuarioActual != null) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    if (user != null) {
+      await authViewModel.checkCurrentSession();
+      if (!mounted) return;
+      
+      if (kIsWeb) {
+        Navigator.pushReplacementNamed(context, AppRoutes.propietarioDashboard);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     }

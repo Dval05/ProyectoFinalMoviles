@@ -15,6 +15,8 @@ class Hosteria {
     this.imagenes = const [],
     this.servicios = const [],
     this.activa = true,
+    this.propietarioId,
+    this.precioPorNoche = 50.0,
   });
   final String id;
   final String nombre;
@@ -29,6 +31,8 @@ class Hosteria {
   final List<String> imagenes;
   final List<String> servicios;
   final bool activa;
+  final String? propietarioId;
+  final double precioPorNoche;
 
   Hosteria copyWith({
     String? id,
@@ -44,6 +48,8 @@ class Hosteria {
     List<String>? imagenes,
     List<String>? servicios,
     bool? activa,
+    String? propietarioId,
+    double? precioPorNoche,
   }) {
     return Hosteria(
       id: id ?? this.id,
@@ -59,6 +65,8 @@ class Hosteria {
       imagenes: imagenes ?? this.imagenes,
       servicios: servicios ?? this.servicios,
       activa: activa ?? this.activa,
+      propietarioId: propietarioId ?? this.propietarioId,
+      precioPorNoche: precioPorNoche ?? this.precioPorNoche,
     );
   }
 }

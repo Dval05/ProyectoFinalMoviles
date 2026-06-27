@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../domain/entities/habitacion.dart';
-import '../../../domain/entities/reserva.dart';
 import '../../../themes/esquema_color.dart';
-import '../../routes/app_routes.dart';
 import '../../viewmodels/auth_viewmodel.dart';
+import '../../viewmodels/carrito_reserva_viewmodel.dart';
 import '../../viewmodels/reserva_viewmodel.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/loading_overlay.dart';
@@ -24,7 +24,10 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
   DateTime? _fechaCheckIn;
   DateTime? _fechaCheckOut;
   int _numHuespedes = 1;
+  int _numHabitaciones = 1;
+  bool _esParaOtraPersona = false;
   final _notasController = TextEditingController();
+  final _nombreOtraPersonaController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -35,6 +38,7 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
   @override
   void dispose() {
     _notasController.dispose();
+    _nombreOtraPersonaController.dispose();
     super.dispose();
   }
 
@@ -74,10 +78,10 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
 
   double get _precioTotal {
     if (_habitacion == null) return 0;
-    return _noches * _habitacion!.precioPorNoche;
+    return _noches * _habitacion!.precioPorNoche * _numHabitaciones;
   }
 
-  Future<void> _confirmarReserva() async {
+  Future<void> _agregarAlCarrito() async {
     if (_fechaCheckIn == null || _fechaCheckOut == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -87,41 +91,65 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
       return;
     }
 
-    final usuario = context.read<AuthViewModel>().usuarioActual;
-    if (usuario == null) {
+    if (_esParaOtraPersona && _nombreOtraPersonaController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Debes iniciar sesión para reservar')),
+        const SnackBar(
+          content: Text('Por favor ingresa el nombre de la otra persona'),
+        ),
       );
       return;
     }
 
-    final reserva = Reserva(
-      id: '', // Se genera en Firestore
-      usuarioId: usuario.id,
-      hosteriaId: _habitacion!.hosteriaId,
-      habitacionId: _habitacion!.id,
+    // Verificar disponibilidad real
+    final reservaVm = context.read<ReservaViewModel>();
+    final hayDisponibilidad = await reservaVm.verificarDisponibilidad(
+      _habitacion!,
+      _fechaCheckIn!,
+      _fechaCheckOut!,
+      _numHabitaciones,
+    );
+
+    if (!hayDisponibilidad) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No hay suficientes habitaciones disponibles para esas fechas.')),
+      );
+      return;
+    }
+
+    // Si la reserva es para la misma persona, chequear que no se solape con otras propias
+    if (!_esParaOtraPersona) {
+      final usuario = context.read<AuthViewModel>().usuarioActual;
+      if (usuario != null) {
+        final haySolapamiento = await reservaVm.existeSolapamiento(usuario.id, _fechaCheckIn!, _fechaCheckOut!);
+        if (haySolapamiento) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ya tienes una reserva activa en estas fechas. Activa la opción "Reservar para otra persona" si la reserva no es para ti.')),
+          );
+          return;
+        }
+      }
+    }
+
+    final item = ItemCarrito(
+      habitacion: _habitacion!,
       fechaCheckIn: _fechaCheckIn!,
       fechaCheckOut: _fechaCheckOut!,
       numHuespedes: _numHuespedes,
-      precioTotal: _precioTotal,
-      fechaCreacion: DateTime.now(),
+      numHabitaciones: _numHabitaciones,
       notas: _notasController.text.trim(),
-      tipoHabitacion: _habitacion!.tipo,
+      esParaOtraPersona: _esParaOtraPersona,
+      nombreOtraPersona: _esParaOtraPersona ? _nombreOtraPersonaController.text.trim() : null,
     );
+    
+    context.read<CarritoReservaViewModel>().agregarItem(item);
 
-    final exito = await context.read<ReservaViewModel>().crearReserva(reserva);
-
-    if (exito && mounted) {
-      Navigator.pushReplacementNamed(
-        context,
-        AppRoutes.confirmacion,
-        // Pasamos la reserva recién creada que quedó guardada en el ViewModel
-      );
-    } else if (mounted) {
-      final error = context.read<ReservaViewModel>().errorMessage;
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error ?? 'Error al procesar reserva')),
+        const SnackBar(content: Text('Añadido a tu reserva (Carrito)')),
       );
+      Navigator.pop(context); // Volver a lista de habitaciones
     }
   }
 
@@ -131,7 +159,7 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
 
     if (_habitacion == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Reservar')),
+        appBar: AppBar(title: const Text('Añadir Habitación')),
         body: const Center(
           child: Text('Error: Datos de habitación no disponibles'),
         ),
@@ -140,7 +168,7 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Completar Reserva'),
+        title: const Text('Detalles de la Habitación'),
       ),
       body: LoadingOverlay(
         isLoading: reservaVm.isLoading,
@@ -282,6 +310,81 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
               ),
               const SizedBox(height: 24),
 
+              // Habitaciones
+              const Text(
+                'Habitaciones',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: _numHabitaciones > 1
+                        ? () => setState(() => _numHabitaciones--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                    color: ColorSchemeApp.primaryGreen,
+                  ),
+                  Text(
+                    '$_numHabitaciones',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _numHabitaciones < 5
+                        ? () => setState(() => _numHabitaciones++)
+                        : null,
+                    icon: const Icon(Icons.add_circle_outline),
+                    color: ColorSchemeApp.primaryGreen,
+                  ),
+                  const Spacer(),
+                  const Text(
+                    'Máx. 5',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Titular de Reserva
+              const Text(
+                'Titular de la Reserva',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              SwitchListTile(
+                title: const Text('Reservar para otra persona'),
+                subtitle: const Text('Activa esto si no te hospedarás tú'),
+                value: _esParaOtraPersona,
+                activeThumbColor: ColorSchemeApp.primaryGreen,
+                onChanged: (value) {
+                  setState(() {
+                    _esParaOtraPersona = value;
+                    if (!value) {
+                      _nombreOtraPersonaController.clear();
+                    }
+                  });
+                },
+                contentPadding: EdgeInsets.zero,
+              ),
+              if (_esParaOtraPersona) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _nombreOtraPersonaController,
+                  decoration: InputDecoration(
+                    labelText: 'Nombre de la otra persona',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.person_outline),
+                  ),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
+                ),
+              ],
+              const SizedBox(height: 24),
+
               // Notas adicionales
               TextField(
                 controller: _notasController,
@@ -330,8 +433,8 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
               const SizedBox(height: 32),
 
               GradientButton(
-                text: 'Confirmar y Proceder al Pago',
-                onPressed: _confirmarReserva,
+                text: 'Añadir a mi Reserva',
+                onPressed: _agregarAlCarrito,
               ),
             ],
           ),

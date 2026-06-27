@@ -25,6 +25,22 @@ class ReservaDataSource {
     }
   }
 
+  Future<List<ReservaModel>> getTodasLasReservas() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection(FirestorePaths.reservas)
+          .orderBy('fechaCreacion', descending: true)
+          .get();
+
+      return querySnapshot.docs
+          .map(ReservaModel.fromFirestore)
+          .toList();
+    } catch (e) {
+      debugPrint(r'Error en getTodasLasReservas: $e');
+      throw const FirestoreFailure('Error al obtener todas las reservas');
+    }
+  }
+
   Future<List<ReservaModel>> getReservasPorUsuario(String usuarioId) async {
     try {
       final querySnapshot = await _firestore
@@ -39,6 +55,23 @@ class ReservaDataSource {
     } catch (e) {
       debugPrint(r'Error en getReservasPorUsuario: $e');
       throw const FirestoreFailure('Error al obtener el historial de reservas');
+    }
+  }
+
+  Future<List<ReservaModel>> getReservasPorHabitacion(String habitacionId) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection(FirestorePaths.reservas)
+          .where('habitacionId', isEqualTo: habitacionId)
+          // We don't order by fechaCreacion here, we'll just get them all to check dates
+          .get();
+
+      return querySnapshot.docs
+          .map(ReservaModel.fromFirestore)
+          .toList();
+    } catch (e) {
+      debugPrint(r'Error en getReservasPorHabitacion: $e');
+      throw const FirestoreFailure('Error al obtener las reservas de la habitación');
     }
   }
 

@@ -13,6 +13,7 @@ class HabitacionModel extends Habitacion {
     super.imagenes,
     super.amenidades,
     super.disponible,
+    super.cantidadTotal = 10,
   });
 
   factory HabitacionModel.fromFirestore(DocumentSnapshot doc) {
@@ -27,6 +28,7 @@ class HabitacionModel extends Habitacion {
       imagenes: List<String>.from(data['imagenes'] ?? []),
       amenidades: List<String>.from(data['amenidades'] ?? []),
       disponible: data['disponible'] ?? true,
+      cantidadTotal: (data['cantidadTotal'] as num?)?.toInt() ?? 10,
     );
   }
 
@@ -40,6 +42,7 @@ class HabitacionModel extends Habitacion {
       'imagenes': imagenes,
       'amenidades': amenidades,
       'disponible': disponible,
+      'cantidadTotal': cantidadTotal,
     };
   }
 }

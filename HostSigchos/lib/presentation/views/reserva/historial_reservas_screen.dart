@@ -92,6 +92,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                 itemCount: viewModel.reservas.length,
                 itemBuilder: (context, index) {
                   final reserva = viewModel.reservas[index];
+                  final bool puedeCancelar = reserva.estado == 'pendiente';
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
                     child: Padding(
@@ -99,19 +100,23 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Código: ${reserva.id.substring(0, 8).toUpperCase()}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${l10n.code}: ${reserva.id.substring(0, 8).toUpperCase()}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                              _EstadoChip(estado: reserva.estado),
-                            ],
-                          ),
+                                Row(
+                                  children: [
+                                    _EstadoChip(estado: reserva.estado),
+                                  ],
+                                ),
+                              ],
+                            ),
                           const Divider(),
                           const SizedBox(height: 8),
                           Text(
@@ -145,7 +150,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                '${reserva.numHuespedes} Huéspedes',
+                                '${reserva.numHuespedes} ${l10n.guests}',
                                 style: theme.textTheme.bodyMedium,
                               ),
                             ],
@@ -155,7 +160,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Total:',
+                                '${l10n.total}:',
                                 style: theme.textTheme.titleMedium,
                               ),
                               Text(
@@ -184,11 +189,49 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                                   );
                                 },
                                 style: OutlinedButton.styleFrom(
+                                  foregroundColor: ColorSchemeApp.primaryGreen,
                                   side: const BorderSide(
                                     color: ColorSchemeApp.primaryGreen,
                                   ),
                                 ),
                                 child: Text(l10n.payNow),
+                              ),
+                            ),
+                          ],
+                          if (reserva.estado != 'cancelada' && puedeCancelar) ...[
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(l10n.cancelReservation),
+                                      content: Text(l10n.areYouSureCancel),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: Text(l10n.noKeep),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          child: Text(l10n.yesCancel, style: const TextStyle(color: Colors.red)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirm == true && context.mounted) {
+                                    final success = await context.read<ReservaViewModel>().cancelarReservaUsuario(reserva.id);
+                                    if (success && context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.cancelSuccess)));
+                                    } else if (context.mounted) {
+                                      final error = context.read<ReservaViewModel>().errorMessage ?? 'Error';
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${l10n.cancelError}$error')));
+                                    }
+                                  }
+                                },
+                                child: Text(l10n.cancelReservation, style: const TextStyle(color: Colors.red)),
                               ),
                             ),
                           ],

@@ -16,6 +16,7 @@ class RegisterUseCase {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
+    String rol = 'usuario',
   }) {
     return repository.registrarse(
       nombre: nombre,
@@ -26,6 +27,7 @@ class RegisterUseCase {
       telefono: telefono,
       ubicacion: ubicacion,
       fotoBytes: fotoBytes,
+      rol: rol,
     );
   }
 }

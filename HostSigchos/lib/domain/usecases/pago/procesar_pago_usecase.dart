@@ -14,7 +14,7 @@ class ProcesarPagoUseCase {
     // Actualizar el estado de la reserva acorde al pago
     await _reservaRepository.actualizarEstado(
       pago.reservaId,
-      pago.estado == 'completado' ? 'completado' : 'en_revision',
+      pago.estado == 'completado' ? 'confirmada' : 'en_revision',
     );
     return pagoProcesado;
   }

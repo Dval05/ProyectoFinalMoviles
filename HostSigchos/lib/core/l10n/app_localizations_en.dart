@@ -440,4 +440,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentReminderScheduled =>
       'We will remind you to make your payment to confirm the reservation.';
+
+  @override
+  String get hotelMap => 'Lodges Map';
+
+  @override
+  String get getDirections => 'Get directions';
+
+  @override
+  String get whatDates => 'What dates do you want to stay?';
+
+  @override
+  String get availableDatesTitle => 'Available for your dates';
+
+  @override
+  String helloUser(String name) {
+    return 'Hello, $name!';
+  }
+
+  @override
+  String get helpAndSupport => 'Help & Support';
+
+  @override
+  String get noPaymentHistory => 'No payment history found.';
+
+  @override
+  String get reference => 'Reference';
+
+  @override
+  String get method => 'Method';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get code => 'Code';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get areYouSureCancel =>
+      'Are you sure you want to cancel this reservation? This action cannot be undone.';
+
+  @override
+  String get yesCancel => 'Yes, Cancel';
+
+  @override
+  String get noKeep => 'Go Back';
+
+  @override
+  String get cancelSuccess => 'Reservation cancelled successfully';
+
+  @override
+  String get cancelError => 'Error cancelling reservation: ';
+
+  @override
+  String get supportInfoText =>
+      'For technical support, please contact:\n\nEmail: soporte@hostsigchos.com\nPhone: +593 99 123 4567';
+
+  @override
+  String get advancedFilters => 'Advanced Filters';
+
+  @override
+  String get priceRange => 'Price Range (\$)';
+
+  @override
+  String get locationFilterHint => 'Location (e.g. Latacunga)';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get sortTitle => 'Sort by';
+
+  @override
+  String get sortNone => 'None';
+
+  @override
+  String get sortPriceAsc => 'Price: Low to High';
+
+  @override
+  String get sortPriceDesc => 'Price: High to Low';
+
+  @override
+  String get sortNameAsc => 'Name: A - Z';
+
+  @override
+  String get sortNameDesc => 'Name: Z - A';
+
+  @override
+  String get sortRatingDesc => 'Highest Rated';
+
+  @override
+  String get sortRatingAsc => 'Lowest Rated';
 }

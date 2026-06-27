@@ -52,6 +52,9 @@ dependencies:
   flutter_map: ^8.3.0
   latlong2: ^0.9.1
   country_picker: ^2.0.28
+  package_info_plus: ^10.1.0
+  url_launcher: ^6.3.2
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +62,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   very_good_analysis: ^10.3.0
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 flutter:
   generate: true
@@ -67,6 +71,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - .env
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -74,3 +79,12 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   image_path: "assets/images/logo.png"
   min_sdk_android: 23
+
+flutter_native_splash:
+  color: "#F8F9FA"
+  image: "assets/images/logo.png"
+  android_12:
+    image: "assets/images/logo.png"
+    icon_background_color: "#F8F9FA"
+  android: true
+  ios: true

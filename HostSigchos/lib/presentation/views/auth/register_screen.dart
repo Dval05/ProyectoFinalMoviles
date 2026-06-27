@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  final String _selectedRol = kIsWeb ? 'propietario' : 'usuario';
 
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -172,6 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ? '${_customCityController.text.trim()}, $_selectedCountry'
             : null,
         fotoBytes: imageBytes,
+        rol: _selectedRol,
       );
 
       if (success && mounted) {
@@ -280,6 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   prefixIcon: Icons.person_outline,
                   controller: _nombreController,
                   validator: Validators.nombre,
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
                 ),
 
                 CustomTextField(
@@ -327,6 +332,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ? TextInputType.number 
                             : TextInputType.text,
                         validator: (val) => Validators.identificacion(val, _tipoIdentificacion),
+                        inputFormatters: _tipoIdentificacion == 'Cédula' 
+                            ? [FilteringTextInputFormatter.digitsOnly] 
+                            : [FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]'))],
                       ),
                     ),
                   ],
@@ -387,6 +395,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: _telefonoController,
                         keyboardType: TextInputType.phone,
                         validator: Validators.telefono,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       ),
                     ),
                   ],
@@ -457,6 +466,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: (val) =>
                       Validators.confirmPassword(val, _passwordController.text),
                 ),
+
+                const SizedBox(height: 16),
+                
+
 
                 const SizedBox(height: 32),
 

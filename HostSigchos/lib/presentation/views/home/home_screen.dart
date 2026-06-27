@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/hosteria_viewmodel.dart';
+import '../../viewmodels/weather_viewmodel.dart';
 import '../../widgets/hosteria_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,13 +23,32 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _profileChecked = false;
+  DateTimeRange? _selectedDateRange;
+  bool _isGridView = false;
+  Position? _currentPosition;
+
+  Future<void> _seleccionarFechas() async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: _selectedDateRange,
+    );
+    if (picked != null && picked != _selectedDateRange) {
+      setState(() {
+        _selectedDateRange = picked;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    // Cargar hosterías al iniciar el home
+    _obtenerUbicacion();
+    // Cargar hosterías y clima al iniciar el home
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HosteriaViewModel>().cargarHosterias();
+      context.read<WeatherViewModel>().fetchWeather();
 
       if (!_profileChecked) {
         _profileChecked = true;
@@ -57,10 +80,31 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _obtenerUbicacion() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+
+    if (permission == LocationPermission.deniedForever) return;
+
+    final position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = context.watch<AuthViewModel>();
     final hosteriaViewModel = context.watch<HosteriaViewModel>();
+    final weatherViewModel = context.watch<WeatherViewModel>();
 
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
@@ -71,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "¡Hola, ${authViewModel.usuarioActual == null ? 'Viajero' : authViewModel.usuarioActual!.nombre.split(' ').first}!",
+              l10n.helloUser(authViewModel.usuarioActual == null ? 'Viajero' : authViewModel.usuarioActual!.nombre.split(' ').first),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -97,6 +141,49 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              // Hero Section - Fechas
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: InkWell(
+                  onTap: _seleccionarFechas,
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: ColorSchemeApp.primaryGreen),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_month, color: ColorSchemeApp.primaryGreen, size: 32),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.whatDates,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: ColorSchemeApp.darkGreen),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _selectedDateRange == null 
+                                  ? AppLocalizations.of(context)!.tapToChoose
+                                  : '${DateFormat('dd MMM').format(_selectedDateRange!.start)} - ${DateFormat('dd MMM').format(_selectedDateRange!.end)}',
+                                style: TextStyle(color: Colors.grey[700]),
+                              )
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, color: ColorSchemeApp.primaryGreen),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
               // Buscador rápido
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -121,6 +208,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
+              // Widget de Clima
+              if (!weatherViewModel.isLoading && weatherViewModel.temperature != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [ColorSchemeApp.primaryGreen, ColorSchemeApp.lightGreen],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Clima en Sigchos',
+                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${weatherViewModel.temperature}°C',
+                              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          weatherViewModel.getWeatherIcon(),
+                          size: 48,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Carrusel de destacadas
               if (hosteriaViewModel.isLoading)
                 const Center(
@@ -136,7 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        l10n.popularHosterias,
+                        _selectedDateRange == null 
+                            ? l10n.popularHosterias 
+                            : AppLocalizations.of(context)!.availableDatesTitle,
                         style: theme.textTheme.titleLarge,
                       ),
                     ),
@@ -148,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         autoPlay: true,
                         viewportFraction: 0.85,
                       ),
-                      items: hosteriaViewModel.hosterias.take(3).map((
+                      items: hosteriaViewModel.destacadas.map((
                         hosteria,
                       ) {
                         return Builder(
@@ -210,13 +347,36 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ),
                                           padding: const EdgeInsets.all(16),
-                                          child: Text(
-                                            hosteria.nombre,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  hosteria.nombre,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    hosteria.rating.toStringAsFixed(1),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
@@ -242,41 +402,109 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        l10n.exploreHosterias,
+                        _selectedDateRange == null 
+                            ? l10n.nearYou 
+                            : AppLocalizations.of(context)!.availableDatesTitle,
                         style: theme.textTheme.titleLarge,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, AppRoutes.hosteriasList),
-                      child: Text(l10n.viewAll),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
+                          onPressed: () => setState(() => _isGridView = !_isGridView),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pushNamed(context, AppRoutes.hosteriasList),
+                          child: Text(l10n.viewAll),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
 
               if (!hosteriaViewModel.isLoading)
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: hosteriaViewModel.hosterias.length,
-                  itemBuilder: (context, index) {
-                    final hosteria = hosteriaViewModel.hosterias[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: HosteriaCard(
-                        hosteria: hosteria,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.hosteriaDetail,
-                            arguments: hosteria.id,
+                Builder(
+                  builder: (context) {
+                    final lat = _currentPosition?.latitude ?? AppConstants.sigchosLatitud;
+                    final lng = _currentPosition?.longitude ?? AppConstants.sigchosLongitud;
+                    final cercanas = hosteriaViewModel.obtenerCercanas(lat, lng, count: 4);
+
+                    if (_isGridView) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.75,
+                        ),
+                        itemCount: cercanas.length,
+                        itemBuilder: (context, index) {
+                          final hosteria = cercanas[index];
+                          String? distanciaTexto;
+                          if (_currentPosition != null) {
+                            final dist = Geolocator.distanceBetween(
+                              _currentPosition!.latitude, 
+                              _currentPosition!.longitude, 
+                              hosteria.latitud, 
+                              hosteria.longitud
+                            );
+                            distanciaTexto = '${(dist / 1000).toStringAsFixed(1)} km';
+                          }
+                          return HosteriaCard(
+                            hosteria: hosteria,
+                            isGrid: true,
+                            distancia: distanciaTexto,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.hosteriaDetail,
+                                arguments: hosteria.id,
+                              );
+                            },
                           );
                         },
-                      ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: cercanas.length,
+                      itemBuilder: (context, index) {
+                        final hosteria = cercanas[index];
+                        String? distanciaTexto;
+                        if (_currentPosition != null) {
+                          final dist = Geolocator.distanceBetween(
+                            _currentPosition!.latitude, 
+                            _currentPosition!.longitude, 
+                            hosteria.latitud, 
+                            hosteria.longitud
+                          );
+                          distanciaTexto = '${(dist / 1000).toStringAsFixed(1)} km';
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: HosteriaCard(
+                            hosteria: hosteria,
+                            distancia: distanciaTexto,
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.hosteriaDetail,
+                                arguments: hosteria.id,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     );
-                  },
+                  }
                 ),
             ],
           ),

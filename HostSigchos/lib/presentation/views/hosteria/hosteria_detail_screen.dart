@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../core/l10n/app_localizations.dart';
 
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
@@ -150,6 +153,30 @@ class _HosteriaDetailScreenState extends State<HosteriaDetailScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${hosteria.latitud},${hosteria.longitud}');
+                        try {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+                            );
+                          }
+                        }
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: ColorSchemeApp.primaryGreen,
+                        side: const BorderSide(color: ColorSchemeApp.primaryGreen),
+                      ),
+                      icon: const Icon(Icons.directions),
+                      label: Text(AppLocalizations.of(context)!.getDirections),
+                    ),
                   ),
                   const SizedBox(height: 8),
 

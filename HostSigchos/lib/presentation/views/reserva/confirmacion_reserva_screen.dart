@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../core/services/notification_service.dart';
+import '../../../domain/entities/reserva.dart';
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
-import '../../viewmodels/reserva_viewmodel.dart';
 
 class ConfirmacionReservaScreen extends StatelessWidget {
   const ConfirmacionReservaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final reservaVm = context.watch<ReservaViewModel>();
-    final reserva = reservaVm.reservaActual;
+    // Capturar la lista de reservas desde los argumentos
+    final reservas = ModalRoute.of(context)?.settings.arguments as List<Reserva>?;
 
     return Scaffold(
       backgroundColor: ColorSchemeApp.offWhite,
@@ -50,21 +49,30 @@ class ConfirmacionReservaScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              if (reserva != null)
-                Text(
-                  'Código: ${reserva.id.toUpperCase().substring(0, 8)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+              if (reservas != null && reservas.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Text(
+                  'Códigos de Reserva:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 4),
+                ...reservas.map(
+                  (r) => Text(
+                    r.id.toUpperCase().substring(0, 8),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ],
               const SizedBox(height: 48),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Ir a pantalla de pago, pasando el ID de la reserva
+                    // Ir a pantalla de pago, pasando la lista de reservas
                     Navigator.pushReplacementNamed(
                       context,
                       AppRoutes.pago,
-                      arguments: reserva?.id,
+                      arguments: reservas,
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -82,11 +90,13 @@ class ConfirmacionReservaScreen extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   // Programar notificación de recordatorio de pago
-                  if (reserva != null) {
-                    NotificationService().programarNotificacionPagoPendiente(
-                      reservaId: reserva.id,
-                      nombreHosteria: reserva.nombreHosteria,
-                    );
+                  if (reservas != null && reservas.isNotEmpty) {
+                    for (final r in reservas) {
+                      NotificationService().programarNotificacionPagoPendiente(
+                        reservaId: r.id,
+                        nombreHosteria: r.nombreHosteria,
+                      );
+                    }
 
                     // Mostrar mensaje informativo
                     ScaffoldMessenger.of(context).showSnackBar(

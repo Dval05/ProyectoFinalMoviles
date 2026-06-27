@@ -51,6 +51,7 @@ class HabitacionViewModel extends ChangeNotifier {
           hab.id,
           checkIn,
           checkOut,
+          1,
         );
         _disponibilidadPorHabitacion[hab.id] = disponible;
       }

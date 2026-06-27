@@ -11,6 +11,7 @@ class Habitacion {
     this.imagenes = const [],
     this.amenidades = const [],
     this.disponible = true,
+    this.cantidadTotal = 10,
   });
   final String id;
   final String hosteriaId;
@@ -21,6 +22,7 @@ class Habitacion {
   final List<String> imagenes;
   final List<String> amenidades;
   final bool disponible;
+  final int cantidadTotal;
 
   Habitacion copyWith({
     String? id,
@@ -32,6 +34,7 @@ class Habitacion {
     List<String>? imagenes,
     List<String>? amenidades,
     bool? disponible,
+    int? cantidadTotal,
   }) {
     return Habitacion(
       id: id ?? this.id,
@@ -43,6 +46,7 @@ class Habitacion {
       imagenes: imagenes ?? this.imagenes,
       amenidades: amenidades ?? this.amenidades,
       disponible: disponible ?? this.disponible,
+      cantidadTotal: cantidadTotal ?? this.cantidadTotal,
     );
   }
 }

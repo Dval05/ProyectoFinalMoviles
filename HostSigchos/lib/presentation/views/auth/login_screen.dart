@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,14 +32,31 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
+      
+      var input = _emailController.text.trim();
+      if (!input.contains('@')) {
+        input = '$input@hostsigchos.com';
+      }
+
       final success = await context.read<AuthViewModel>().login(
-        _emailController.text.trim(),
+        input,
         _passwordController.text,
       );
 
       if (success && mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        final usuario = context.read<AuthViewModel>().usuarioActual;
+        if (usuario != null) {
+          _navegarPostLogin();
+        }
       }
+    }
+  }
+
+  void _navegarPostLogin() {
+    if (kIsWeb) {
+      Navigator.pushReplacementNamed(context, AppRoutes.propietarioDashboard);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
     }
   }
 
@@ -50,7 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (authVm.isUsuarioSoloGoogle) {
         _mostrarDialogoVincularPassword();
       } else {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        final usuario = authVm.usuarioActual;
+        if (usuario != null) {
+          _navegarPostLogin();
+        }
       }
     }
   }
@@ -58,7 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _loginBiometric() async {
     final success = await context.read<AuthViewModel>().loginConBiometria();
     if (success && mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      final usuario = context.read<AuthViewModel>().usuarioActual;
+      if (usuario != null) {
+        _navegarPostLogin();
+      }
     }
   }
 
@@ -132,7 +156,10 @@ class _LoginScreenState extends State<LoginScreen> {
               passwordDialogController.dispose();
               confirmDialogController.dispose();
               if (mounted) {
-                Navigator.pushReplacementNamed(context, AppRoutes.home);
+                final usuario = context.read<AuthViewModel>().usuarioActual;
+                if (usuario != null) {
+                  _navegarPostLogin();
+                }
               }
             },
             child: const Text('Omitir'),
@@ -159,7 +186,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   }
-                  Navigator.pushReplacementNamed(context, AppRoutes.home);
+                  final usuario = context.read<AuthViewModel>().usuarioActual;
+                  if (usuario != null) {
+                    _navegarPostLogin();
+                  }
                 }
               }
             },
@@ -198,10 +228,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Icon(
-                          Icons.landscape_rounded,
-                          size: 80,
-                          color: ColorSchemeApp.primaryGreen,
+                        Image.asset(
+                          'assets/images/logo.png',
+                          height: 30,
                         ),
                         const SizedBox(height: 24),
                         Text(
@@ -241,11 +270,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
 
                         CustomTextField(
-                          label: 'Correo electrónico',
+                          label: 'Correo / Nombre de local',
                           prefixIcon: Icons.email_outlined,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          validator: Validators.email,
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Este campo es requerido';
+                            }
+                            return null;
+                          },
                         ),
 
                         CustomTextField(

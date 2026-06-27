@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
@@ -9,11 +10,13 @@ import 'package:provider/provider.dart';
 import 'core/l10n/app_localizations.dart';
 // Import Services
 import 'core/services/notification_service.dart';
+import 'data/datasources/api/weather_api.dart';
 // Import DataSources
 import 'data/datasources/firebase/auth_datasource.dart';
 import 'data/datasources/firebase/habitacion_datasource.dart';
 import 'data/datasources/firebase/hosteria_datasource.dart';
 import 'data/datasources/firebase/pago_datasource.dart';
+import 'data/datasources/firebase/promocion_datasource.dart';
 import 'data/datasources/firebase/reserva_datasource.dart';
 import 'data/datasources/firebase/storage_datasource.dart';
 import 'data/datasources/remote/geocoding_datasource.dart';
@@ -23,6 +26,7 @@ import 'data/repositories/geocoding_repository_impl.dart';
 import 'data/repositories/habitacion_repository_impl.dart';
 import 'data/repositories/hosteria_repository_impl.dart';
 import 'data/repositories/pago_repository_impl.dart';
+import 'data/repositories/promocion_repository_impl.dart';
 import 'data/repositories/reserva_repository_impl.dart';
 import 'domain/usecases/auth/actualizar_perfil_usecase.dart';
 import 'domain/usecases/auth/google_signin_usecase.dart';
@@ -36,29 +40,42 @@ import 'domain/usecases/auth/vincular_password_usecase.dart';
 import 'domain/usecases/geocoding/get_direccion_usecase.dart';
 import 'domain/usecases/habitacion/check_disponibilidad_usecase.dart';
 import 'domain/usecases/habitacion/get_habitaciones_usecase.dart';
+import 'domain/usecases/hosteria/actualizar_hosteria_usecase.dart';
+import 'domain/usecases/hosteria/crear_hosteria_usecase.dart';
 import 'domain/usecases/hosteria/get_hosteria_detail_usecase.dart';
 import 'domain/usecases/hosteria/get_hosterias_usecase.dart';
 import 'domain/usecases/pago/actualizar_estado_pago_usecase.dart';
 import 'domain/usecases/pago/get_historial_pagos_usecase.dart';
 import 'domain/usecases/pago/procesar_pago_usecase.dart';
+import 'domain/usecases/promocion/actualizar_promocion_usecase.dart';
+import 'domain/usecases/promocion/crear_promocion_usecase.dart';
+import 'domain/usecases/promocion/get_promociones_usecase.dart';
+import 'domain/usecases/reserva/actualizar_estado_reserva_usecase.dart';
 import 'domain/usecases/reserva/cancelar_reserva_usecase.dart';
 import 'domain/usecases/reserva/crear_reserva_usecase.dart';
 import 'domain/usecases/reserva/get_historial_reservas_usecase.dart';
+import 'domain/usecases/reserva/get_todas_las_reservas_usecase.dart';
 import 'firebase_options.dart'; // Opciones generadas por FlutterFire
 import 'presentation/routes/app_routes.dart';
 // Import ViewModels
 import 'presentation/viewmodels/auth_viewmodel.dart';
+import 'presentation/viewmodels/carrito_reserva_viewmodel.dart';
 import 'presentation/viewmodels/geocoding_viewmodel.dart';
 import 'presentation/viewmodels/habitacion_viewmodel.dart';
 import 'presentation/viewmodels/hosteria_viewmodel.dart';
 import 'presentation/viewmodels/locale_viewmodel.dart';
 import 'presentation/viewmodels/pago_viewmodel.dart';
+import 'presentation/viewmodels/promocion_viewmodel.dart';
 import 'presentation/viewmodels/reserva_viewmodel.dart';
+import 'presentation/viewmodels/weather_viewmodel.dart';
 // Import Theme & Routes
 import 'themes/tema_general.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Cargar variables de entorno
+  await dotenv.load(fileName: '.env');
 
   // Inicialización de Firebase
   try {
@@ -89,6 +106,7 @@ void main() async {
       providers: [
         // Core ViewModels
         ChangeNotifierProvider(create: (_) => LocaleViewModel()),
+        ChangeNotifierProvider(create: (_) => WeatherViewModel(WeatherApi())),
 
         // Dependency Injection Manual (sin packages de DI para mantenerlo simple según Provider requirement)
         ChangeNotifierProvider(
@@ -105,6 +123,7 @@ void main() async {
               vincularPasswordUseCase: VincularPasswordUseCase(authRepo),
               verificarEmailUseCase: VerificarEmailUseCase(authRepo),
               verificarTelefonoUseCase: VerificarTelefonoUseCase(authRepo),
+              authRepository: authRepo,
             );
           },
         ),
@@ -115,6 +134,9 @@ void main() async {
             return HosteriaViewModel(
               getHosteriasUseCase: GetHosteriasUseCase(repo),
               getHosteriaDetailUseCase: GetHosteriaDetailUseCase(repo),
+              crearHosteriaUseCase: CrearHosteriaUseCase(repo),
+              actualizarHosteriaUseCase: ActualizarHosteriaUseCase(repo),
+              getHabitacionesUseCase: GetHabitacionesUseCase(HabitacionRepositoryImpl(HabitacionDataSource())),
             );
           },
         ),
@@ -131,25 +153,44 @@ void main() async {
 
         ChangeNotifierProvider(
           create: (_) {
-            final repo = ReservaRepositoryImpl(ReservaDataSource());
+            final repoReserva = ReservaRepositoryImpl(ReservaDataSource());
+            final repoHabitacion = HabitacionRepositoryImpl(HabitacionDataSource());
             return ReservaViewModel(
-              crearReservaUseCase: CrearReservaUseCase(repo),
-              getHistorialReservasUseCase: GetHistorialReservasUseCase(repo),
-              cancelarReservaUseCase: CancelarReservaUseCase(repo),
+              crearReservaUseCase: CrearReservaUseCase(repoReserva),
+              getHistorialReservasUseCase: GetHistorialReservasUseCase(repoReserva),
+              getTodasLasReservasUseCase: GetTodasLasReservasUseCase(repoReserva),
+              actualizarEstadoReservaUseCase: ActualizarEstadoReservaUseCase(repoReserva),
+              cancelarReservaUseCase: CancelarReservaUseCase(repoReserva),
+              checkDisponibilidadUseCase: CheckDisponibilidadUseCase(repoHabitacion),
+            );
+          },
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => CarritoReservaViewModel(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) {
+            final repo = PromocionRepositoryImpl(PromocionDataSource());
+            return PromocionViewModel(
+              getPromocionesUseCase: GetPromocionesUseCase(repo),
+              crearPromocionUseCase: CrearPromocionUseCase(repo),
+              actualizarPromocionUseCase: ActualizarPromocionUseCase(repo),
             );
           },
         ),
 
         ChangeNotifierProvider(
           create: (_) {
-            final repoPago = PagoRepositoryImpl(PagoDataSource());
-            final repoReserva = ReservaRepositoryImpl(ReservaDataSource());
+            final repo = PagoRepositoryImpl(PagoDataSource());
+            final reservaRepo = ReservaRepositoryImpl(ReservaDataSource());
             return PagoViewModel(
-              procesarPagoUseCase: ProcesarPagoUseCase(repoPago, repoReserva),
-              getHistorialPagosUseCase: GetHistorialPagosUseCase(repoPago),
+              procesarPagoUseCase: ProcesarPagoUseCase(repo, reservaRepo),
+              getHistorialPagosUseCase: GetHistorialPagosUseCase(repo),
               actualizarEstadoPagoUseCase: ActualizarEstadoPagoUseCase(
-                repoPago,
-                repoReserva,
+                repo,
+                reservaRepo,
               ),
             );
           },

@@ -113,8 +113,30 @@ class PerfilScreen extends StatelessWidget {
             _buildOpcionMenu(
               context,
               icon: Icons.help_outline,
-              title: 'Ayuda y Soporte',
-              onTap: () {},
+              title: l10n.helpAndSupport,
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(l10n.helpAndSupport),
+                    content: Text(l10n.supportInfoText),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(l10n.understood),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            _buildOpcionMenu(
+              context,
+              icon: Icons.payment,
+              title: l10n.paymentHistory,
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.historialPagos);
+              },
             ),
           ],
         ),

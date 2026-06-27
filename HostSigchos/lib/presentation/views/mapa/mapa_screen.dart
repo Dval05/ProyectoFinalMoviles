@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../../domain/entities/hosteria.dart';
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
@@ -25,7 +27,7 @@ class _MapaScreenState extends State<MapaScreen> {
     // Cargar hosterías si no están cargadas
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final hosteriaVm = context.read<HosteriaViewModel>();
-      if (hosteriaVm.hosterias.isEmpty) {
+      if (hosteriaVm.todasHosterias.isEmpty) {
         hosteriaVm.cargarHosterias();
       }
     });
@@ -37,7 +39,7 @@ class _MapaScreenState extends State<MapaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapa de Hosterías'),
+        title: Text(AppLocalizations.of(context)!.hotelMap),
         centerTitle: true,
       ),
       body: hosteriaVm.isLoading
@@ -56,7 +58,7 @@ class _MapaScreenState extends State<MapaScreen> {
                   userAgentPackageName: 'com.example.hostsigchos',
                 ),
                 MarkerLayer(
-                  markers: hosteriaVm.hosterias.map((hosteria) {
+                  markers: hosteriaVm.todasHosterias.map((hosteria) {
                     return Marker(
                       point: LatLng(hosteria.latitud, hosteria.longitud),
                       width: 50,
@@ -65,10 +67,34 @@ class _MapaScreenState extends State<MapaScreen> {
                         onTap: () {
                           _mostrarInfoHosteria(context, hosteria);
                         },
-                        child: const Icon(
-                          Icons.location_on,
-                          color: ColorSchemeApp.primaryGreen,
-                          size: 40,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: ColorSchemeApp.primaryGreen,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 2),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.home_work_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            Container(
+                              width: 2,
+                              height: 6,
+                              color: ColorSchemeApp.primaryGreen,
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -127,7 +153,32 @@ class _MapaScreenState extends State<MapaScreen> {
                     backgroundColor: ColorSchemeApp.primaryGreen,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Ver Detalles'),
+                  child: Text(AppLocalizations.of(context)!.reservationDetails),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    Navigator.pop(context); // Cerrar modal
+                    final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${hosteria.latitud},${hosteria.longitud}');
+                    try {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+                        );
+                      }
+                    }
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: ColorSchemeApp.primaryGreen,
+                    side: const BorderSide(color: ColorSchemeApp.primaryGreen),
+                  ),
+                  icon: const Icon(Icons.directions),
+                  label: Text(AppLocalizations.of(context)!.getDirections),
                 ),
               ),
             ],

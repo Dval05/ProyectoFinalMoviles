@@ -62,6 +62,7 @@ class AuthDataSource {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
+    String rol = 'usuario',
   }) async {
     try {
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -87,6 +88,7 @@ class AuthDataSource {
         ubicacion: ubicacion,
         fotoUrl: fotoUrl,
         fechaRegistro: DateTime.now(),
+        rol: rol,
       );
 
       await _firestore
@@ -143,6 +145,7 @@ class AuthDataSource {
           email: user.email!,
           fotoUrl: user.photoURL,
           fechaRegistro: DateTime.now(),
+          rol: 'usuario',
         );
         await _firestore
             .collection(FirestorePaths.usuarios)

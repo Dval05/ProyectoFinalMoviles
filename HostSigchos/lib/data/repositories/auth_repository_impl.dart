@@ -26,6 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
+    String rol = 'usuario',
   }) async {
     final model = await _authDataSource.registrarse(
       nombre: nombre,
@@ -36,6 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
       telefono: telefono,
       ubicacion: ubicacion,
       fotoBytes: fotoBytes,
+      rol: rol,
     );
     return model;
   }

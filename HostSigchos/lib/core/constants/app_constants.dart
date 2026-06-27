@@ -1,11 +1,13 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// Constantes generales de la aplicación HostSigchos
 class AppConstants {
   // Nombre de la app
   static const String appName = 'HostSigchos';
   static const String appTagline = 'Reservas en Sigchos';
 
-  // API Keys (reemplazar con valores reales)
-  static const String googleMapsApiKey = 'TU_GOOGLE_MAPS_API_KEY';
+  // API Keys (cargadas desde .env)
+  static String get googleMapsApiKey => dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
 
   // Google Geocoding API
   static const String geocodingBaseUrl =
