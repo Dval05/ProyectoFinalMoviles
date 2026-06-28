@@ -34,6 +34,14 @@ La aplicación está diseñada tanto para **Usuarios/Turistas** (que buscan desc
   - **Transición Automática (48 horas)**: Si pasan 48 horas sin que el administrador confirme el pago, la reserva cambia automáticamente a `pendiente` o se cancela.
 - **Notificaciones Push Locales**: Sistema de alertas en segundo plano (`flutter_local_notifications`) que advierte a los usuarios sobre confirmaciones de reserva, pagos pendientes y recordatorios.
 
+### 🤖 Chatbot Inteligente (100% Nativo en Flutter)
+- **Integración Directa con Groq**: El chatbot se comunica de forma nativa desde la app en Flutter con las APIs de Groq (eliminando por completo la necesidad de un backend intermedio en Python).
+- **Procesamiento de Voz Nativo**: Permite grabar notas de voz que son enviadas directamente a los servidores ultra-rápidos de Groq usando el modelo `whisper-large-v3` para transcribirlas en tiempo real.
+- **Respuestas Contextuales Inteligentes**: El modelo `llama-3.3-70b-versatile` procesa las consultas del usuario y tiene acceso al contexto en tiempo real de la base de datos de hosterías (precios, ubicaciones, ratings) para hacer recomendaciones exactas como "la hostería más barata" o "la más cercana al centro", además de poder navegar directamente a los cuartos de la hostería sugerida mediante acciones JSON estructuradas.
+
+### 🛏️ Gestión Avanzada de Habitaciones Compartidas
+- Soporte para calcular de forma dinámica las reservas en **Habitaciones Compartidas** donde el usuario paga "Por Cama" y no por la habitación entera. La UI y la calculadora de precios se adaptan inteligentemente al tipo de habitación.
+
 ### 🎁 Promociones
 - Módulo de promociones para destacar ofertas especiales, descuentos temporales o paquetes en las hosterías.
 
@@ -115,8 +123,9 @@ El proyecto está diseñado para ser altamente escalable y mantenible, dividiend
   - `flutter_rating_bar` (Componentes de calificación)
   - `country_picker`, `intl` (Localización y formatos)
 - **Utilidades**: 
-  - `flutter_dotenv` (Variables de entorno)
-  - `http` (Peticiones API externas)
+  - `flutter_dotenv` (Variables de entorno para API Keys como GROQ_API_KEY)
+  - `http` (Peticiones API externas a Groq y otros servicios)
+  - `record`, `path_provider` (Grabación y manejo de audio nativo para notas de voz del Chatbot)
 
 ---
 

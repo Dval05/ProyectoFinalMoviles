@@ -22,7 +22,17 @@ class HabitacionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: InkWell(
         onTap: onTap,
-        child: Row(
+        child: Builder(
+          builder: (context) {
+            final bool esCompartida = habitacion.tipo.toLowerCase().contains('compartida');
+            final String textoPrecio = esCompartida 
+                ? '${CurrencyFormatter.formatear(habitacion.precioPorNoche)} / cama'
+                : CurrencyFormatter.formatear(habitacion.precioPorNoche);
+            final String textoCapacidad = esCompartida
+                ? 'Habitación de ${habitacion.capacidad} camas'
+                : 'Capacidad: ${habitacion.capacidad} personas';
+
+            return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Imagen
@@ -86,9 +96,7 @@ class HabitacionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            CurrencyFormatter.formatear(
-                              habitacion.precioPorNoche,
-                            ),
+                            textoPrecio,
                             style: const TextStyle(
                               color: ColorSchemeApp.darkGreen,
                               fontWeight: FontWeight.bold,
@@ -99,7 +107,7 @@ class HabitacionCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Capacidad: ${habitacion.capacidad} personas',
+                      textoCapacidad,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: ColorSchemeApp.softGray,
                       ),
@@ -130,7 +138,8 @@ class HabitacionCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
+        );
+      }),
       ),
     );
   }

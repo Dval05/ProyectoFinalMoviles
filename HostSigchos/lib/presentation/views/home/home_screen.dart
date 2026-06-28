@@ -440,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 0.75,
+                          childAspectRatio: 0.68,
                         ),
                         itemCount: cercanas.length,
                         itemBuilder: (context, index) {
@@ -509,6 +509,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, AppRoutes.chatbot),
+        backgroundColor: ColorSchemeApp.primaryGreen,
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {

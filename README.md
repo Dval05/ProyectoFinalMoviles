@@ -31,6 +31,10 @@ HostSigchos es una aplicación móvil desarrollada en **Flutter** diseñada para
 - **Horarios:** Check-In a las 14:00 (2:00 PM), Check-Out a las 12:00 PM.
 - **Moneda de Operación:** Dólares Estadounidenses (USD, $).
 - **Ubicación Base:** Sigchos (Latitud: -0.7033, Longitud: -78.8878).
+- **Habitaciones Compartidas:** Soporte para habitaciones donde el pago y reserva se hace "por cama/huésped" dinámicamente.
+- **Chatbot Inteligente Nativo:** Integración 100% nativa (sin backend externo) con la API de Groq.
+  - **Reconocimiento de Voz (Whisper-large-v3)**: Permite enviar notas de voz que se transcriben en tiempo real.
+  - **Asistente Contextual (Llama-3.3-70b-versatile)**: El chatbot conoce las hosterías, precios y ubicaciones en tiempo real y te permite navegar directamente a sus cuartos desde el chat.
 
 ---
 
@@ -123,6 +127,20 @@ Para configurarlo:
      static const String googleMapsApiKey = 'TU_GOOGLE_MAPS_API_KEY_AQUI';
      ```
    *(No es necesario modificar el AndroidManifest.xml ni el AppDelegate.swift para los mapas)*
+
+---
+
+## 🤖 Configuración del Chatbot (API de Groq)
+
+La app cuenta con un Chatbot nativo que interactúa con la Inteligencia Artificial de Groq (Llama 3 y Whisper) directamente desde Flutter.
+
+Para configurarlo:
+1. Obtén tu API Key gratuita en [Groq Console](https://console.groq.com/keys).
+2. Crea un archivo `.env` en la ruta `HostSigchos/.env`.
+3. Añade tu API Key de esta manera (también puedes añadir aquí la key de Google Maps si la configuraste por variables de entorno):
+   ```env
+   GROQ_API_KEY=gsk_tu_api_key_aqui
+   ```
 
 ---
 

@@ -19,9 +19,11 @@ import 'data/datasources/firebase/pago_datasource.dart';
 import 'data/datasources/firebase/promocion_datasource.dart';
 import 'data/datasources/firebase/reserva_datasource.dart';
 import 'data/datasources/firebase/storage_datasource.dart';
+import 'data/datasources/remote/chatbot_datasource.dart';
 import 'data/datasources/remote/geocoding_datasource.dart';
 // Import Repositories
 import 'data/repositories/auth_repository_impl.dart';
+import 'data/repositories/chatbot_repository_impl.dart';
 import 'data/repositories/geocoding_repository_impl.dart';
 import 'data/repositories/habitacion_repository_impl.dart';
 import 'data/repositories/hosteria_repository_impl.dart';
@@ -37,6 +39,8 @@ import 'domain/usecases/auth/register_usecase.dart';
 import 'domain/usecases/auth/verificar_email_usecase.dart';
 import 'domain/usecases/auth/verificar_telefono_usecase.dart';
 import 'domain/usecases/auth/vincular_password_usecase.dart';
+import 'domain/usecases/chatbot/enviar_audio_usecase.dart';
+import 'domain/usecases/chatbot/enviar_mensaje_usecase.dart';
 import 'domain/usecases/geocoding/get_direccion_usecase.dart';
 import 'domain/usecases/habitacion/check_disponibilidad_usecase.dart';
 import 'domain/usecases/habitacion/get_habitaciones_usecase.dart';
@@ -60,6 +64,7 @@ import 'presentation/routes/app_routes.dart';
 // Import ViewModels
 import 'presentation/viewmodels/auth_viewmodel.dart';
 import 'presentation/viewmodels/carrito_reserva_viewmodel.dart';
+import 'presentation/viewmodels/chatbot_viewmodel.dart';
 import 'presentation/viewmodels/geocoding_viewmodel.dart';
 import 'presentation/viewmodels/habitacion_viewmodel.dart';
 import 'presentation/viewmodels/hosteria_viewmodel.dart';
@@ -201,6 +206,16 @@ void main() async {
             final repo = GeocodingRepositoryImpl(GeocodingDataSource());
             return GeocodingViewModel(
               getDireccionUseCase: GetDireccionUseCase(repo),
+            );
+          },
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) {
+            final repo = ChatbotRepositoryImpl(ChatbotDataSource());
+            return ChatbotViewModel(
+              enviarMensajeUseCase: EnviarMensajeUseCase(repo),
+              enviarAudioUseCase: EnviarAudioUseCase(repo),
             );
           },
         ),

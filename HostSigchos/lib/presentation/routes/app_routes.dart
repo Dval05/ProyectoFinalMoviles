@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../views/auth/login_screen.dart';
 import '../views/auth/register_screen.dart';
 import '../views/auth/verificacion_screen.dart';
+import '../views/chatbot/chatbot_screen.dart';
 import '../views/home/home_screen.dart';
 import '../views/hosteria/hosteria_detail_screen.dart';
 import '../views/hosteria/hosterias_list_screen.dart';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String perfil = '/perfil';
   static const String editarPerfil = '/editar-perfil';
   static const String propietarioDashboard = '/propietario-dashboard';
+  static const String chatbot = '/chatbot';
 
   static Map<String, WidgetBuilder> get routes => {
     splash: (context) => const SplashScreen(),
@@ -58,5 +60,6 @@ class AppRoutes {
     perfil: (context) => const PerfilScreen(),
     editarPerfil: (context) => const EditarPerfilScreen(),
     propietarioDashboard: (context) => const PropietarioDashboardScreen(),
+    chatbot: (context) => const ChatbotScreen(),
   };
 }
