@@ -6,7 +6,6 @@ import '../../../core/errors/failures.dart';
 /// DataSource Remoto que consume la API REST de Nominatim (OpenStreetMap)
 /// para cumplir con el requisito del proyecto: "Consumo de API REST"
 class GeocodingDataSource {
-
   GeocodingDataSource({http.Client? client}) : client = client ?? http.Client();
   final http.Client client;
 

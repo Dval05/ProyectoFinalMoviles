@@ -27,7 +27,8 @@ class ItemCarrito {
     return diff == 0 ? 1 : diff;
   }
 
-  double get precioTotal => noches * habitacion.precioPorNoche * numHabitaciones;
+  double get precioTotal =>
+      noches * habitacion.precioPorNoche * numHabitaciones;
 }
 
 class CarritoReservaViewModel extends ChangeNotifier {
@@ -37,7 +38,8 @@ class CarritoReservaViewModel extends ChangeNotifier {
   bool get isEmpty => _items.isEmpty;
   int get itemCount => _items.length;
 
-  double get totalCarrito => _items.fold(0, (sum, item) => sum + item.precioTotal);
+  double get totalCarrito =>
+      _items.fold(0, (sum, item) => sum + item.precioTotal);
 
   void agregarItem(ItemCarrito item) {
     _items.add(item);

@@ -6,7 +6,6 @@ import '../../domain/usecases/pago/get_historial_pagos_usecase.dart';
 import '../../domain/usecases/pago/procesar_pago_usecase.dart';
 
 class PagoViewModel extends ChangeNotifier {
-
   PagoViewModel({
     required this.procesarPagoUseCase,
     required this.getHistorialPagosUseCase,

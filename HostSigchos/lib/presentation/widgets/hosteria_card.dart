@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/hosteria.dart';
 
 class HosteriaCard extends StatelessWidget {
-
   const HosteriaCard({
-    required this.hosteria, required this.onTap, this.isGrid = false, this.distancia, super.key,
+    required this.hosteria,
+    required this.onTap,
+    this.isGrid = false,
+    this.distancia,
+    super.key,
   });
   final Hosteria hosteria;
   final VoidCallback onTap;
@@ -48,15 +51,23 @@ class HosteriaCard extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: hosteria.imagenes.first,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(color: Colors.grey[100]),
+                          placeholder: (context, url) =>
+                              Container(color: Colors.grey[100]),
                           errorWidget: (context, url, error) => Container(
                             color: Colors.grey[100],
-                            child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey,
+                            ),
                           ),
                         )
                       : Container(
                           color: Colors.grey[100],
-                          child: const Icon(Icons.landscape, size: 50, color: Colors.grey),
+                          child: const Icon(
+                            Icons.landscape,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
                         ),
                 ),
               ),
@@ -83,50 +94,79 @@ class HosteriaCard extends StatelessWidget {
                         ),
                         if (!isGrid) ...[
                           Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 16),
-                              const SizedBox(width: 4),
-                              Text(
-                                hosteria.rating.toStringAsFixed(1),
-                                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.amber),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                    if (!isGrid) Row(
-                      children: [
-                        const Icon(Icons.location_on, color: Colors.grey, size: 16),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            distancia != null ? '$distancia - ${hosteria.direccion}' : hosteria.direccion,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  hosteria.rating.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.amber,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ) else if (distancia != null) Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.location_on, color: Colors.grey, size: 12),
-                          const SizedBox(width: 2),
-                          Text(distancia!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
                         ],
-                      ),
+                      ],
                     ),
+                    if (!isGrid)
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.grey,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              distancia != null
+                                  ? '$distancia - ${hosteria.direccion}'
+                                  : hosteria.direccion,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (distancia != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              color: Colors.grey,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              distancia!,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     SizedBox(height: isGrid ? 8 : 16),
                     Row(
                       children: [
@@ -142,22 +182,32 @@ class HosteriaCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (!isGrid) Text(
-                          ' / noche',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        if (isGrid) Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 14),
-                            Text(
-                              hosteria.rating.toStringAsFixed(1),
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.amber, fontSize: 12),
+                        if (!isGrid)
+                          Text(
+                            ' / noche',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
                             ),
-                          ],
-                        ),
+                          ),
+                        if (isGrid)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 14,
+                              ),
+                              Text(
+                                hosteria.rating.toStringAsFixed(1),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.amber,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ],

@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
-      
+
       var input = _emailController.text.trim();
       if (!input.contains('@')) {
         input = '$input@hostsigchos.com';

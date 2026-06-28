@@ -98,12 +98,13 @@ class _HosteriasListScreenState extends State<HosteriasListScreen> {
               child: _isGridView
                   ? GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.68,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.68,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
                       itemCount: viewModel.hosterias.length,
                       itemBuilder: (context, index) {
                         final hosteria = viewModel.hosterias[index];
@@ -191,7 +192,10 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l10n.advancedFilters, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            l10n.advancedFilters,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 24),
           Text(l10n.priceRange),
           RangeSlider(
@@ -199,7 +203,10 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
             min: 10,
             max: 500,
             divisions: 49,
-            labels: RangeLabels('\$${_precios!.start.round()}', '\$${_precios!.end.round()}'),
+            labels: RangeLabels(
+              '\$${_precios!.start.round()}',
+              '\$${_precios!.end.round()}',
+            ),
             onChanged: (values) {
               setState(() {
                 _precios = values;
@@ -211,8 +218,14 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('\$${_precios!.start.round()}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('\$${_precios!.end.round()}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  '\$${_precios!.start.round()}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '\$${_precios!.end.round()}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
@@ -222,7 +235,9 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
             decoration: InputDecoration(
               labelText: l10n.locationFilterHint,
               prefixIcon: const Icon(Icons.location_city),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onChanged: (val) {
               _ubicacion = val;
@@ -233,21 +248,47 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.sortTitle,
               prefixIcon: const Icon(Icons.sort),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 4,
+              ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<OrdenHosterias>(
                 value: _orden,
                 isExpanded: true,
                 items: [
-                  DropdownMenuItem(value: OrdenHosterias.ninguno, child: Text(AppLocalizations.of(context)!.sortNone)),
-                  DropdownMenuItem(value: OrdenHosterias.precioMenorAMayor, child: Text(AppLocalizations.of(context)!.sortPriceAsc)),
-                  DropdownMenuItem(value: OrdenHosterias.precioMayorAMenor, child: Text(AppLocalizations.of(context)!.sortPriceDesc)),
-                  DropdownMenuItem(value: OrdenHosterias.nombreAZ, child: Text(AppLocalizations.of(context)!.sortNameAsc)),
-                  DropdownMenuItem(value: OrdenHosterias.nombreZA, child: Text(AppLocalizations.of(context)!.sortNameDesc)),
-                  DropdownMenuItem(value: OrdenHosterias.ratingMayorAMenor, child: Text(AppLocalizations.of(context)!.sortRatingDesc)),
-                  DropdownMenuItem(value: OrdenHosterias.ratingMenorAMayor, child: Text(AppLocalizations.of(context)!.sortRatingAsc)),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.ninguno,
+                    child: Text(AppLocalizations.of(context)!.sortNone),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.precioMenorAMayor,
+                    child: Text(AppLocalizations.of(context)!.sortPriceAsc),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.precioMayorAMenor,
+                    child: Text(AppLocalizations.of(context)!.sortPriceDesc),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.nombreAZ,
+                    child: Text(AppLocalizations.of(context)!.sortNameAsc),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.nombreZA,
+                    child: Text(AppLocalizations.of(context)!.sortNameDesc),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.ratingMayorAMenor,
+                    child: Text(AppLocalizations.of(context)!.sortRatingDesc),
+                  ),
+                  DropdownMenuItem(
+                    value: OrdenHosterias.ratingMenorAMayor,
+                    child: Text(AppLocalizations.of(context)!.sortRatingAsc),
+                  ),
                 ],
                 onChanged: (val) {
                   if (val != null) {
@@ -287,7 +328,7 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

@@ -21,8 +21,11 @@ class PromocionModel extends Promocion {
       titulo: data['titulo'] ?? '',
       descripcion: data['descripcion'] ?? '',
       descuentoPorcentaje: (data['descuentoPorcentaje'] ?? 0.0).toDouble(),
-      fechaInicio: (data['fechaInicio'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      fechaFin: (data['fechaFin'] as Timestamp?)?.toDate() ?? DateTime.now().add(const Duration(days: 30)),
+      fechaInicio:
+          (data['fechaInicio'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      fechaFin:
+          (data['fechaFin'] as Timestamp?)?.toDate() ??
+          DateTime.now().add(const Duration(days: 30)),
       hosteriaId: data['hosteriaId'],
       habitacionId: data['habitacionId'],
       activa: data['activa'] ?? true,

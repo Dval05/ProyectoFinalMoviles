@@ -5,7 +5,6 @@ import '../../domain/usecases/habitacion/check_disponibilidad_usecase.dart';
 import '../../domain/usecases/habitacion/get_habitaciones_usecase.dart';
 
 class HabitacionViewModel extends ChangeNotifier {
-
   HabitacionViewModel({
     required this._getHabitacionesUseCase,
     required this._checkDisponibilidadUseCase,

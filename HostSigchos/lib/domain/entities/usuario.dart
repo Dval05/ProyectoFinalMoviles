@@ -1,11 +1,11 @@
 /// Entidad de dominio: Usuario del sistema
 class Usuario {
-
   const Usuario({
     required this.id,
     required this.nombre,
     required this.email,
-    required this.fechaRegistro, this.cedula,
+    required this.fechaRegistro,
+    this.cedula,
     this.fechaNacimiento,
     this.telefono,
     this.ubicacion,

@@ -9,7 +9,9 @@ class PagoModel extends Pago {
     required super.usuarioId,
     required super.monto,
     required super.metodo,
-    required super.referencia, required super.fechaPago, super.estado,
+    required super.referencia,
+    required super.fechaPago,
+    super.estado,
     super.comprobanteUrl,
   });
 

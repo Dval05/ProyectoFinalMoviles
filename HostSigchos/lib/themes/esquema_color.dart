@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 /// Verdes de montaña, marrones tierra, dorados del sol andino.
 class ColorSchemeApp {
   // Primarios - Verdes de montaña (Premium)
-  static const Color primaryGreen = Color(0xFF1B4332); // Verde esmeralda profundo
-  static const Color lightGreen = Color(0xFF40916C);   // Verde medio vibrante
-  static const Color darkGreen = Color(0xFF081C15);    // Verde casi negro para alto contraste
+  static const Color primaryGreen = Color(
+    0xFF1B4332,
+  ); // Verde esmeralda profundo
+  static const Color lightGreen = Color(0xFF40916C); // Verde medio vibrante
+  static const Color darkGreen = Color(
+    0xFF081C15,
+  ); // Verde casi negro para alto contraste
 
   // Secundarios - Tierra (Elegante)
   static const Color warmBrown = Color(0xFF8B5A2B);

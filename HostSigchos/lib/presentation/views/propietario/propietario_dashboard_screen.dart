@@ -17,10 +17,12 @@ class PropietarioDashboardScreen extends StatefulWidget {
   const PropietarioDashboardScreen({super.key});
 
   @override
-  State<PropietarioDashboardScreen> createState() => _PropietarioDashboardScreenState();
+  State<PropietarioDashboardScreen> createState() =>
+      _PropietarioDashboardScreenState();
 }
 
-class _PropietarioDashboardScreenState extends State<PropietarioDashboardScreen> {
+class _PropietarioDashboardScreenState
+    extends State<PropietarioDashboardScreen> {
   int _selectedIndex = 0;
 
   @override
@@ -157,17 +159,23 @@ class _DashboardView extends StatelessWidget {
 
     var hosterias = context.watch<HosteriaViewModel>().hosterias;
     if (isPropietario && usuario != null) {
-      hosterias = hosterias.where((h) => h.propietarioId == usuario.id).toList();
+      hosterias = hosterias
+          .where((h) => h.propietarioId == usuario.id)
+          .toList();
     }
     var reservas = context.watch<ReservaViewModel>().reservas;
     if (isPropietario) {
       final hosteriaIds = hosterias.map((h) => h.id).toSet();
-      reservas = reservas.where((r) => hosteriaIds.contains(r.hosteriaId)).toList();
+      reservas = reservas
+          .where((r) => hosteriaIds.contains(r.hosteriaId))
+          .toList();
     }
 
     final hosteriasActivas = hosterias.where((h) => h.activa).length;
-    final reservasNuevas = reservas.where((r) => r.estado == 'pendiente' || r.estado == 'en_revision').length;
-    
+    final reservasNuevas = reservas
+        .where((r) => r.estado == 'pendiente' || r.estado == 'en_revision')
+        .length;
+
     double ingresosTotales = 0;
     for (final r in reservas) {
       if (r.estado == 'confirmada') {
@@ -183,9 +191,9 @@ class _DashboardView extends StatelessWidget {
           Text(
             '¡Bienvenido, $nombre!',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: ColorSchemeApp.darkGreen,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: ColorSchemeApp.darkGreen,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -195,11 +203,26 @@ class _DashboardView extends StatelessWidget {
           const SizedBox(height: 32),
           Row(
             children: [
-              _buildStatCard(context, 'Hosterías Activas', hosteriasActivas.toString(), Icons.business_center),
+              _buildStatCard(
+                context,
+                'Hosterías Activas',
+                hosteriasActivas.toString(),
+                Icons.business_center,
+              ),
               const SizedBox(width: 24),
-              _buildStatCard(context, 'Reservas Activas', reservasNuevas.toString(), Icons.book_online),
+              _buildStatCard(
+                context,
+                'Reservas Activas',
+                reservasNuevas.toString(),
+                Icons.book_online,
+              ),
               const SizedBox(width: 24),
-              _buildStatCard(context, 'Ingresos Totales', '\$${ingresosTotales.toStringAsFixed(2)}', Icons.attach_money),
+              _buildStatCard(
+                context,
+                'Ingresos Totales',
+                '\$${ingresosTotales.toStringAsFixed(2)}',
+                Icons.attach_money,
+              ),
             ],
           ),
         ],
@@ -207,7 +230,12 @@ class _DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String title, String value, IconData icon) {
+  Widget _buildStatCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(24),
@@ -219,7 +247,7 @@ class _DashboardView extends StatelessWidget {
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -227,11 +255,18 @@ class _DashboardView extends StatelessWidget {
           children: [
             Icon(icon, size: 32, color: ColorSchemeApp.primaryGreen),
             const SizedBox(height: 16),
-            Text(title, style: const TextStyle(fontSize: 16, color: Colors.black54)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
+            ),
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: ColorSchemeApp.darkText),
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: ColorSchemeApp.darkText,
+              ),
             ),
           ],
         ),
@@ -250,7 +285,9 @@ class _MisHosteriasView extends StatelessWidget {
 
     var hosterias = context.watch<HosteriaViewModel>().hosterias;
     if (isPropietario && usuario != null) {
-      hosterias = hosterias.where((h) => h.propietarioId == usuario.id).toList();
+      hosterias = hosterias
+          .where((h) => h.propietarioId == usuario.id)
+          .toList();
     }
     final isLoading = context.watch<HosteriaViewModel>().isLoading;
 
@@ -265,9 +302,9 @@ class _MisHosteriasView extends StatelessWidget {
               Text(
                 'Mis Hosterías',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: ColorSchemeApp.darkGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: ColorSchemeApp.darkGreen,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton.icon(
                 onPressed: () {
@@ -281,51 +318,69 @@ class _MisHosteriasView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorSchemeApp.primaryGreen,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 24),
           Expanded(
-            child: isLoading 
-              ? const Center(child: CircularProgressIndicator())
-              : hosterias.isEmpty 
-                  ? const Center(child: Text('No tienes hosterías registradas.'))
-                  : ListView.builder(
-              itemCount: hosterias.length,
-              itemBuilder: (context, index) {
-                final h = hosterias[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(h.imagenes.isNotEmpty ? h.imagenes.first : 'https://via.placeholder.com/150'),
-                          fit: BoxFit.cover,
-                        )
-                      ),
-                    ),
-                    title: Text(h.nombre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    subtitle: Text(h.direccion),
-                    trailing: const Icon(Icons.edit, color: ColorSchemeApp.primaryGreen),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => _HosteriaFormDialog(hosteria: h),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : hosterias.isEmpty
+                ? const Center(child: Text('No tienes hosterías registradas.'))
+                : ListView.builder(
+                    itemCount: hosterias.length,
+                    itemBuilder: (context, index) {
+                      final h = hosterias[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  h.imagenes.isNotEmpty
+                                      ? h.imagenes.first
+                                      : 'https://via.placeholder.com/150',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            h.nombre,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          subtitle: Text(h.direccion),
+                          trailing: const Icon(
+                            Icons.edit,
+                            color: ColorSchemeApp.primaryGreen,
+                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => _HosteriaFormDialog(hosteria: h),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -355,14 +410,30 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
   @override
   void initState() {
     super.initState();
-    _nombreController = TextEditingController(text: widget.hosteria?.nombre ?? '');
-    _descripcionController = TextEditingController(text: widget.hosteria?.descripcion ?? '');
-    _direccionController = TextEditingController(text: widget.hosteria?.direccion ?? '');
-    _telefonoController = TextEditingController(text: widget.hosteria?.telefono ?? '');
-    _emailController = TextEditingController(text: widget.hosteria?.email ?? '');
-    _sitioWebController = TextEditingController(text: widget.hosteria?.sitioWeb ?? '');
-    _imagenesController = TextEditingController(text: widget.hosteria?.imagenes.join(', ') ?? '');
-    _propietarioIdController = TextEditingController(text: widget.hosteria?.propietarioId ?? '');
+    _nombreController = TextEditingController(
+      text: widget.hosteria?.nombre ?? '',
+    );
+    _descripcionController = TextEditingController(
+      text: widget.hosteria?.descripcion ?? '',
+    );
+    _direccionController = TextEditingController(
+      text: widget.hosteria?.direccion ?? '',
+    );
+    _telefonoController = TextEditingController(
+      text: widget.hosteria?.telefono ?? '',
+    );
+    _emailController = TextEditingController(
+      text: widget.hosteria?.email ?? '',
+    );
+    _sitioWebController = TextEditingController(
+      text: widget.hosteria?.sitioWeb ?? '',
+    );
+    _imagenesController = TextEditingController(
+      text: widget.hosteria?.imagenes.join(', ') ?? '',
+    );
+    _propietarioIdController = TextEditingController(
+      text: widget.hosteria?.propietarioId ?? '',
+    );
   }
 
   @override
@@ -380,14 +451,20 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
 
   Future<void> _guardar() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final viewmodel = context.read<HosteriaViewModel>();
     final isEditing = widget.hosteria != null;
-    
-    final imagenes = _imagenesController.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-    
+
+    final imagenes = _imagenesController.text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
     final nuevaHosteria = Hosteria(
-      id: isEditing ? widget.hosteria!.id : DateTime.now().millisecondsSinceEpoch.toString(),
+      id: isEditing
+          ? widget.hosteria!.id
+          : DateTime.now().millisecondsSinceEpoch.toString(),
       nombre: _nombreController.text.trim(),
       descripcion: _descripcionController.text.trim(),
       direccion: _direccionController.text.trim(),
@@ -400,7 +477,9 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
       rating: widget.hosteria?.rating ?? 0.0,
       servicios: widget.hosteria?.servicios ?? [],
       activa: widget.hosteria?.activa ?? true,
-      propietarioId: _propietarioIdController.text.trim().isEmpty ? null : _propietarioIdController.text.trim(),
+      propietarioId: _propietarioIdController.text.trim().isEmpty
+          ? null
+          : _propietarioIdController.text.trim(),
     );
 
     bool success = false;
@@ -413,10 +492,17 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
     if (mounted) {
       if (success) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hostería guardada exitosamente'), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Hostería guardada exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } else {
         final error = viewmodel.errorMessage ?? 'Error desconocido';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
+        );
       }
     }
   }
@@ -424,7 +510,9 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.hosteria == null ? 'Añadir Hostería' : 'Editar Hostería'),
+      title: Text(
+        widget.hosteria == null ? 'Añadir Hostería' : 'Editar Hostería',
+      ),
       content: SizedBox(
         width: 600,
         child: SingleChildScrollView(
@@ -437,7 +525,11 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
                   controller: _nombreController,
                   decoration: const InputDecoration(labelText: 'Nombre *'),
                   validator: (v) => v!.isEmpty ? 'Requerido' : null,
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -473,7 +565,9 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _imagenesController,
-                  decoration: const InputDecoration(labelText: 'Imágenes (URLs separadas por coma)'),
+                  decoration: const InputDecoration(
+                    labelText: 'Imágenes (URLs separadas por coma)',
+                  ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: 16),
@@ -490,10 +584,16 @@ class _HosteriaFormDialogState extends State<_HosteriaFormDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
         ElevatedButton(
-          onPressed: _guardar, 
-          style: ElevatedButton.styleFrom(backgroundColor: ColorSchemeApp.primaryGreen, foregroundColor: Colors.white),
+          onPressed: _guardar,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: ColorSchemeApp.primaryGreen,
+            foregroundColor: Colors.white,
+          ),
           child: const Text('Guardar'),
         ),
       ],
@@ -523,8 +623,15 @@ class _ReservasAdminViewState extends State<_ReservasAdminView> {
     final isLoading = context.watch<ReservaViewModel>().isLoading;
 
     if (isPropietario && usuario != null) {
-      final hosterias = context.read<HosteriaViewModel>().hosterias.where((h) => h.propietarioId == usuario.id).map((h) => h.id).toSet();
-      reservas = reservas.where((r) => hosterias.contains(r.hosteriaId)).toList();
+      final hosterias = context
+          .read<HosteriaViewModel>()
+          .hosterias
+          .where((h) => h.propietarioId == usuario.id)
+          .map((h) => h.id)
+          .toSet();
+      reservas = reservas
+          .where((r) => hosterias.contains(r.hosteriaId))
+          .toList();
     }
 
     return Padding(
@@ -535,9 +642,9 @@ class _ReservasAdminViewState extends State<_ReservasAdminView> {
           Text(
             'Gestión de Reservas',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: ColorSchemeApp.darkGreen,
-                  fontWeight: FontWeight.bold,
-                ),
+              color: ColorSchemeApp.darkGreen,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -551,50 +658,68 @@ class _ReservasAdminViewState extends State<_ReservasAdminView> {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : reservas.isEmpty
-                      ? const Center(child: Text('No hay reservas registradas.'))
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SingleChildScrollView(
-                            child: DataTable(
-                              columns: const [
-                                DataColumn(label: Text('ID Reserva')),
-                                DataColumn(label: Text('Usuario ID')),
-                                DataColumn(label: Text('Fechas')),
-                                DataColumn(label: Text('Precio Total')),
-                                DataColumn(label: Text('Estado')),
-                                DataColumn(label: Text('Acción')),
-                              ],
-                              rows: reservas.map((r) {
-                                return DataRow(cells: [
-                                  DataCell(Text(r.id.substring(0, 8))),
-                                  DataCell(Text(r.usuarioId.substring(0, 8))),
-                                  DataCell(Text('${r.fechaCheckIn.toLocal().toString().split(' ')[0]} - ${r.fechaCheckOut.toLocal().toString().split(' ')[0]}')),
-                                  DataCell(Text('\$${r.precioTotal.toStringAsFixed(2)}')),
-                                  DataCell(
-                                    Chip(
-                                      label: Text(r.estado, style: const TextStyle(fontSize: 12)),
-                                      backgroundColor: r.estado == 'pendiente' ? Colors.orange.shade100 : (r.estado == 'confirmada' ? Colors.green.shade100 : Colors.red.shade100),
+                  ? const Center(child: Text('No hay reservas registradas.'))
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          columns: const [
+                            DataColumn(label: Text('ID Reserva')),
+                            DataColumn(label: Text('Usuario ID')),
+                            DataColumn(label: Text('Fechas')),
+                            DataColumn(label: Text('Precio Total')),
+                            DataColumn(label: Text('Estado')),
+                            DataColumn(label: Text('Acción')),
+                          ],
+                          rows: reservas.map((r) {
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(r.id.substring(0, 8))),
+                                DataCell(Text(r.usuarioId.substring(0, 8))),
+                                DataCell(
+                                  Text(
+                                    '${r.fechaCheckIn.toLocal().toString().split(' ')[0]} - ${r.fechaCheckOut.toLocal().toString().split(' ')[0]}',
+                                  ),
+                                ),
+                                DataCell(
+                                  Text('\$${r.precioTotal.toStringAsFixed(2)}'),
+                                ),
+                                DataCell(
+                                  Chip(
+                                    label: Text(
+                                      r.estado,
+                                      style: const TextStyle(fontSize: 12),
                                     ),
+                                    backgroundColor: r.estado == 'pendiente'
+                                        ? Colors.orange.shade100
+                                        : (r.estado == 'confirmada'
+                                              ? Colors.green.shade100
+                                              : Colors.red.shade100),
                                   ),
-                                  DataCell(
-                                    r.estado == 'pendiente' || r.estado == 'confirmada' || r.estado == 'en_revision'
-                                        ? ElevatedButton(
-                                              onPressed: () {
-                                                _mostrarDialogoGestion(context, r);
-                                              },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: ColorSchemeApp.primaryGreen,
-                                              foregroundColor: Colors.white,
-                                            ),
-                                            child: const Text('Gestionar'),
-                                          )
-                                        : const Text('-'),
-                                  ),
-                                ]);
-                              }).toList(),
-                            ),
-                          ),
+                                ),
+                                DataCell(
+                                  r.estado == 'pendiente' ||
+                                          r.estado == 'confirmada' ||
+                                          r.estado == 'en_revision'
+                                      ? ElevatedButton(
+                                          onPressed: () {
+                                            _mostrarDialogoGestion(context, r);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorSchemeApp.primaryGreen,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                          child: const Text('Gestionar'),
+                                        )
+                                      : const Text('-'),
+                                ),
+                              ],
+                            );
+                          }).toList(),
                         ),
+                      ),
+                    ),
             ),
           ),
         ],
@@ -626,7 +751,9 @@ class _ReservasAdminViewState extends State<_ReservasAdminView> {
                   DropdownButton<String>(
                     value: selectedEstado,
                     isExpanded: true,
-                    items: estados.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                    items: estados
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
                     onChanged: (val) {
                       if (val != null) setState(() => selectedEstado = val);
                     },
@@ -641,22 +768,39 @@ class _ReservasAdminViewState extends State<_ReservasAdminView> {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.pop(dialogContext);
-                    final success = await context.read<ReservaViewModel>().actualizarEstadoReserva(r.id, selectedEstado);
+                    final success = await context
+                        .read<ReservaViewModel>()
+                        .actualizarEstadoReserva(r.id, selectedEstado);
                     if (mounted) {
                       if (success) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Estado actualizado exitosamente'), backgroundColor: Colors.green));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Estado actualizado exitosamente'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
                       } else {
-                        final error = context.read<ReservaViewModel>().errorMessage ?? 'Error desconocido';
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red));
+                        final error =
+                            context.read<ReservaViewModel>().errorMessage ??
+                            'Error desconocido';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: $error'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: ColorSchemeApp.primaryGreen, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorSchemeApp.primaryGreen,
+                    foregroundColor: Colors.white,
+                  ),
                   child: const Text('Guardar'),
                 ),
               ],
             );
-          }
+          },
         );
       },
     );
@@ -694,8 +838,15 @@ class _PromocionesAdminViewState extends State<_PromocionesAdminView> {
 
     var promociones = viewModel.promociones;
     if (isPropietario && usuario != null) {
-      final hosterias = context.read<HosteriaViewModel>().hosterias.where((h) => h.propietarioId == usuario.id).map((h) => h.id).toSet();
-      promociones = promociones.where((p) => hosterias.contains(p.hosteriaId)).toList();
+      final hosterias = context
+          .read<HosteriaViewModel>()
+          .hosterias
+          .where((h) => h.propietarioId == usuario.id)
+          .map((h) => h.id)
+          .toSet();
+      promociones = promociones
+          .where((p) => hosterias.contains(p.hosteriaId))
+          .toList();
     }
 
     return Padding(
@@ -709,9 +860,9 @@ class _PromocionesAdminViewState extends State<_PromocionesAdminView> {
               Text(
                 'Gestión de Promociones',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: ColorSchemeApp.darkGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: ColorSchemeApp.darkGreen,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton.icon(
                 onPressed: _mostrarFormularioPromocion,
@@ -736,27 +887,34 @@ class _PromocionesAdminViewState extends State<_PromocionesAdminView> {
               child: viewModel.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : promociones.isEmpty
-                      ? const Center(child: Text('No hay promociones registradas.'))
-                      : ListView.separated(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: promociones.length,
-                          separatorBuilder: (_, _) => const Divider(),
-                          itemBuilder: (context, index) {
-                            final p = promociones[index];
-                            return ListTile(
-                              title: Text(p.titulo, style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text('${p.descripcion}\nDescuento: ${p.descuentoPorcentaje}%'),
-                              trailing: Switch(
-                                value: p.activa,
-                                activeThumbColor: ColorSchemeApp.primaryGreen,
-                                onChanged: (val) {
-                                  context.read<PromocionViewModel>().actualizarPromocion(p.copyWith(activa: val));
-                                },
-                              ),
-                              onTap: () => _mostrarFormularioPromocion(p),
-                            );
-                          },
-                        ),
+                  ? const Center(child: Text('No hay promociones registradas.'))
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: promociones.length,
+                      separatorBuilder: (_, _) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final p = promociones[index];
+                        return ListTile(
+                          title: Text(
+                            p.titulo,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            '${p.descripcion}\nDescuento: ${p.descuentoPorcentaje}%',
+                          ),
+                          trailing: Switch(
+                            value: p.activa,
+                            activeThumbColor: ColorSchemeApp.primaryGreen,
+                            onChanged: (val) {
+                              context
+                                  .read<PromocionViewModel>()
+                                  .actualizarPromocion(p.copyWith(activa: val));
+                            },
+                          ),
+                          onTap: () => _mostrarFormularioPromocion(p),
+                        );
+                      },
+                    ),
             ),
           ),
         ],
@@ -778,7 +936,7 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
   final _tituloController = TextEditingController();
   final _descripcionController = TextEditingController();
   final _descuentoController = TextEditingController();
-  
+
   DateTime _fechaInicio = DateTime.now();
   DateTime _fechaFin = DateTime.now().add(const Duration(days: 30));
   String? _selectedHosteriaId;
@@ -790,15 +948,18 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
     if (widget.promocion != null) {
       _tituloController.text = widget.promocion!.titulo;
       _descripcionController.text = widget.promocion!.descripcion;
-      _descuentoController.text = widget.promocion!.descuentoPorcentaje.toString();
+      _descuentoController.text = widget.promocion!.descuentoPorcentaje
+          .toString();
       _fechaInicio = widget.promocion!.fechaInicio;
       _fechaFin = widget.promocion!.fechaFin;
       _selectedHosteriaId = widget.promocion!.hosteriaId;
       _selectedHabitacionId = widget.promocion!.habitacionId;
-      
+
       if (_selectedHosteriaId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<HabitacionViewModel>().cargarHabitacionesPorHosteria(_selectedHosteriaId!);
+          context.read<HabitacionViewModel>().cargarHabitacionesPorHosteria(
+            _selectedHosteriaId!,
+          );
         });
       }
     }
@@ -822,7 +983,7 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
   Future<void> _guardar() async {
     if (!_formKey.currentState!.validate()) return;
     final viewModel = context.read<PromocionViewModel>();
-    
+
     final desc = double.tryParse(_descuentoController.text) ?? 0.0;
 
     bool success;
@@ -837,15 +998,17 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
         habitacionId: _selectedHabitacionId,
       );
     } else {
-      success = await viewModel.actualizarPromocion(widget.promocion!.copyWith(
-        titulo: _tituloController.text.trim(),
-        descripcion: _descripcionController.text.trim(),
-        descuentoPorcentaje: desc,
-        fechaInicio: _fechaInicio,
-        fechaFin: _fechaFin,
-        hosteriaId: _selectedHosteriaId,
-        habitacionId: _selectedHabitacionId,
-      ));
+      success = await viewModel.actualizarPromocion(
+        widget.promocion!.copyWith(
+          titulo: _tituloController.text.trim(),
+          descripcion: _descripcionController.text.trim(),
+          descuentoPorcentaje: desc,
+          fechaInicio: _fechaInicio,
+          fechaFin: _fechaFin,
+          hosteriaId: _selectedHosteriaId,
+          habitacionId: _selectedHabitacionId,
+        ),
+      );
     }
 
     if (mounted) {
@@ -865,7 +1028,9 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.promocion == null ? 'Añadir Promoción' : 'Editar Promoción'),
+      title: Text(
+        widget.promocion == null ? 'Añadir Promoción' : 'Editar Promoción',
+      ),
       content: SizedBox(
         width: 400,
         child: Form(
@@ -899,7 +1064,9 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Rango de Fechas'),
-                subtitle: Text('${_fechaInicio.toString().split(' ')[0]} - ${_fechaFin.toString().split(' ')[0]}'),
+                subtitle: Text(
+                  '${_fechaInicio.toString().split(' ')[0]} - ${_fechaFin.toString().split(' ')[0]}',
+                ),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: _seleccionarFechas,
               ),
@@ -907,10 +1074,17 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
               DropdownButtonFormField<String?>(
                 initialValue: _selectedHosteriaId,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Hostería (Opcional)'),
+                decoration: const InputDecoration(
+                  labelText: 'Hostería (Opcional)',
+                ),
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('Todas (Global)')),
-                  ...context.read<HosteriaViewModel>().hosterias.map((h) => DropdownMenuItem(value: h.id, child: Text(h.nombre))),
+                  const DropdownMenuItem(
+                    value: null,
+                    child: Text('Todas (Global)'),
+                  ),
+                  ...context.read<HosteriaViewModel>().hosterias.map(
+                    (h) => DropdownMenuItem(value: h.id, child: Text(h.nombre)),
+                  ),
                 ],
                 onChanged: (val) {
                   setState(() {
@@ -918,10 +1092,12 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
                     _selectedHabitacionId = null;
                   });
                   if (val != null) {
-                    context.read<HabitacionViewModel>().cargarHabitacionesPorHosteria(val);
+                    context
+                        .read<HabitacionViewModel>()
+                        .cargarHabitacionesPorHosteria(val);
                   }
                 },
-              ), 
+              ),
               const SizedBox(height: 16),
               if (_selectedHosteriaId != null)
                 Consumer<HabitacionViewModel>(
@@ -932,19 +1108,34 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
                         child: Center(child: CircularProgressIndicator()),
                       );
                     }
-                    
-                    final habitacionesDeHosteria = habVm.habitaciones.where((h) => h.hosteriaId == _selectedHosteriaId).toList();
-                    final exists = _selectedHabitacionId == null || habitacionesDeHosteria.any((h) => h.id == _selectedHabitacionId);
+
+                    final habitacionesDeHosteria = habVm.habitaciones
+                        .where((h) => h.hosteriaId == _selectedHosteriaId)
+                        .toList();
+                    final exists =
+                        _selectedHabitacionId == null ||
+                        habitacionesDeHosteria.any(
+                          (h) => h.id == _selectedHabitacionId,
+                        );
                     final currentValue = exists ? _selectedHabitacionId : null;
 
                     return DropdownButtonFormField<String?>(
                       initialValue: currentValue,
                       isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'Habitación (Opcional)'),
+                      decoration: const InputDecoration(
+                        labelText: 'Habitación (Opcional)',
+                      ),
                       items: [
-                        const DropdownMenuItem(value: null, child: Text('Todas las habitaciones')),
-                        ...habitacionesDeHosteria
-                            .map((h) => DropdownMenuItem(value: h.id, child: Text(h.tipo))),
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Todas las habitaciones'),
+                        ),
+                        ...habitacionesDeHosteria.map(
+                          (h) => DropdownMenuItem(
+                            value: h.id,
+                            child: Text(h.tipo),
+                          ),
+                        ),
                       ],
                       onChanged: (val) {
                         setState(() {
@@ -959,10 +1150,16 @@ class _PromocionFormDialogState extends State<_PromocionFormDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
         ElevatedButton(
-          onPressed: _guardar, 
-          style: ElevatedButton.styleFrom(backgroundColor: ColorSchemeApp.primaryGreen, foregroundColor: Colors.white),
+          onPressed: _guardar,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: ColorSchemeApp.primaryGreen,
+            foregroundColor: Colors.white,
+          ),
           child: const Text('Guardar'),
         ),
       ],

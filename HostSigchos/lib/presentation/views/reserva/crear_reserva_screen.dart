@@ -78,8 +78,10 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
 
   double get _precioTotal {
     if (_habitacion == null) return 0;
-    
-    final bool esCompartida = _habitacion!.tipo.toLowerCase().contains('compartida');
+
+    final bool esCompartida = _habitacion!.tipo.toLowerCase().contains(
+      'compartida',
+    );
     if (esCompartida) {
       return _noches * _habitacion!.precioPorNoche * _numHuespedes;
     } else {
@@ -97,7 +99,8 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
       return;
     }
 
-    if (_esParaOtraPersona && _nombreOtraPersonaController.text.trim().isEmpty) {
+    if (_esParaOtraPersona &&
+        _nombreOtraPersonaController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor ingresa el nombre de la otra persona'),
@@ -118,7 +121,11 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
     if (!hayDisponibilidad) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No hay suficientes habitaciones disponibles para esas fechas.')),
+        const SnackBar(
+          content: Text(
+            'No hay suficientes habitaciones disponibles para esas fechas.',
+          ),
+        ),
       );
       return;
     }
@@ -127,11 +134,19 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
     if (!_esParaOtraPersona) {
       final usuario = context.read<AuthViewModel>().usuarioActual;
       if (usuario != null) {
-        final haySolapamiento = await reservaVm.existeSolapamiento(usuario.id, _fechaCheckIn!, _fechaCheckOut!);
+        final haySolapamiento = await reservaVm.existeSolapamiento(
+          usuario.id,
+          _fechaCheckIn!,
+          _fechaCheckOut!,
+        );
         if (haySolapamiento) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ya tienes una reserva activa en estas fechas. Activa la opción "Reservar para otra persona" si la reserva no es para ti.')),
+            const SnackBar(
+              content: Text(
+                'Ya tienes una reserva activa en estas fechas. Activa la opción "Reservar para otra persona" si la reserva no es para ti.',
+              ),
+            ),
           );
           return;
         }
@@ -146,9 +161,11 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
       numHabitaciones: _numHabitaciones,
       notas: _notasController.text.trim(),
       esParaOtraPersona: _esParaOtraPersona,
-      nombreOtraPersona: _esParaOtraPersona ? _nombreOtraPersonaController.text.trim() : null,
+      nombreOtraPersona: _esParaOtraPersona
+          ? _nombreOtraPersonaController.text.trim()
+          : null,
     );
-    
+
     context.read<CarritoReservaViewModel>().agregarItem(item);
 
     if (mounted) {
@@ -212,7 +229,9 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _habitacion!.tipo.toLowerCase().contains('compartida') 
+                            _habitacion!.tipo.toLowerCase().contains(
+                                  'compartida',
+                                )
                                 ? '${CurrencyFormatter.formatear(_habitacion!.precioPorNoche)} / cama / noche'
                                 : '${CurrencyFormatter.formatear(_habitacion!.precioPorNoche)} / noche',
                             style: const TextStyle(
@@ -283,12 +302,17 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
               // Huéspedes
               Builder(
                 builder: (context) {
-                  final esCompartida = _habitacion!.tipo.toLowerCase().contains('compartida');
+                  final esCompartida = _habitacion!.tipo.toLowerCase().contains(
+                    'compartida',
+                  );
                   return Text(
                     esCompartida ? 'Huéspedes (Camas a reservar)' : 'Huéspedes',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   );
-                }
+                },
               ),
               const SizedBox(height: 12),
               Row(
@@ -395,7 +419,11 @@ class _CrearReservaScreenState extends State<CrearReservaScreen> {
                     ),
                     prefixIcon: const Icon(Icons.person_outline),
                   ),
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'),
+                    ),
+                  ],
                 ),
               ],
               const SizedBox(height: 24),

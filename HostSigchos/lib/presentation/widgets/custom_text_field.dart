@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
-
   const CustomTextField({
-    required this.label, required this.prefixIcon, required this.controller, super.key,
+    required this.label,
+    required this.prefixIcon,
+    required this.controller,
+    super.key,
     this.hint,
     this.validator,
     this.isPassword = false,

@@ -12,7 +12,6 @@ import '../../models/usuario_model.dart';
 import 'storage_datasource.dart';
 
 class AuthDataSource {
-
   AuthDataSource(this._storageDataSource);
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instanceFor(

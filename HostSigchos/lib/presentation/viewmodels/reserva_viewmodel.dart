@@ -10,7 +10,6 @@ import '../../domain/usecases/reserva/get_historial_reservas_usecase.dart';
 import '../../domain/usecases/reserva/get_todas_las_reservas_usecase.dart';
 
 class ReservaViewModel extends ChangeNotifier {
-
   ReservaViewModel({
     required this._crearReservaUseCase,
     required this._getHistorialReservasUseCase,
@@ -75,7 +74,10 @@ class ReservaViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> actualizarEstadoReserva(String reservaId, String nuevoEstado) async {
+  Future<bool> actualizarEstadoReserva(
+    String reservaId,
+    String nuevoEstado,
+  ) async {
     _setLoading(true);
     try {
       await _actualizarEstadoReservaUseCase(reservaId, nuevoEstado);
@@ -121,7 +123,9 @@ class ReservaViewModel extends ChangeNotifier {
   Future<bool> cancelarReservaUsuario(String reservaId) async {
     _setLoading(true);
     try {
-      await _cancelarReservaUseCase(reservaId).timeout(const Duration(seconds: 5));
+      await _cancelarReservaUseCase(
+        reservaId,
+      ).timeout(const Duration(seconds: 5));
       final index = _reservas.indexWhere((r) => r.id == reservaId);
       if (index != -1) {
         final nuevaLista = List<Reserva>.from(_reservas);
@@ -138,16 +142,21 @@ class ReservaViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> existeSolapamiento(String usuarioId, DateTime checkIn, DateTime checkOut) async {
+  Future<bool> existeSolapamiento(
+    String usuarioId,
+    DateTime checkIn,
+    DateTime checkOut,
+  ) async {
     _setLoading(true);
     try {
       final historial = await _getHistorialReservasUseCase(usuarioId);
-      final reservasPropias = historial.where((r) => 
-        r.estaActiva && !r.esParaOtraPersona
-      ).toList();
+      final reservasPropias = historial
+          .where((r) => r.estaActiva && !r.esParaOtraPersona)
+          .toList();
 
       for (final r in reservasPropias) {
-        if (checkIn.isBefore(r.fechaCheckOut) && checkOut.isAfter(r.fechaCheckIn)) {
+        if (checkIn.isBefore(r.fechaCheckOut) &&
+            checkOut.isAfter(r.fechaCheckIn)) {
           return true;
         }
       }
@@ -160,10 +169,20 @@ class ReservaViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> verificarDisponibilidad(Habitacion habitacion, DateTime checkIn, DateTime checkOut, int cantidadSolicitada) async {
+  Future<bool> verificarDisponibilidad(
+    Habitacion habitacion,
+    DateTime checkIn,
+    DateTime checkOut,
+    int cantidadSolicitada,
+  ) async {
     _setLoading(true);
     try {
-      return await _checkDisponibilidadUseCase(habitacion.id, checkIn, checkOut, cantidadSolicitada);
+      return await _checkDisponibilidadUseCase(
+        habitacion.id,
+        checkIn,
+        checkOut,
+        cantidadSolicitada,
+      );
     } catch (e) {
       debugPrint('Error al verificar disponibilidad real: $e');
       return false;
@@ -171,7 +190,6 @@ class ReservaViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
-
 
   Future<bool> cancelarReserva(String reservaId) async {
     _setLoading(true);

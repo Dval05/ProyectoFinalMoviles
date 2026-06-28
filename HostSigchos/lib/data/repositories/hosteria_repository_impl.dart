@@ -4,7 +4,6 @@ import '../datasources/firebase/hosteria_datasource.dart';
 import '../models/hosteria_model.dart';
 
 class HosteriaRepositoryImpl implements HosteriaRepository {
-
   HosteriaRepositoryImpl(this._dataSource);
   final HosteriaDataSource _dataSource;
 

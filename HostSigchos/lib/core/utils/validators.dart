@@ -89,13 +89,14 @@ class Validators {
       if (provincia < 1 || provincia > 24) {
         return false;
       }
-      
+
       final digitoVerificador = int.parse(cedula.substring(9, 10));
       int suma = 0;
-      
+
       for (int i = 0; i < 9; i++) {
         int digito = int.parse(cedula.substring(i, i + 1));
-        if (i % 2 == 0) { // Posiciones impares (0, 2, 4...) se multiplican por 2
+        if (i % 2 == 0) {
+          // Posiciones impares (0, 2, 4...) se multiplican por 2
           digito *= 2;
           if (digito > 9) {
             digito -= 9;
@@ -103,12 +104,12 @@ class Validators {
         }
         suma += digito;
       }
-      
+
       int decenaSuperior = ((suma ~/ 10) + 1) * 10;
       if (suma % 10 == 0) {
         decenaSuperior = suma;
       }
-      
+
       final resultado = decenaSuperior - suma;
       return resultado == digitoVerificador;
     } catch (_) {

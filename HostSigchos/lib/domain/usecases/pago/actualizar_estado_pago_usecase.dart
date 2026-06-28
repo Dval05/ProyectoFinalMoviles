@@ -3,7 +3,6 @@ import '../../repositories/reserva_repository.dart';
 
 /// Caso de uso: Actualizar el estado de un pago
 class ActualizarEstadoPagoUseCase {
-
   ActualizarEstadoPagoUseCase(this._pagoRepository, this._reservaRepository);
   final PagoRepository _pagoRepository;
   final ReservaRepository _reservaRepository;

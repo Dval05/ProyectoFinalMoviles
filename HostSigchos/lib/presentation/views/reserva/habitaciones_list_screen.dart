@@ -49,7 +49,9 @@ class _HabitacionesListScreenState extends State<HabitacionesListScreen> {
                     onPressed: () {
                       if (carrito.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Tu carrito está vacío')),
+                          const SnackBar(
+                            content: Text('Tu carrito está vacío'),
+                          ),
                         );
                         return;
                       }

@@ -1,6 +1,5 @@
 /// Entidad de dominio: Habitación de una hostería
 class Habitacion {
-
   const Habitacion({
     required this.id,
     required this.hosteriaId,

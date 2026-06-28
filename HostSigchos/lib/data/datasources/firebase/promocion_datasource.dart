@@ -42,7 +42,10 @@ class PromocionDataSource {
 
   Future<void> actualizarPromocion(PromocionModel promocion) async {
     try {
-      await _firestore.collection('promociones').doc(promocion.id).update(promocion.toFirestore());
+      await _firestore
+          .collection('promociones')
+          .doc(promocion.id)
+          .update(promocion.toFirestore());
     } catch (e) {
       throw ServerFailure(ErrorHandler.getFriendlyMessage(e));
     }

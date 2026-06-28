@@ -1,13 +1,14 @@
 /// Entidad de dominio: Pago de una reserva
 class Pago {
-
   const Pago({
     required this.id,
     required this.reservaId,
     required this.usuarioId,
     required this.monto,
     required this.metodo,
-    required this.referencia, required this.fechaPago, this.estado = 'pendiente',
+    required this.referencia,
+    required this.fechaPago,
+    this.estado = 'pendiente',
     this.comprobanteUrl,
   });
   final String id;

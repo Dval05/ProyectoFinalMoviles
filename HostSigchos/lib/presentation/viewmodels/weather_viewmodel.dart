@@ -35,14 +35,24 @@ class WeatherViewModel extends ChangeNotifier {
   // Helper para obtener icono según el código WMO (World Meteorological Organization)
   IconData getWeatherIcon() {
     if (_weathercode == null) return Icons.cloud_outlined;
-    
+
     // Simplificación de códigos WMO
-    if (_weathercode == 0) return Icons.wb_sunny; // Despejado
-    if (_weathercode! > 0 && _weathercode! <= 3) return Icons.wb_cloudy; // Parcialmente nublado
-    if (_weathercode! >= 51 && _weathercode! <= 67) return Icons.water_drop; // Lluvia
-    if (_weathercode! >= 71 && _weathercode! <= 77) return Icons.ac_unit; // Nieve
-    if (_weathercode! >= 95) return Icons.flash_on; // Tormenta
-    
+    if (_weathercode == 0) {
+      return Icons.wb_sunny; // Despejado
+    }
+    if (_weathercode! > 0 && _weathercode! <= 3) {
+      return Icons.wb_cloudy; // Parcialmente nublado
+    }
+    if (_weathercode! >= 51 && _weathercode! <= 67) {
+      return Icons.water_drop; // Lluvia
+    }
+    if (_weathercode! >= 71 && _weathercode! <= 77) {
+      return Icons.ac_unit; // Nieve
+    }
+    if (_weathercode! >= 95) {
+      return Icons.flash_on; // Tormenta
+    }
+
     return Icons.cloud; // Por defecto
   }
 }

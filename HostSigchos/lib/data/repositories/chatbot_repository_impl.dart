@@ -8,10 +8,13 @@ class ChatbotRepositoryImpl implements ChatbotRepository {
   final ChatbotDataSource remoteDataSource;
 
   @override
-  Future<ChatMessage> enviarMensaje(String mensaje, Map<String, dynamic> contexto) async {
+  Future<ChatMessage> enviarMensaje(
+    String mensaje,
+    Map<String, dynamic> contexto,
+  ) async {
     try {
       final data = await remoteDataSource.enviarMensaje(mensaje, contexto);
-      
+
       return ChatMessage(
         text: data['text'] ?? '',
         isUser: false,
@@ -30,10 +33,13 @@ class ChatbotRepositoryImpl implements ChatbotRepository {
   }
 
   @override
-  Future<ChatMessage> enviarAudio(String filePath, Map<String, dynamic> contexto) async {
+  Future<ChatMessage> enviarAudio(
+    String filePath,
+    Map<String, dynamic> contexto,
+  ) async {
     try {
       final data = await remoteDataSource.enviarAudio(filePath, contexto);
-      
+
       return ChatMessage(
         text: data['text'] ?? '',
         isUser: false,

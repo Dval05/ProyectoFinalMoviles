@@ -5,7 +5,17 @@ class CheckDisponibilidadUseCase {
   CheckDisponibilidadUseCase(this._repository);
   final HabitacionRepository _repository;
 
-  Future<bool> call(String habitacionId, DateTime checkIn, DateTime checkOut, int cantidadSolicitada) {
-    return _repository.verificarDisponibilidad(habitacionId, checkIn, checkOut, cantidadSolicitada);
+  Future<bool> call(
+    String habitacionId,
+    DateTime checkIn,
+    DateTime checkOut,
+    int cantidadSolicitada,
+  ) {
+    return _repository.verificarDisponibilidad(
+      habitacionId,
+      checkIn,
+      checkOut,
+      cantidadSolicitada,
+    );
   }
 }

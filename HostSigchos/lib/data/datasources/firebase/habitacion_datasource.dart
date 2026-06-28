@@ -20,9 +20,7 @@ class HabitacionDataSource {
           .where('hosteriaId', isEqualTo: hosteriaId)
           .get();
 
-      return querySnapshot.docs
-          .map(HabitacionModel.fromFirestore)
-          .toList();
+      return querySnapshot.docs.map(HabitacionModel.fromFirestore).toList();
     } catch (e) {
       throw const FirestoreFailure(
         'Error al obtener habitaciones de la hostería',
@@ -64,7 +62,8 @@ class HabitacionDataSource {
         return false;
       }
 
-      final cantidadTotal = (doc.data()?['cantidadTotal'] as num?)?.toInt() ?? 10;
+      final cantidadTotal =
+          (doc.data()?['cantidadTotal'] as num?)?.toInt() ?? 10;
 
       // 2. Verificar cruce de fechas en reservas existentes
       final reservasSnapshot = await _firestore
@@ -80,7 +79,8 @@ class HabitacionDataSource {
             .toDate();
         final rCheckOut = (reservaDoc.data()['fechaCheckOut'] as Timestamp)
             .toDate();
-        final numHabitaciones = (reservaDoc.data()['numHabitaciones'] as num?)?.toInt() ?? 1;
+        final numHabitaciones =
+            (reservaDoc.data()['numHabitaciones'] as num?)?.toInt() ?? 1;
 
         if (checkIn.isBefore(rCheckOut) && checkOut.isAfter(rCheckIn)) {
           habitacionesOcupadas += numHabitaciones;

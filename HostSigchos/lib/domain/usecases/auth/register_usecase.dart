@@ -3,7 +3,6 @@ import '../../entities/usuario.dart';
 import '../../repositories/auth_repository.dart';
 
 class RegisterUseCase {
-
   RegisterUseCase(this.repository);
   final AuthRepository repository;
 

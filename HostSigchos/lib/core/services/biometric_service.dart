@@ -19,7 +19,7 @@ class BiometricService {
   /// Verifica si el dispositivo soporta biometría y está configurada
   Future<bool> isBiometricAvailable() async {
     if (kIsWeb) return false;
-    
+
     try {
       final canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
       final canAuthenticate =

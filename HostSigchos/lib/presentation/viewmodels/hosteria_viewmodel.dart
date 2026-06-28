@@ -19,7 +19,6 @@ enum OrdenHosterias {
 }
 
 class HosteriaViewModel extends ChangeNotifier {
-
   HosteriaViewModel({
     required this._getHosteriasUseCase,
     required this._getHosteriaDetailUseCase,
@@ -56,8 +55,18 @@ class HosteriaViewModel extends ChangeNotifier {
     if (_hosterias.isEmpty) return [];
     final list = List<Hosteria>.from(_hosterias)
       ..sort((a, b) {
-        final distA = Geolocator.distanceBetween(lat, lng, a.latitud, a.longitud);
-        final distB = Geolocator.distanceBetween(lat, lng, b.latitud, b.longitud);
+        final distA = Geolocator.distanceBetween(
+          lat,
+          lng,
+          a.latitud,
+          a.longitud,
+        );
+        final distB = Geolocator.distanceBetween(
+          lat,
+          lng,
+          b.latitud,
+          b.longitud,
+        );
         return distA.compareTo(distB);
       });
     return list.take(count).toList();
@@ -70,7 +79,10 @@ class HosteriaViewModel extends ChangeNotifier {
       final processedFutures = rawHosterias.map((h) async {
         final habitaciones = await _getHabitacionesUseCase(h.id);
         if (habitaciones.isNotEmpty) {
-          final total = habitaciones.fold<double>(0, (sum, r) => sum + r.precioPorNoche);
+          final total = habitaciones.fold<double>(
+            0,
+            (sum, r) => sum + r.precioPorNoche,
+          );
           final avg = total / habitaciones.length;
           return h.copyWith(precioPorNoche: avg);
         }
@@ -181,7 +193,9 @@ class HosteriaViewModel extends ChangeNotifier {
 
       // 2. Filtro por Ubicación exacta/similar
       if (_filtroUbicacion != null && _filtroUbicacion!.isNotEmpty) {
-        if (!h.direccion.toLowerCase().contains(_filtroUbicacion!.toLowerCase())) {
+        if (!h.direccion.toLowerCase().contains(
+          _filtroUbicacion!.toLowerCase(),
+        )) {
           return false;
         }
       }
@@ -196,20 +210,28 @@ class HosteriaViewModel extends ChangeNotifier {
 
       // 4. Filtro por Fechas
       // (Aquí deberíamos verificar la disponibilidad real comparando con reservaciones si tuviéramos esos datos cargados en Hosteria, por ahora es ilustrativo o asume disponibilidad si no se choca con h.fechasOcupadas)
-      
+
       return true;
     }).toList();
 
     // 5. Aplicar ordenamiento
     switch (_ordenActual) {
       case OrdenHosterias.precioMenorAMayor:
-        _hosteriasFiltradas.sort((a, b) => a.precioPorNoche.compareTo(b.precioPorNoche));
+        _hosteriasFiltradas.sort(
+          (a, b) => a.precioPorNoche.compareTo(b.precioPorNoche),
+        );
       case OrdenHosterias.precioMayorAMenor:
-        _hosteriasFiltradas.sort((a, b) => b.precioPorNoche.compareTo(a.precioPorNoche));
+        _hosteriasFiltradas.sort(
+          (a, b) => b.precioPorNoche.compareTo(a.precioPorNoche),
+        );
       case OrdenHosterias.nombreAZ:
-        _hosteriasFiltradas.sort((a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()));
+        _hosteriasFiltradas.sort(
+          (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
+        );
       case OrdenHosterias.nombreZA:
-        _hosteriasFiltradas.sort((a, b) => b.nombre.toLowerCase().compareTo(a.nombre.toLowerCase()));
+        _hosteriasFiltradas.sort(
+          (a, b) => b.nombre.toLowerCase().compareTo(a.nombre.toLowerCase()),
+        );
       case OrdenHosterias.ratingMayorAMenor:
         _hosteriasFiltradas.sort((a, b) => b.rating.compareTo(a.rating));
       case OrdenHosterias.ratingMenorAMayor:

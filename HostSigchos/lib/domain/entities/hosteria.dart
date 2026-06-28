@@ -1,6 +1,5 @@
 /// Entidad de dominio: Hostería del cantón Sigchos
 class Hosteria {
-
   const Hosteria({
     required this.id,
     required this.nombre,

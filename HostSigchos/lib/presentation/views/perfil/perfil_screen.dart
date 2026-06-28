@@ -148,7 +148,8 @@ class PerfilScreen extends StatelessWidget {
     BuildContext context, {
     required IconData icon,
     required String title,
-    required VoidCallback onTap, String? subtitle,
+    required VoidCallback onTap,
+    String? subtitle,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),

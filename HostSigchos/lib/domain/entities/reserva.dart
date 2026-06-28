@@ -2,7 +2,6 @@
 ///
 /// Estados posibles: pendiente, confirmada, cancelada, completada
 class Reserva {
-
   const Reserva({
     required this.id,
     required this.usuarioId,

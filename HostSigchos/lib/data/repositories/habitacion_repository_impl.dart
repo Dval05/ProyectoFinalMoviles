@@ -3,7 +3,6 @@ import '../../domain/repositories/habitacion_repository.dart';
 import '../datasources/firebase/habitacion_datasource.dart';
 
 class HabitacionRepositoryImpl implements HabitacionRepository {
-
   HabitacionRepositoryImpl(this._dataSource);
   final HabitacionDataSource _dataSource;
 

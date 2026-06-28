@@ -74,7 +74,10 @@ class _MapaScreenState extends State<MapaScreen> {
                               decoration: BoxDecoration(
                                 color: ColorSchemeApp.primaryGreen,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: Colors.black26,
@@ -162,13 +165,20 @@ class _MapaScreenState extends State<MapaScreen> {
                 child: OutlinedButton.icon(
                   onPressed: () async {
                     Navigator.pop(context); // Cerrar modal
-                    final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${hosteria.latitud},${hosteria.longitud}');
+                    final url = Uri.parse(
+                      'https://www.google.com/maps/dir/?api=1&destination=${hosteria.latitud},${hosteria.longitud}',
+                    );
                     try {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.error),
+                          ),
                         );
                       }
                     }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../domain/usecases/geocoding/get_direccion_usecase.dart';
 
 class GeocodingViewModel extends ChangeNotifier {
-
   GeocodingViewModel({
     required this._getDireccionUseCase,
   });

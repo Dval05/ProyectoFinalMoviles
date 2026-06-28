@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     final user = await FirebaseAuth.instance.authStateChanges().first;
-    
+
     if (!mounted) return;
 
     final authViewModel = context.read<AuthViewModel>();
@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (user != null) {
       await authViewModel.checkCurrentSession();
       if (!mounted) return;
-      
+
       if (kIsWeb) {
         Navigator.pushReplacementNamed(context, AppRoutes.propietarioDashboard);
       } else {

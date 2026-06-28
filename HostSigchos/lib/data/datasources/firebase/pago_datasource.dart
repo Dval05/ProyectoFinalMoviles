@@ -36,9 +36,7 @@ class PagoDataSource {
           .orderBy('fechaPago', descending: true)
           .get();
 
-      return querySnapshot.docs
-          .map(PagoModel.fromFirestore)
-          .toList();
+      return querySnapshot.docs.map(PagoModel.fromFirestore).toList();
     } catch (e) {
       throw const FirestoreFailure('Error al obtener el historial de pagos');
     }

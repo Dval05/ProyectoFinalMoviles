@@ -18,9 +18,7 @@ class HosteriaDataSource {
           .where('activa', isEqualTo: true)
           .get();
 
-      return querySnapshot.docs
-          .map(HosteriaModel.fromFirestore)
-          .toList();
+      return querySnapshot.docs.map(HosteriaModel.fromFirestore).toList();
     } catch (e) {
       throw const FirestoreFailure('Error al obtener la lista de hosterías');
     }

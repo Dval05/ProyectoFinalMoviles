@@ -52,9 +52,14 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
     final List<Reserva> reservasCreadas = [];
 
     for (final item in carritoVm.items) {
-      final maxDesc = promoVm.obtenerDescuentoPara(item.habitacion.hosteriaId, item.habitacion.id);
+      final maxDesc = promoVm.obtenerDescuentoPara(
+        item.habitacion.hosteriaId,
+        item.habitacion.id,
+      );
       final precioOriginal = item.precioTotal;
-      final precioConDescuento = maxDesc > 0 ? precioOriginal * (1 - maxDesc / 100) : precioOriginal;
+      final precioConDescuento = maxDesc > 0
+          ? precioOriginal * (1 - maxDesc / 100)
+          : precioOriginal;
 
       final reserva = Reserva(
         id: '',
@@ -78,7 +83,11 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
         allSuccess = false;
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al procesar reserva de ${item.habitacion.tipo}: ${reservaVm.errorMessage}')),
+            SnackBar(
+              content: Text(
+                'Error al procesar reserva de ${item.habitacion.tipo}: ${reservaVm.errorMessage}',
+              ),
+            ),
           );
         }
         break;
@@ -91,8 +100,8 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
       carritoVm.vaciarCarrito();
       if (mounted) {
         Navigator.pushReplacementNamed(
-          context, 
-          AppRoutes.confirmacion, 
+          context,
+          AppRoutes.confirmacion,
           arguments: reservasCreadas,
         );
       }
@@ -107,16 +116,21 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
   Widget build(BuildContext context) {
     final carritoVm = context.watch<CarritoReservaViewModel>();
     final promoVm = context.watch<PromocionViewModel>();
-    
+
     double totalOriginal = 0;
     double totalConDescuento = 0;
-    
+
     for (final item in carritoVm.items) {
       totalOriginal += item.precioTotal;
-      final desc = promoVm.obtenerDescuentoPara(item.habitacion.hosteriaId, item.habitacion.id);
-      totalConDescuento += desc > 0 ? item.precioTotal * (1 - desc / 100) : item.precioTotal;
+      final desc = promoVm.obtenerDescuentoPara(
+        item.habitacion.hosteriaId,
+        item.habitacion.id,
+      );
+      totalConDescuento += desc > 0
+          ? item.precioTotal * (1 - desc / 100)
+          : item.precioTotal;
     }
-    
+
     final hayDescuento = totalOriginal > totalConDescuento;
 
     return Scaffold(
@@ -135,15 +149,27 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                       itemBuilder: (context, index) {
                         final item = carritoVm.items[index];
                         return Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: ListTile(
-                            title: Text('${item.numHabitaciones}x ${item.habitacion.tipo}'),
+                            title: Text(
+                              '${item.numHabitaciones}x ${item.habitacion.tipo}',
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${AppDateUtils.formatearFechaCorta(item.fechaCheckIn)} - ${AppDateUtils.formatearFechaCorta(item.fechaCheckOut)}'),
+                                Text(
+                                  '${AppDateUtils.formatearFechaCorta(item.fechaCheckIn)} - ${AppDateUtils.formatearFechaCorta(item.fechaCheckOut)}',
+                                ),
                                 if (item.esParaOtraPersona)
-                                  Text('Para: ${item.nombreOtraPersona}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                                  Text(
+                                    'Para: ${item.nombreOtraPersona}',
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
                               ],
                             ),
                             trailing: Column(
@@ -152,11 +178,18 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                               children: [
                                 Text(
                                   CurrencyFormatter.formatear(item.precioTotal),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 InkWell(
                                   onTap: () => carritoVm.eliminarItem(item),
-                                  child: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                                  child: const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
                                 ),
                               ],
                             ),
@@ -189,12 +222,19 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                                 children: [
                                   const Text(
                                     'Total a pagar:',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   if (hayDescuento)
                                     const Text(
                                       'Promociones aplicadas al carrito',
-                                      style: TextStyle(fontSize: 12, color: Colors.orange, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                 ],
                               ),
@@ -203,12 +243,24 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                                 children: [
                                   if (hayDescuento)
                                     Text(
-                                      CurrencyFormatter.formatear(totalOriginal),
-                                      style: const TextStyle(fontSize: 14, color: Colors.grey, decoration: TextDecoration.lineThrough),
+                                      CurrencyFormatter.formatear(
+                                        totalOriginal,
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
                                     ),
                                   Text(
-                                    CurrencyFormatter.formatear(totalConDescuento),
-                                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                                    CurrencyFormatter.formatear(
+                                      totalConDescuento,
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
                                   ),
                                 ],
                               ),

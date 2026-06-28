@@ -4,7 +4,6 @@ import '../datasources/firebase/reserva_datasource.dart';
 import '../models/reserva_model.dart';
 
 class ReservaRepositoryImpl implements ReservaRepository {
-
   ReservaRepositoryImpl(this._dataSource);
   final ReservaDataSource _dataSource;
 

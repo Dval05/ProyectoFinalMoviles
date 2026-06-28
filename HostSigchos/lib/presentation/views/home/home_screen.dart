@@ -115,7 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n.helloUser(authViewModel.usuarioActual == null ? 'Viajero' : authViewModel.usuarioActual!.nombre.split(' ').first),
+              l10n.helloUser(
+                authViewModel.usuarioActual == null
+                    ? 'Viajero'
+                    : authViewModel.usuarioActual!.nombre.split(' ').first,
+              ),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -156,7 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.calendar_month, color: ColorSchemeApp.primaryGreen, size: 32),
+                        const Icon(
+                          Icons.calendar_month,
+                          color: ColorSchemeApp.primaryGreen,
+                          size: 32,
+                        ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -164,19 +172,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.whatDates,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: ColorSchemeApp.darkGreen),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: ColorSchemeApp.darkGreen,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _selectedDateRange == null 
-                                  ? AppLocalizations.of(context)!.tapToChoose
-                                  : '${DateFormat('dd MMM').format(_selectedDateRange!.start)} - ${DateFormat('dd MMM').format(_selectedDateRange!.end)}',
+                                _selectedDateRange == null
+                                    ? AppLocalizations.of(context)!.tapToChoose
+                                    : '${DateFormat('dd MMM').format(_selectedDateRange!.start)} - ${DateFormat('dd MMM').format(_selectedDateRange!.end)}',
                                 style: TextStyle(color: Colors.grey[700]),
-                              )
+                              ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios, color: ColorSchemeApp.primaryGreen),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: ColorSchemeApp.primaryGreen,
+                        ),
                       ],
                     ),
                   ),
@@ -209,21 +224,30 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               // Widget de Clima
-              if (!weatherViewModel.isLoading && weatherViewModel.temperature != null)
+              if (!weatherViewModel.isLoading &&
+                  weatherViewModel.temperature != null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [ColorSchemeApp.primaryGreen, ColorSchemeApp.lightGreen],
+                        colors: [
+                          ColorSchemeApp.primaryGreen,
+                          ColorSchemeApp.lightGreen,
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.3),
+                          color: ColorSchemeApp.primaryGreen.withValues(
+                            alpha: 0.3,
+                          ),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -237,12 +261,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             const Text(
                               'Clima en Sigchos',
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '${weatherViewModel.temperature}°C',
-                              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -271,8 +303,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        _selectedDateRange == null 
-                            ? l10n.popularHosterias 
+                        _selectedDateRange == null
+                            ? l10n.popularHosterias
                             : AppLocalizations.of(context)!.availableDatesTitle,
                         style: theme.textTheme.titleLarge,
                       ),
@@ -320,14 +352,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Stack(
                                     fit: StackFit.expand,
                                     children: [
-                                      if (hosteria.imagenes.isNotEmpty) CachedNetworkImage(
-                                              imageUrl: hosteria.imagenes.first,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                    color: Colors.grey[300],
-                                                  ),
-                                            ) else Container(color: Colors.grey[300]),
+                                      if (hosteria.imagenes.isNotEmpty)
+                                        CachedNetworkImage(
+                                          imageUrl: hosteria.imagenes.first,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                                color: Colors.grey[300],
+                                              ),
+                                        )
+                                      else
+                                        Container(color: Colors.grey[300]),
                                       // Gradiente inferior para texto
                                       Positioned(
                                         bottom: 0,
@@ -348,7 +383,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           padding: const EdgeInsets.all(16),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 child: Text(
@@ -359,19 +395,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               Row(
                                                 children: [
-                                                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                                                  const Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                    size: 20,
+                                                  ),
                                                   const SizedBox(width: 4),
                                                   Text(
-                                                    hosteria.rating.toStringAsFixed(1),
+                                                    hosteria.rating
+                                                        .toStringAsFixed(1),
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ],
@@ -402,8 +445,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        _selectedDateRange == null 
-                            ? l10n.nearYou 
+                        _selectedDateRange == null
+                            ? l10n.nearYou
                             : AppLocalizations.of(context)!.availableDatesTitle,
                         style: theme.textTheme.titleLarge,
                       ),
@@ -411,11 +454,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         IconButton(
-                          icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
-                          onPressed: () => setState(() => _isGridView = !_isGridView),
+                          icon: Icon(
+                            _isGridView ? Icons.view_list : Icons.grid_view,
+                          ),
+                          onPressed: () =>
+                              setState(() => _isGridView = !_isGridView),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.pushNamed(context, AppRoutes.hosteriasList),
+                          onPressed: () => Navigator.pushNamed(
+                            context,
+                            AppRoutes.hosteriasList,
+                          ),
                           child: Text(l10n.viewAll),
                         ),
                       ],
@@ -427,33 +476,43 @@ class _HomeScreenState extends State<HomeScreen> {
               if (!hosteriaViewModel.isLoading)
                 Builder(
                   builder: (context) {
-                    final lat = _currentPosition?.latitude ?? AppConstants.sigchosLatitud;
-                    final lng = _currentPosition?.longitude ?? AppConstants.sigchosLongitud;
-                    final cercanas = hosteriaViewModel.obtenerCercanas(lat, lng, count: 4);
+                    final lat =
+                        _currentPosition?.latitude ??
+                        AppConstants.sigchosLatitud;
+                    final lng =
+                        _currentPosition?.longitude ??
+                        AppConstants.sigchosLongitud;
+                    final cercanas = hosteriaViewModel.obtenerCercanas(
+                      lat,
+                      lng,
+                      count: 4,
+                    );
 
                     if (_isGridView) {
                       return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.68,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.68,
+                            ),
                         itemCount: cercanas.length,
                         itemBuilder: (context, index) {
                           final hosteria = cercanas[index];
                           String? distanciaTexto;
                           if (_currentPosition != null) {
                             final dist = Geolocator.distanceBetween(
-                              _currentPosition!.latitude, 
-                              _currentPosition!.longitude, 
-                              hosteria.latitud, 
-                              hosteria.longitud
+                              _currentPosition!.latitude,
+                              _currentPosition!.longitude,
+                              hosteria.latitud,
+                              hosteria.longitud,
                             );
-                            distanciaTexto = '${(dist / 1000).toStringAsFixed(1)} km';
+                            distanciaTexto =
+                                '${(dist / 1000).toStringAsFixed(1)} km';
                           }
                           return HosteriaCard(
                             hosteria: hosteria,
@@ -481,12 +540,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         String? distanciaTexto;
                         if (_currentPosition != null) {
                           final dist = Geolocator.distanceBetween(
-                            _currentPosition!.latitude, 
-                            _currentPosition!.longitude, 
-                            hosteria.latitud, 
-                            hosteria.longitud
+                            _currentPosition!.latitude,
+                            _currentPosition!.longitude,
+                            hosteria.latitud,
+                            hosteria.longitud,
                           );
-                          distanciaTexto = '${(dist / 1000).toStringAsFixed(1)} km';
+                          distanciaTexto =
+                              '${(dist / 1000).toStringAsFixed(1)} km';
                         }
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -504,7 +564,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     );
-                  }
+                  },
                 ),
             ],
           ),

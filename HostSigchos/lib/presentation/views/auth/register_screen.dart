@@ -284,7 +284,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   prefixIcon: Icons.person_outline,
                   controller: _nombreController,
                   validator: Validators.nombre,
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'))],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]'),
+                    ),
+                  ],
                 ),
 
                 CustomTextField(
@@ -302,7 +306,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: DropdownButtonFormField<String>(
                         initialValue: _tipoIdentificacion,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -311,7 +317,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         items: ['Cédula', 'Pasaporte']
-                            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
                             .toList(),
                         onChanged: (val) {
                           setState(() {
@@ -325,16 +333,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Expanded(
                       flex: 5,
                       child: CustomTextField(
-                        label: _tipoIdentificacion == 'Cédula' ? 'Cédula' : 'Pasaporte',
+                        label: _tipoIdentificacion == 'Cédula'
+                            ? 'Cédula'
+                            : 'Pasaporte',
                         prefixIcon: Icons.badge_outlined,
                         controller: _cedulaController,
-                        keyboardType: _tipoIdentificacion == 'Cédula' 
-                            ? TextInputType.number 
+                        keyboardType: _tipoIdentificacion == 'Cédula'
+                            ? TextInputType.number
                             : TextInputType.text,
-                        validator: (val) => Validators.identificacion(val, _tipoIdentificacion),
-                        inputFormatters: _tipoIdentificacion == 'Cédula' 
-                            ? [FilteringTextInputFormatter.digitsOnly] 
-                            : [FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]'))],
+                        validator: (val) =>
+                            Validators.identificacion(val, _tipoIdentificacion),
+                        inputFormatters: _tipoIdentificacion == 'Cédula'
+                            ? [FilteringTextInputFormatter.digitsOnly]
+                            : [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp('[a-zA-Z0-9]'),
+                                ),
+                              ],
                       ),
                     ),
                   ],
@@ -374,7 +389,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.3),
+                              color: ColorSchemeApp.primaryGreen.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ),
                           child: Center(
@@ -395,7 +412,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: _telefonoController,
                         keyboardType: TextInputType.phone,
                         validator: Validators.telefono,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                       ),
                     ),
                   ],
@@ -415,27 +434,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.3),
+                        color: ColorSchemeApp.primaryGreen.withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.map_outlined, color: ColorSchemeApp.primaryGreen),
+                        const Icon(
+                          Icons.map_outlined,
+                          color: ColorSchemeApp.primaryGreen,
+                        ),
                         const SizedBox(width: 12),
                         Text(
                           _selectedCountry ?? l10n.countryOfOrigin,
                           style: TextStyle(
                             fontSize: 16,
-                            color: _selectedCountry == null ? Colors.black54 : Colors.black87,
+                            color: _selectedCountry == null
+                                ? Colors.black54
+                                : Colors.black87,
                           ),
                         ),
                         const Spacer(),
-                        const Icon(Icons.arrow_drop_down, color: Colors.black54),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black54,
+                        ),
                       ],
                     ),
                   ),
@@ -468,8 +500,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 const SizedBox(height: 16),
-                
-
 
                 const SizedBox(height: 32),
 

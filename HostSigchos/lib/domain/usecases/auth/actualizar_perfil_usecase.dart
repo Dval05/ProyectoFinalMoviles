@@ -3,7 +3,6 @@ import '../../entities/usuario.dart';
 import '../../repositories/auth_repository.dart';
 
 class ActualizarPerfilUseCase {
-
   ActualizarPerfilUseCase(this._repository);
   final AuthRepository _repository;
 

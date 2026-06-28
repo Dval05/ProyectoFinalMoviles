@@ -141,7 +141,9 @@ void main() async {
               getHosteriaDetailUseCase: GetHosteriaDetailUseCase(repo),
               crearHosteriaUseCase: CrearHosteriaUseCase(repo),
               actualizarHosteriaUseCase: ActualizarHosteriaUseCase(repo),
-              getHabitacionesUseCase: GetHabitacionesUseCase(HabitacionRepositoryImpl(HabitacionDataSource())),
+              getHabitacionesUseCase: GetHabitacionesUseCase(
+                HabitacionRepositoryImpl(HabitacionDataSource()),
+              ),
             );
           },
         ),
@@ -159,14 +161,24 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) {
             final repoReserva = ReservaRepositoryImpl(ReservaDataSource());
-            final repoHabitacion = HabitacionRepositoryImpl(HabitacionDataSource());
+            final repoHabitacion = HabitacionRepositoryImpl(
+              HabitacionDataSource(),
+            );
             return ReservaViewModel(
               crearReservaUseCase: CrearReservaUseCase(repoReserva),
-              getHistorialReservasUseCase: GetHistorialReservasUseCase(repoReserva),
-              getTodasLasReservasUseCase: GetTodasLasReservasUseCase(repoReserva),
-              actualizarEstadoReservaUseCase: ActualizarEstadoReservaUseCase(repoReserva),
+              getHistorialReservasUseCase: GetHistorialReservasUseCase(
+                repoReserva,
+              ),
+              getTodasLasReservasUseCase: GetTodasLasReservasUseCase(
+                repoReserva,
+              ),
+              actualizarEstadoReservaUseCase: ActualizarEstadoReservaUseCase(
+                repoReserva,
+              ),
               cancelarReservaUseCase: CancelarReservaUseCase(repoReserva),
-              checkDisponibilidadUseCase: CheckDisponibilidadUseCase(repoHabitacion),
+              checkDisponibilidadUseCase: CheckDisponibilidadUseCase(
+                repoHabitacion,
+              ),
             );
           },
         ),

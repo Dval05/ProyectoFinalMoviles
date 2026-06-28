@@ -19,7 +19,8 @@ class ErrorHandler {
           ? 'No existe un usuario con este correo electrónico.'
           : 'No user found with this email.';
     }
-    if (eString.contains('wrong-password') || eString.contains('invalid-credential')) {
+    if (eString.contains('wrong-password') ||
+        eString.contains('invalid-credential')) {
       return isSpanish
           ? 'Correo o contraseña incorrectos.'
           : 'Incorrect email or password.';
@@ -39,7 +40,8 @@ class ErrorHandler {
           ? 'Esta cuenta ha sido deshabilitada.'
           : 'This account has been disabled.';
     }
-    if (eString.contains('network-request-failed') || eString.contains('socketexception')) {
+    if (eString.contains('network-request-failed') ||
+        eString.contains('socketexception')) {
       return isSpanish
           ? 'Problema de conexión. Verifica tu internet e inténtalo de nuevo.'
           : 'Network issue. Please check your internet connection and try again.';
@@ -54,7 +56,7 @@ class ErrorHandler {
           ? 'La cuenta ya está vinculada a otro proveedor.'
           : 'The account is already linked to another provider.';
     }
-    
+
     // Fallback genérico para no exponer errores crudos
     debugPrint('Excepción no mapeada capturada: $error');
     return isSpanish

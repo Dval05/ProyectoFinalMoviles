@@ -4,7 +4,6 @@ import '../datasources/firebase/pago_datasource.dart';
 import '../models/pago_model.dart';
 
 class PagoRepositoryImpl implements PagoRepository {
-
   PagoRepositoryImpl(this._dataSource);
   final PagoDataSource _dataSource;
 

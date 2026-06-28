@@ -4,7 +4,6 @@ import '../../repositories/reserva_repository.dart';
 
 /// Caso de uso: Procesar un pago
 class ProcesarPagoUseCase {
-
   ProcesarPagoUseCase(this._pagoRepository, this._reservaRepository);
   final PagoRepository _pagoRepository;
   final ReservaRepository _reservaRepository;

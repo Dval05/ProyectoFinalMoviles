@@ -11,7 +11,8 @@ class ConfirmacionReservaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Capturar la lista de reservas desde los argumentos
-    final reservas = ModalRoute.of(context)?.settings.arguments as List<Reserva>?;
+    final reservas =
+        ModalRoute.of(context)?.settings.arguments as List<Reserva>?;
 
     return Scaffold(
       backgroundColor: ColorSchemeApp.offWhite,
@@ -59,7 +60,10 @@ class ConfirmacionReservaScreen extends StatelessWidget {
                 ...reservas.map(
                   (r) => Text(
                     r.id.toUpperCase().substring(0, 8),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ],

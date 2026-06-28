@@ -196,9 +196,10 @@ class _PagoScreenState extends State<PagoScreen> {
   Widget build(BuildContext context) {
     final isLoading = context.watch<PagoViewModel>().isLoading;
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Calcular el monto total
-    final montoTotal = _reservasAPagar?.fold<double>(0, (sum, r) => sum + r.precioTotal) ?? 0;
+    final montoTotal =
+        _reservasAPagar?.fold<double>(0, (sum, r) => sum + r.precioTotal) ?? 0;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.payment)),
@@ -360,7 +361,9 @@ class _PagoScreenState extends State<PagoScreen> {
                               value == null || value.length < 3
                               ? l10n.error
                               : null,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                         ),
                       ),
                     ],

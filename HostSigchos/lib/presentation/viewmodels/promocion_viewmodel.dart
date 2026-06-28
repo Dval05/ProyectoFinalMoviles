@@ -25,21 +25,31 @@ class PromocionViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   double obtenerDescuentoPara(String hosteriaId, String habitacionId) {
-    if (_promociones.isEmpty) return 0;
-    
+    if (_promociones.isEmpty) {
+      return 0;
+    }
+
     final ahora = DateTime.now();
     final activas = _promociones.where((p) {
-      if (!p.activa) return false;
-      if (ahora.isBefore(p.fechaInicio) || ahora.isAfter(p.fechaFin)) return false;
-      
-      if (p.hosteriaId != null && p.hosteriaId != hosteriaId) return false;
-      if (p.habitacionId != null && p.habitacionId != habitacionId) return false;
-      
+      if (!p.activa) {
+        return false;
+      }
+      if (ahora.isBefore(p.fechaInicio) || ahora.isAfter(p.fechaFin)) {
+        return false;
+      }
+
+      if (p.hosteriaId != null && p.hosteriaId != hosteriaId) {
+        return false;
+      }
+      if (p.habitacionId != null && p.habitacionId != habitacionId) {
+        return false;
+      }
+
       return true;
     }).toList();
-    
+
     if (activas.isEmpty) return 0;
-    
+
     double maxDesc = 0;
     for (final p in activas) {
       if (p.descuentoPorcentaje > maxDesc) {

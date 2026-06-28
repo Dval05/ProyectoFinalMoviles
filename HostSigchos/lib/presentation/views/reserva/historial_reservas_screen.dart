@@ -100,23 +100,23 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${l10n.code}: ${reserva.id.substring(0, 8).toUpperCase()}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${l10n.code}: ${reserva.id.substring(0, 8).toUpperCase()}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
                                 ),
-                                Row(
-                                  children: [
-                                    _EstadoChip(estado: reserva.estado),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              ),
+                              Row(
+                                children: [
+                                  _EstadoChip(estado: reserva.estado),
+                                ],
+                              ),
+                            ],
+                          ),
                           const Divider(),
                           const SizedBox(height: 8),
                           Text(
@@ -198,7 +198,8 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                               ),
                             ),
                           ],
-                          if (reserva.estado != 'cancelada' && puedeCancelar) ...[
+                          if (reserva.estado != 'cancelada' &&
+                              puedeCancelar) ...[
                             const SizedBox(height: 8),
                             SizedBox(
                               width: double.infinity,
@@ -211,27 +212,57 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                                       content: Text(l10n.areYouSureCancel),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
                                           child: Text(l10n.noKeep),
                                         ),
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context, true),
-                                          child: Text(l10n.yesCancel, style: const TextStyle(color: Colors.red)),
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: Text(
+                                            l10n.yesCancel,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
                                   );
                                   if (confirm == true && context.mounted) {
-                                    final success = await context.read<ReservaViewModel>().cancelarReservaUsuario(reserva.id);
+                                    final success = await context
+                                        .read<ReservaViewModel>()
+                                        .cancelarReservaUsuario(reserva.id);
                                     if (success && context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.cancelSuccess)));
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(l10n.cancelSuccess),
+                                        ),
+                                      );
                                     } else if (context.mounted) {
-                                      final error = context.read<ReservaViewModel>().errorMessage ?? 'Error';
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${l10n.cancelError}$error')));
+                                      final error =
+                                          context
+                                              .read<ReservaViewModel>()
+                                              .errorMessage ??
+                                          'Error';
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '${l10n.cancelError}$error',
+                                          ),
+                                        ),
+                                      );
                                     }
                                   }
                                 },
-                                child: Text(l10n.cancelReservation, style: const TextStyle(color: Colors.red)),
+                                child: Text(
+                                  l10n.cancelReservation,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
                               ),
                             ),
                           ],
@@ -247,7 +278,6 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
 }
 
 class _EstadoChip extends StatelessWidget {
-
   const _EstadoChip({required this.estado});
   final String estado;
 

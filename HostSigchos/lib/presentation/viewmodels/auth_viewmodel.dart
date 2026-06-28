@@ -15,7 +15,6 @@ import '../../domain/usecases/auth/verificar_telefono_usecase.dart';
 import '../../domain/usecases/auth/vincular_password_usecase.dart';
 
 class AuthViewModel extends ChangeNotifier {
-
   AuthViewModel({
     required this.loginUseCase,
     required this.registerUseCase,
