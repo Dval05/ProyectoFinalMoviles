@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../../presentation/routes/app_routes.dart';
 
 /// Servicio singleton para manejar notificaciones locales
 class NotificationService {
@@ -16,7 +17,7 @@ class NotificationService {
     if (_initialized) return;
 
     const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      '@mipmap/launcher_icon',
     );
     const iosSettings = DarwinInitializationSettings();
 
@@ -25,7 +26,19 @@ class NotificationService {
         android: androidSettings,
         iOS: iosSettings,
       ),
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload == 'reserva_exitosa') {
+          AppRoutes.navigatorKey.currentState?.pushNamed(AppRoutes.historialReservas);
+        }
+      },
     );
+
+    // Solicitar permisos de notificación (necesario para Android 13+ y iOS)
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+        
     _initialized = true;
   }
 
@@ -42,7 +55,7 @@ class NotificationService {
       channelDescription: 'Notificaciones de recordatorio de pagos pendientes',
       importance: Importance.high,
       priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
+      icon: '@mipmap/launcher_icon',
     );
 
     const iosDetails = DarwinNotificationDetails();
@@ -56,9 +69,72 @@ class NotificationService {
 
     await _plugin.show(
       id: reservaId.hashCode,
-      title: '¡Pago pendiente!',
-      body: '¡Falta realizar tu pago para confirmar tu reserva en $hosteria!',
+      title: '¡Confirmación pendiente!',
+      body: '¡Recuerda contactarte por WhatsApp para confirmar tu reserva en $hosteria!',
       notificationDetails: details,
+      payload: 'reserva_exitosa', // Reutilizamos el mismo payload para ir al historial
+    );
+  }
+
+  /// Muestra una notificación cuando se crea la reserva exitosamente
+  Future<void> mostrarNotificacionReservaExitosa() async {
+    if (!_initialized) await inicializar();
+
+    const androidDetails = AndroidNotificationDetails(
+      'reserva_exitosa_channel',
+      'Reservas Exitosas',
+      channelDescription: 'Notificaciones cuando se confirma una reserva',
+      importance: Importance.max,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+    );
+
+    const iosDetails = DarwinNotificationDetails();
+
+    const details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _plugin.show(
+      id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      title: '¡Reserva Exitosa!',
+      body: 'Tu reserva ha sido registrada correctamente. Toca aquí para ver tu reserva.',
+      notificationDetails: details,
+      payload: 'reserva_exitosa',
+    );
+  }
+
+  /// Muestra una notificación local genérica (pop-up de sistema)
+  Future<void> mostrarNotificacionLocal({
+    required String titulo,
+    required String cuerpo,
+    String? payload,
+  }) async {
+    if (!_initialized) await inicializar();
+
+    const androidDetails = AndroidNotificationDetails(
+      'alertas_generales_channel',
+      'Alertas Generales',
+      channelDescription: 'Notificaciones sobre la actividad del usuario',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/launcher_icon',
+    );
+
+    const iosDetails = DarwinNotificationDetails();
+
+    const details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _plugin.show(
+      id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      title: titulo,
+      body: cuerpo,
+      notificationDetails: details,
+      payload: payload,
     );
   }
 

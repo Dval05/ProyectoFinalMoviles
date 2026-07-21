@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../core/utils/error_handler.dart';
 import '../../domain/entities/hosteria.dart';
 import '../../domain/usecases/habitacion/get_habitaciones_usecase.dart';
-import '../../domain/usecases/hosteria/actualizar_hosteria_usecase.dart';
-import '../../domain/usecases/hosteria/crear_hosteria_usecase.dart';
 import '../../domain/usecases/hosteria/get_hosteria_detail_usecase.dart';
 import '../../domain/usecases/hosteria/get_hosterias_usecase.dart';
 
@@ -22,14 +21,10 @@ class HosteriaViewModel extends ChangeNotifier {
   HosteriaViewModel({
     required this._getHosteriasUseCase,
     required this._getHosteriaDetailUseCase,
-    required this._crearHosteriaUseCase,
-    required this._actualizarHosteriaUseCase,
     required this._getHabitacionesUseCase,
   });
   final GetHosteriasUseCase _getHosteriasUseCase;
   final GetHosteriaDetailUseCase _getHosteriaDetailUseCase;
-  final CrearHosteriaUseCase _crearHosteriaUseCase;
-  final ActualizarHosteriaUseCase _actualizarHosteriaUseCase;
   final GetHabitacionesUseCase _getHabitacionesUseCase;
 
   List<Hosteria> _hosterias = [];
@@ -92,7 +87,7 @@ class HosteriaViewModel extends ChangeNotifier {
       _hosteriasFiltradas = _hosterias;
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
     } finally {
       _setLoading(false);
     }
@@ -104,37 +99,7 @@ class HosteriaViewModel extends ChangeNotifier {
       _hosteriaSeleccionada = await _getHosteriaDetailUseCase(id);
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  Future<bool> crearHosteria(Hosteria hosteria) async {
-    _setLoading(true);
-    try {
-      await _crearHosteriaUseCase(hosteria);
-      _errorMessage = null;
-      await cargarHosterias();
-      return true;
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  Future<bool> actualizarHosteria(Hosteria hosteria) async {
-    _setLoading(true);
-    try {
-      await _actualizarHosteriaUseCase(hosteria);
-      _errorMessage = null;
-      await cargarHosterias();
-      return true;
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
     } finally {
       _setLoading(false);
     }
@@ -143,11 +108,9 @@ class HosteriaViewModel extends ChangeNotifier {
   String _searchQuery = '';
   DateTimeRange? _filtroFechas;
   RangeValues? _filtroPrecios;
-  String? _filtroUbicacion;
 
   DateTimeRange? get filtroFechas => _filtroFechas;
   RangeValues? get filtroPrecios => _filtroPrecios;
-  String? get filtroUbicacion => _filtroUbicacion;
   OrdenHosterias get ordenActual => _ordenActual;
 
   void filtrarHosterias(String query) {
@@ -163,18 +126,15 @@ class HosteriaViewModel extends ChangeNotifier {
   void aplicarFiltrosAvanzados({
     DateTimeRange? fechas,
     RangeValues? precios,
-    String? ubicacion,
   }) {
     _filtroFechas = fechas;
     _filtroPrecios = precios;
-    _filtroUbicacion = ubicacion;
     _aplicarFiltrosCombinados();
   }
 
   void limpiarFiltrosAvanzados() {
     _filtroFechas = null;
     _filtroPrecios = null;
-    _filtroUbicacion = null;
     _ordenActual = OrdenHosterias.ninguno;
     _aplicarFiltrosCombinados();
   }
@@ -190,16 +150,6 @@ class HosteriaViewModel extends ChangeNotifier {
           return false;
         }
       }
-
-      // 2. Filtro por Ubicación exacta/similar
-      if (_filtroUbicacion != null && _filtroUbicacion!.isNotEmpty) {
-        if (!h.direccion.toLowerCase().contains(
-          _filtroUbicacion!.toLowerCase(),
-        )) {
-          return false;
-        }
-      }
-
       // 3. Filtro por Precios
       if (_filtroPrecios != null) {
         if (h.precioPorNoche < _filtroPrecios!.start ||

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/utils/error_handler.dart';
 import '../../data/datasources/api/weather_api.dart';
 
 class WeatherViewModel extends ChangeNotifier {
@@ -22,35 +23,35 @@ class WeatherViewModel extends ChangeNotifier {
 
     try {
       final weatherData = await _weatherApi.getCurrentWeather();
-      _temperature = weatherData['temperature'] as double?;
+      _temperature = (weatherData['temperature'] as num?)?.toDouble();
       _weathercode = weatherData['weathercode'] as int?;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Helper para obtener icono según el código WMO (World Meteorological Organization)
+  // Helper para obtener icono según el código WWO (World Weather Online)
   IconData getWeatherIcon() {
     if (_weathercode == null) return Icons.cloud_outlined;
 
-    // Simplificación de códigos WMO
-    if (_weathercode == 0) {
+    // Códigos WWO (usados por wttr.in)
+    if (_weathercode == 113) {
       return Icons.wb_sunny; // Despejado
     }
-    if (_weathercode! > 0 && _weathercode! <= 3) {
-      return Icons.wb_cloudy; // Parcialmente nublado
+    if (_weathercode == 116 || _weathercode == 119 || _weathercode == 122) {
+      return Icons.wb_cloudy; // Nublado
     }
-    if (_weathercode! >= 51 && _weathercode! <= 67) {
-      return Icons.water_drop; // Lluvia
+    if (_weathercode! >= 143 && _weathercode! <= 314) {
+      return Icons.water_drop; // Lluvia / Neblina / Llovizna
     }
-    if (_weathercode! >= 71 && _weathercode! <= 77) {
-      return Icons.ac_unit; // Nieve
+    if (_weathercode! >= 317 && _weathercode! <= 350) {
+      return Icons.ac_unit; // Nieve / Granizo
     }
-    if (_weathercode! >= 95) {
-      return Icons.flash_on; // Tormenta
+    if (_weathercode! >= 353) {
+      return Icons.water_drop; // Tormenta / Lluvia fuerte
     }
 
     return Icons.cloud; // Por defecto

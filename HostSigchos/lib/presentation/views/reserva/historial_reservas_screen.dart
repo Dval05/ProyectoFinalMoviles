@@ -8,7 +8,7 @@ import '../../../core/utils/currency_formatter.dart';
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
 import '../../viewmodels/auth_viewmodel.dart';
-import '../../viewmodels/pago_viewmodel.dart';
+import '../../viewmodels/hosteria_viewmodel.dart';
 import '../../viewmodels/reserva_viewmodel.dart';
 
 class HistorialReservasScreen extends StatefulWidget {
@@ -27,9 +27,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
       final user = context.read<AuthViewModel>().usuarioActual;
       if (user != null) {
         context.read<ReservaViewModel>().cargarHistorial(user.id);
-        // Cargar historial de pagos para verificar expirados
-        context.read<PagoViewModel>().cargarHistorial(user.id);
-        // Verificar y notificar pagos pendientes
+        // Verificar y notificar reservas pendientes
         _verificarPagosPendientes(user.id);
       }
     });
@@ -59,6 +57,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ReservaViewModel>();
+    final hosteriaVm = context.watch<HosteriaViewModel>();
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final dateFormatter = DateFormat(
@@ -79,12 +78,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                 final user = context.read<AuthViewModel>().usuarioActual;
                 if (user != null) {
                   await viewModel.cargarHistorial(user.id);
-                  // También refrescar pagos para verificar expirados
-                  if (context.mounted) {
-                    await context.read<PagoViewModel>().cargarHistorial(
-                      user.id,
-                    );
-                  }
+
                 }
               },
               child: ListView.builder(
@@ -92,6 +86,14 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                 itemCount: viewModel.reservas.length,
                 itemBuilder: (context, index) {
                   final reserva = viewModel.reservas[index];
+                  
+                  String nombreHosteria = reserva.nombreHosteria ?? 'Hostería';
+                  if (reserva.nombreHosteria == null || reserva.nombreHosteria!.isEmpty) {
+                    try {
+                      nombreHosteria = hosteriaVm.hosterias.firstWhere((h) => h.id == reserva.hosteriaId).nombre;
+                    } catch (_) {}
+                  }
+                  
                   final bool puedeCancelar = reserva.estado == 'pendiente';
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
@@ -120,7 +122,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                           const Divider(),
                           const SizedBox(height: 8),
                           Text(
-                            "${reserva.nombreHosteria ?? 'Hostería'} - ${reserva.tipoHabitacion ?? 'Habitación'}",
+                            "$nombreHosteria - ${reserva.tipoHabitacion ?? 'Habitación'}",
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -184,8 +186,8 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                                 onPressed: () {
                                   Navigator.pushNamed(
                                     context,
-                                    AppRoutes.pago,
-                                    arguments: reserva.id,
+                                    AppRoutes.confirmacion,
+                                    arguments: [reserva],
                                   );
                                 },
                                 style: OutlinedButton.styleFrom(
@@ -194,7 +196,7 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                                     color: ColorSchemeApp.primaryGreen,
                                   ),
                                 ),
-                                child: Text(l10n.payNow),
+                                child: const Text('Confirmar reserva'),
                               ),
                             ),
                           ],
@@ -234,6 +236,10 @@ class _HistorialReservasScreenState extends State<HistorialReservasScreen> {
                                         .read<ReservaViewModel>()
                                         .cancelarReservaUsuario(reserva.id);
                                     if (success && context.mounted) {
+                                      NotificationService().mostrarNotificacionLocal(
+                                        titulo: l10n.bookingCancelledTitle,
+                                        cuerpo: l10n.bookingCancelledBody,
+                                      );
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(

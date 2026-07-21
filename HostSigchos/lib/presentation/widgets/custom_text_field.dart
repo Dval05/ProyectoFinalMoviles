@@ -14,6 +14,7 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.inputFormatters,
+    this.autofillHints,
   });
   final String label;
   final String? hint;
@@ -25,6 +26,7 @@ class CustomTextField extends StatefulWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -45,6 +47,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         readOnly: widget.readOnly,
         onTap: widget.onTap,
         inputFormatters: widget.inputFormatters,
+        autofillHints: widget.autofillHints,
         decoration: InputDecoration(
           labelText: widget.label,
           hintText: widget.hint,

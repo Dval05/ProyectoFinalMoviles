@@ -41,7 +41,7 @@ class _HosteriasListScreenState extends State<HosteriasListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hosterías'),
+        title: Text(AppLocalizations.of(context)!.hosterias),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -64,7 +64,7 @@ class _HosteriasListScreenState extends State<HosteriasListScreen> {
               controller: _searchController,
               onChanged: viewModel.filtrarHosterias,
               decoration: InputDecoration(
-                hintText: 'Buscar por nombre, ubicación...',
+                hintText: AppLocalizations.of(context)!.searchPlaceholder,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -92,7 +92,7 @@ class _HosteriasListScreenState extends State<HosteriasListScreen> {
           : viewModel.errorMessage != null
           ? Center(child: Text('Error: ${viewModel.errorMessage}'))
           : viewModel.hosterias.isEmpty
-          ? const Center(child: Text('No se encontraron hosterías'))
+          ? Center(child: Text(AppLocalizations.of(context)!.noPlacesFound))
           : RefreshIndicator(
               onRefresh: viewModel.cargarHosterias,
               child: _isGridView
@@ -101,7 +101,7 @@ class _HosteriasListScreenState extends State<HosteriasListScreen> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.68,
+                            childAspectRatio: 1.4,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                           ),
@@ -165,7 +165,6 @@ class _FiltrosBottomSheet extends StatefulWidget {
 
 class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
   RangeValues? _precios;
-  String? _ubicacion;
   OrdenHosterias _orden = OrdenHosterias.ninguno;
   // Agrega variables de fecha si lo necesitas (por simplificar, dejamos precios y ubicación)
 
@@ -174,7 +173,6 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
     super.initState();
     final vm = context.read<HosteriaViewModel>();
     _precios = vm.filtroPrecios ?? const RangeValues(10, 200);
-    _ubicacion = vm.filtroUbicacion;
     _orden = vm.ordenActual;
   }
 
@@ -228,20 +226,6 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            initialValue: _ubicacion,
-            decoration: InputDecoration(
-              labelText: l10n.locationFilterHint,
-              prefixIcon: const Icon(Icons.location_city),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onChanged: (val) {
-              _ubicacion = val;
-            },
           ),
           const SizedBox(height: 16),
           InputDecorator(
@@ -319,7 +303,6 @@ class _FiltrosBottomSheetState extends State<_FiltrosBottomSheet> {
                     context.read<HosteriaViewModel>()
                       ..aplicarFiltrosAvanzados(
                         precios: _precios,
-                        ubicacion: _ubicacion,
                       )
                       ..cambiarOrden(_orden);
                     Navigator.pop(context);

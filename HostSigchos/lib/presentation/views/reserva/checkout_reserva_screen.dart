@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/l10n/app_localizations.dart';
+import '../../../core/services/notification_service.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../domain/entities/reserva.dart';
 import '../../routes/app_routes.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/carrito_reserva_viewmodel.dart';
-import '../../viewmodels/promocion_viewmodel.dart';
+import '../../viewmodels/hosteria_viewmodel.dart';
 import '../../viewmodels/reserva_viewmodel.dart';
 import '../../widgets/gradient_button.dart';
 import '../../widgets/loading_overlay.dart';
@@ -25,23 +27,19 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PromocionViewModel>().cargarPromociones();
-    });
   }
 
   Future<void> _confirmarLoteReservas() async {
     final carritoVm = context.read<CarritoReservaViewModel>();
     final reservaVm = context.read<ReservaViewModel>();
     final authVm = context.read<AuthViewModel>();
-    final promoVm = context.read<PromocionViewModel>();
 
     if (carritoVm.isEmpty) return;
 
     final usuario = authVm.usuarioActual;
     if (usuario == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Debes iniciar sesión para reservar')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.mustSignInToBook)),
       );
       return;
     }
@@ -51,41 +49,48 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
     bool allSuccess = true;
     final List<Reserva> reservasCreadas = [];
 
+    final hosteriaVm = context.read<HosteriaViewModel>();
+
     for (final item in carritoVm.items) {
-      final maxDesc = promoVm.obtenerDescuentoPara(
-        item.habitacion.hosteriaId,
-        item.habitacion.id,
-      );
-      final precioOriginal = item.precioTotal;
-      final precioConDescuento = maxDesc > 0
-          ? precioOriginal * (1 - maxDesc / 100)
-          : precioOriginal;
+      // Find the hosteria name
+      final hosteriaId = item.habitacion.hosteriaId;
+      String? nombreHosteria;
+      try {
+        nombreHosteria = hosteriaVm.hosterias.firstWhere((h) => h.id == hosteriaId).nombre;
+      } catch (_) {
+        nombreHosteria = hosteriaVm.hosteriaSeleccionada?.nombre;
+      }
 
       final reserva = Reserva(
         id: '',
         usuarioId: usuario.id,
-        hosteriaId: item.habitacion.hosteriaId,
+        hosteriaId: hosteriaId,
         habitacionId: item.habitacion.id,
         fechaCheckIn: item.fechaCheckIn,
         fechaCheckOut: item.fechaCheckOut,
         numHuespedes: item.numHuespedes,
         numHabitaciones: item.numHabitaciones,
-        precioTotal: precioConDescuento,
+        precioTotal: item.precioTotal,
         fechaCreacion: DateTime.now(),
         notas: item.notas,
         tipoHabitacion: item.habitacion.tipo,
         esParaOtraPersona: item.esParaOtraPersona,
         nombreOtraPersona: item.nombreOtraPersona,
+        nombreHosteria: nombreHosteria,
       );
 
       final exito = await reservaVm.crearReserva(reserva);
       if (!exito) {
         allSuccess = false;
+        NotificationService().mostrarNotificacionLocal(
+          titulo: AppLocalizations.of(context)!.bookingBlockedTitle,
+          cuerpo: AppLocalizations.of(context)!.bookingBlockedBody(item.habitacion.tipo, reservaVm.errorMessage ?? ''),
+        );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Error al procesar reserva de ${item.habitacion.tipo}: ${reservaVm.errorMessage}',
+                AppLocalizations.of(context)!.errorProcessingBooking(item.habitacion.tipo, reservaVm.errorMessage ?? ''),
               ),
             ),
           );
@@ -98,6 +103,10 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
 
     if (allSuccess) {
       carritoVm.vaciarCarrito();
+      
+      // Mostrar la notificación push local
+      await NotificationService().mostrarNotificacionReservaExitosa();
+
       if (mounted) {
         Navigator.pushReplacementNamed(
           context,
@@ -115,32 +124,20 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
   @override
   Widget build(BuildContext context) {
     final carritoVm = context.watch<CarritoReservaViewModel>();
-    final promoVm = context.watch<PromocionViewModel>();
-
     double totalOriginal = 0;
-    double totalConDescuento = 0;
 
     for (final item in carritoVm.items) {
       totalOriginal += item.precioTotal;
-      final desc = promoVm.obtenerDescuentoPara(
-        item.habitacion.hosteriaId,
-        item.habitacion.id,
-      );
-      totalConDescuento += desc > 0
-          ? item.precioTotal * (1 - desc / 100)
-          : item.precioTotal;
     }
-
-    final hayDescuento = totalOriginal > totalConDescuento;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Checkout Reserva'),
+        title: Text(AppLocalizations.of(context)!.bookingCheckout),
       ),
       body: LoadingOverlay(
         isLoading: _isProcessing,
         child: carritoVm.isEmpty
-            ? const Center(child: Text('El carrito está vacío'))
+            ? Center(child: Text(AppLocalizations.of(context)!.cartIsEmpty))
             : Column(
                 children: [
                   Expanded(
@@ -165,7 +162,7 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                                 ),
                                 if (item.esParaOtraPersona)
                                   Text(
-                                    'Para: ${item.nombreOtraPersona}',
+                                    AppLocalizations.of(context)!.bookingFor(item.nombreOtraPersona ?? ''),
                                     style: const TextStyle(
                                       fontStyle: FontStyle.italic,
                                     ),
@@ -220,41 +217,21 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Total a pagar:',
-                                    style: TextStyle(
+                                  Text(
+                                    AppLocalizations.of(context)!.totalToPay,
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (hayDescuento)
-                                    const Text(
-                                      'Promociones aplicadas al carrito',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.orange,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                 ],
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  if (hayDescuento)
-                                    Text(
-                                      CurrencyFormatter.formatear(
-                                        totalOriginal,
-                                      ),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
                                   Text(
                                     CurrencyFormatter.formatear(
-                                      totalConDescuento,
+                                      totalOriginal,
                                     ),
                                     style: const TextStyle(
                                       fontSize: 24,
@@ -268,8 +245,9 @@ class _CheckoutReservaScreenState extends State<CheckoutReservaScreen> {
                           ),
                           const SizedBox(height: 24),
                           GradientButton(
-                            text: 'Confirmar todas las reservas',
+                            text: AppLocalizations.of(context)!.confirmAllBookings,
                             onPressed: _confirmarLoteReservas,
+                            isLoading: _isProcessing,
                           ),
                         ],
                       ),

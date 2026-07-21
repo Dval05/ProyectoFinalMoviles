@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 
+import '../errors/failures.dart';
+
 class ErrorHandler {
   static String getFriendlyMessage(dynamic error) {
     final isSpanish = _isSpanish();
@@ -9,6 +11,10 @@ class ErrorHandler {
       return isSpanish
           ? 'Error desconocido. Inténtalo más tarde.'
           : 'Unknown error. Please try again later.';
+    }
+
+    if (error is Failure) {
+      return error.message;
     }
 
     final String eString = error.toString().toLowerCase();
@@ -55,6 +61,30 @@ class ErrorHandler {
       return isSpanish
           ? 'La cuenta ya está vinculada a otro proveedor.'
           : 'The account is already linked to another provider.';
+    }
+    if (eString.contains('operation-not-allowed')) {
+      return isSpanish
+          ? 'La verificación por SMS u otro método no está habilitada en estos momentos. Por favor, inténtalo más tarde.'
+          : 'This verification method is currently not enabled on the server. Please try again later.';
+    }
+    if (eString.contains('too-many-requests')) {
+      return isSpanish
+          ? 'Demasiados intentos. Por favor, inténtalo más tarde.'
+          : 'Too many attempts. Please try again later.';
+    }
+
+    // Google Sign-In errors
+    if (eString.contains('account reauth failed') ||
+        eString.contains('sign_in_failed') ||
+        eString.contains('googlesigninexception')) {
+      return isSpanish
+          ? 'No se pudo iniciar sesión con Google. Verifica tu conexión e inténtalo de nuevo.'
+          : 'Could not sign in with Google. Check your connection and try again.';
+    }
+    if (eString.contains('canceled') || eString.contains('cancelled')) {
+      return isSpanish
+          ? 'Inicio de sesión cancelado.'
+          : 'Sign-in was cancelled.';
     }
 
     // Fallback genérico para no exponer errores crudos

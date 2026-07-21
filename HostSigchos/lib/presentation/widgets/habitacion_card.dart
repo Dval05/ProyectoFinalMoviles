@@ -46,6 +46,7 @@ class HabitacionCard extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: habitacion.imagenes.first,
                           fit: BoxFit.cover,
+                          memCacheWidth: 600,
                           placeholder: (context, url) =>
                               Container(color: Colors.grey[200]),
                           errorWidget: (context, url, error) => Container(

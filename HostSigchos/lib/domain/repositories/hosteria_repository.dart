@@ -10,10 +10,4 @@ abstract class HosteriaRepository {
 
   /// Buscar hosterías por nombre
   Future<List<Hosteria>> buscarHosterias(String query);
-
-  /// Crear una nueva hostería
-  Future<void> crearHosteria(Hosteria hosteria);
-
-  /// Actualizar una hostería existente
-  Future<void> actualizarHosteria(Hosteria hosteria);
 }

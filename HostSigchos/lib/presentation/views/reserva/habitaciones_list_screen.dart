@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 import '../../routes/app_routes.dart';
 import '../../viewmodels/carrito_reserva_viewmodel.dart';
@@ -37,7 +38,7 @@ class _HabitacionesListScreenState extends State<HabitacionesListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Habitaciones'),
+        title: Text(AppLocalizations.of(context)!.rooms),
         actions: [
           Consumer<CarritoReservaViewModel>(
             builder: (context, carrito, child) {
@@ -49,8 +50,8 @@ class _HabitacionesListScreenState extends State<HabitacionesListScreen> {
                     onPressed: () {
                       if (carrito.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Tu carrito está vacío'),
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.yourCartIsEmpty),
                           ),
                         );
                         return;
@@ -91,9 +92,9 @@ class _HabitacionesListScreenState extends State<HabitacionesListScreen> {
       body: viewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
           : viewModel.errorMessage != null
-          ? Center(child: Text('Error: ${viewModel.errorMessage}'))
+          ? Center(child: Text(AppLocalizations.of(context)!.errorGeneric(viewModel.errorMessage!)))
           : viewModel.habitaciones.isEmpty
-          ? const Center(child: Text('No hay habitaciones disponibles'))
+          ? Center(child: Text(AppLocalizations.of(context)!.noRoomsAvailable))
           : RefreshIndicator(
               onRefresh: () =>
                   viewModel.cargarHabitacionesPorHosteria(hosteriaId!),

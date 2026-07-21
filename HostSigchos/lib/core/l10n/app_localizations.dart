@@ -194,6 +194,48 @@ abstract class AppLocalizations {
   /// **'Reservas'**
   String get reservations;
 
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar por nombre, ubicación...'**
+  String get searchPlaceholder;
+
+  /// No description provided for @chooseDates.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige tus fechas'**
+  String get chooseDates;
+
+  /// No description provided for @stop.
+  ///
+  /// In es, this message translates to:
+  /// **'Detener'**
+  String get stop;
+
+  /// No description provided for @followRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguir Ruta'**
+  String get followRoute;
+
+  /// No description provided for @calculatingRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Calculando ruta...'**
+  String get calculatingRoute;
+
+  /// No description provided for @routeRecalculated.
+  ///
+  /// In es, this message translates to:
+  /// **'Ruta recalculada automáticamente'**
+  String get routeRecalculated;
+
+  /// No description provided for @noPlacesFound.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron hosterías'**
+  String get noPlacesFound;
+
   /// No description provided for @map.
   ///
   /// In es, this message translates to:
@@ -218,17 +260,17 @@ abstract class AppLocalizations {
   /// **'Buscar hosterías...'**
   String get searchHosterias;
 
-  /// No description provided for @rooms.
+  /// No description provided for @settings.
   ///
   /// In es, this message translates to:
-  /// **'Habitaciones'**
-  String get rooms;
+  /// **'Ajustes'**
+  String get settings;
 
-  /// No description provided for @services.
+  /// No description provided for @deleteAccount.
   ///
   /// In es, this message translates to:
-  /// **'Servicios'**
-  String get services;
+  /// **'Eliminar Cuenta'**
+  String get deleteAccount;
 
   /// No description provided for @location.
   ///
@@ -266,12 +308,6 @@ abstract class AppLocalizations {
   /// **'Precio por noche'**
   String get pricePerNight;
 
-  /// No description provided for @guests.
-  ///
-  /// In es, this message translates to:
-  /// **'Huéspedes'**
-  String get guests;
-
   /// No description provided for @checkIn.
   ///
   /// In es, this message translates to:
@@ -283,24 +319,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Check-out'**
   String get checkOut;
-
-  /// No description provided for @nights.
-  ///
-  /// In es, this message translates to:
-  /// **'noches'**
-  String get nights;
-
-  /// No description provided for @night.
-  ///
-  /// In es, this message translates to:
-  /// **'noche'**
-  String get night;
-
-  /// No description provided for @totalPrice.
-  ///
-  /// In es, this message translates to:
-  /// **'Precio total'**
-  String get totalPrice;
 
   /// No description provided for @bookNow.
   ///
@@ -452,12 +470,6 @@ abstract class AppLocalizations {
   /// **'¿Deseas cerrar sesión?'**
   String get logoutConfirm;
 
-  /// No description provided for @cancel.
-  ///
-  /// In es, this message translates to:
-  /// **'Cancelar'**
-  String get cancel;
-
   /// No description provided for @confirm.
   ///
   /// In es, this message translates to:
@@ -469,12 +481,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Aceptar'**
   String get accept;
-
-  /// No description provided for @save.
-  ///
-  /// In es, this message translates to:
-  /// **'Guardar'**
-  String get save;
 
   /// No description provided for @delete.
   ///
@@ -547,12 +553,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ver en mapa'**
   String get viewOnMap;
-
-  /// No description provided for @selectDates.
-  ///
-  /// In es, this message translates to:
-  /// **'Seleccionar fechas'**
-  String get selectDates;
 
   /// No description provided for @reservationDetails.
   ///
@@ -1049,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @supportInfoText.
   ///
   /// In es, this message translates to:
-  /// **'Para soporte técnico, contacta a:\n\nEmail: soporte@hostsigchos.com\nTeléfono: +593 99 123 4567'**
+  /// **'Para soporte técnico, contacta a:'**
   String get supportInfoText;
 
   /// No description provided for @advancedFilters.
@@ -1129,6 +1129,798 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Peor valorados'**
   String get sortRatingAsc;
+
+  /// No description provided for @discoverSigchos.
+  ///
+  /// In es, this message translates to:
+  /// **'Descubre Sigchos'**
+  String get discoverSigchos;
+
+  /// No description provided for @topRated.
+  ///
+  /// In es, this message translates to:
+  /// **'Top Valorados'**
+  String get topRated;
+
+  /// No description provided for @noPlacesAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay lugares disponibles para estas fechas.'**
+  String get noPlacesAvailable;
+
+  /// No description provided for @about.
+  ///
+  /// In es, this message translates to:
+  /// **'Acerca de'**
+  String get about;
+
+  /// No description provided for @popularServices.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios Populares'**
+  String get popularServices;
+
+  /// No description provided for @servicesNotSpecified.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios no especificados'**
+  String get servicesNotSpecified;
+
+  /// No description provided for @reviews.
+  ///
+  /// In es, this message translates to:
+  /// **'Opiniones'**
+  String get reviews;
+
+  /// No description provided for @writeReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribir'**
+  String get writeReview;
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay opiniones todavía.'**
+  String get noReviewsYet;
+
+  /// No description provided for @beTheFirstToReview.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Sé el primero en calificar este lugar!'**
+  String get beTheFirstToReview;
+
+  /// No description provided for @welcomeTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido a HostSigchos'**
+  String get welcomeTo;
+
+  /// No description provided for @signInToContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para continuar'**
+  String get signInToContinue;
+
+  /// No description provided for @emailOrPlaceName.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo / Nombre de local'**
+  String get emailOrPlaceName;
+
+  /// No description provided for @registerHere.
+  ///
+  /// In es, this message translates to:
+  /// **'Regístrate aquí'**
+  String get registerHere;
+
+  /// No description provided for @biometricLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'Huella/Face ID'**
+  String get biometricLogin;
+
+  /// No description provided for @biometricSetupMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión con correo y contraseña primero para habilitar esta opción.'**
+  String get biometricSetupMessage;
+
+  /// No description provided for @keepSession.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantener sesión iniciada'**
+  String get keepSession;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor verifica tu correo electrónico antes de iniciar sesión.'**
+  String get emailNotVerified;
+
+  /// No description provided for @idTypeCedula.
+  ///
+  /// In es, this message translates to:
+  /// **'Cédula'**
+  String get idTypeCedula;
+
+  /// No description provided for @idTypePassport.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasaporte'**
+  String get idTypePassport;
+
+  /// No description provided for @pleaseWait.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor espera...'**
+  String get pleaseWait;
+
+  /// No description provided for @yourCartIsEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu carrito está vacío'**
+  String get yourCartIsEmpty;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In es, this message translates to:
+  /// **'Error: {error}'**
+  String errorGeneric(String error);
+
+  /// No description provided for @noRoomsAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay habitaciones disponibles'**
+  String get noRoomsAvailable;
+
+  /// No description provided for @pleaseSelectDates.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor selecciona las fechas de estadía'**
+  String get pleaseSelectDates;
+
+  /// No description provided for @pleaseEnterOtherPersonName.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor ingresa el nombre de la otra persona'**
+  String get pleaseEnterOtherPersonName;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadido a tu reserva (Carrito)'**
+  String get addedToCart;
+
+  /// No description provided for @addRoom.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir Habitación'**
+  String get addRoom;
+
+  /// No description provided for @roomDataNotAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Error: Datos de habitación no disponibles'**
+  String get roomDataNotAvailable;
+
+  /// No description provided for @roomDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles de la Habitación'**
+  String get roomDetails;
+
+  /// No description provided for @bookForOtherPerson.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar para otra persona'**
+  String get bookForOtherPerson;
+
+  /// No description provided for @activateIfYouWontStay.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa esto si no te hospedarás tú'**
+  String get activateIfYouWontStay;
+
+  /// No description provided for @totalToPay.
+  ///
+  /// In es, this message translates to:
+  /// **'Total a pagar:'**
+  String get totalToPay;
+
+  /// No description provided for @bookingConfirmed.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva Confirmada'**
+  String get bookingConfirmed;
+
+  /// No description provided for @proceedToPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Proceder al Pago'**
+  String get proceedToPayment;
+
+  /// No description provided for @payLater.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagar más tarde'**
+  String get payLater;
+
+  /// No description provided for @mustSignInToBook.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes iniciar sesión para reservar'**
+  String get mustSignInToBook;
+
+  /// No description provided for @bookingCheckout.
+  ///
+  /// In es, this message translates to:
+  /// **'Checkout Reserva'**
+  String get bookingCheckout;
+
+  /// No description provided for @cartIsEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'El carrito está vacío'**
+  String get cartIsEmpty;
+
+  /// No description provided for @clientBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas de Clientes'**
+  String get clientBookings;
+
+  /// No description provided for @noHostelsRegistered.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes hosterías registradas.'**
+  String get noHostelsRegistered;
+
+  /// No description provided for @hostelSavedSuccessfully.
+  ///
+  /// In es, this message translates to:
+  /// **'Hostería guardada exitosamente'**
+  String get hostelSavedSuccessfully;
+
+  /// No description provided for @noBookingsRegistered.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay reservas registradas.'**
+  String get noBookingsRegistered;
+
+  /// No description provided for @bookingId.
+  ///
+  /// In es, this message translates to:
+  /// **'ID Reserva'**
+  String get bookingId;
+
+  /// No description provided for @userId.
+  ///
+  /// In es, this message translates to:
+  /// **'Usuario ID'**
+  String get userId;
+
+  /// No description provided for @dates.
+  ///
+  /// In es, this message translates to:
+  /// **'Fechas'**
+  String get dates;
+
+  /// No description provided for @status.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado'**
+  String get status;
+
+  /// No description provided for @action.
+  ///
+  /// In es, this message translates to:
+  /// **'Acción'**
+  String get action;
+
+  /// No description provided for @manage.
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar'**
+  String get manage;
+
+  /// No description provided for @manageBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Gestionar Reserva'**
+  String get manageBooking;
+
+  /// No description provided for @changeStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar estado:'**
+  String get changeStatus;
+
+  /// No description provided for @statusUpdatedSuccessfully.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado actualizado exitosamente'**
+  String get statusUpdatedSuccessfully;
+
+  /// No description provided for @newPromotion.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva Promoción'**
+  String get newPromotion;
+
+  /// No description provided for @noPromotionsRegistered.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay promociones registradas.'**
+  String get noPromotionsRegistered;
+
+  /// No description provided for @guestsBedsToBook.
+  ///
+  /// In es, this message translates to:
+  /// **'Huéspedes (Camas a reservar)'**
+  String get guestsBedsToBook;
+
+  /// No description provided for @max.
+  ///
+  /// In es, this message translates to:
+  /// **'Máx.'**
+  String get max;
+
+  /// No description provided for @otherPersonName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre de la otra persona'**
+  String get otherPersonName;
+
+  /// No description provided for @specialRequests.
+  ///
+  /// In es, this message translates to:
+  /// **'Peticiones especiales (opcional)'**
+  String get specialRequests;
+
+  /// No description provided for @payInNextStep.
+  ///
+  /// In es, this message translates to:
+  /// **'Podrás realizar el pago en el siguiente paso'**
+  String get payInNextStep;
+
+  /// No description provided for @addToMyBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir a mi Reserva'**
+  String get addToMyBooking;
+
+  /// No description provided for @notEnoughRooms.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay suficientes habitaciones disponibles para esas fechas.'**
+  String get notEnoughRooms;
+
+  /// No description provided for @overlappingBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya tienes una reserva activa en estas fechas. Activa la opción \'Reservar para otra persona\' si la reserva no es para ti.'**
+  String get overlappingBooking;
+
+  /// No description provided for @perBedPerNight.
+  ///
+  /// In es, this message translates to:
+  /// **'cama / noche'**
+  String get perBedPerNight;
+
+  /// No description provided for @bookingCreatedSuccessfully.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Reserva Creada Exitosamente!'**
+  String get bookingCreatedSuccessfully;
+
+  /// No description provided for @bookingRequestRegistered.
+  ///
+  /// In es, this message translates to:
+  /// **'Hemos registrado tu solicitud de reserva en la hostería.'**
+  String get bookingRequestRegistered;
+
+  /// No description provided for @bookingCodes.
+  ///
+  /// In es, this message translates to:
+  /// **'Códigos de Reserva:'**
+  String get bookingCodes;
+
+  /// No description provided for @paymentReminder.
+  ///
+  /// In es, this message translates to:
+  /// **'Te recordaremos realizar tu pago para confirmar la reserva.'**
+  String get paymentReminder;
+
+  /// No description provided for @errorProcessingBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al procesar reserva de {tipo}: {error}'**
+  String errorProcessingBooking(String tipo, String error);
+
+  /// No description provided for @bookingFor.
+  ///
+  /// In es, this message translates to:
+  /// **'Para: {name}'**
+  String bookingFor(String name);
+
+  /// No description provided for @promotionsApplied.
+  ///
+  /// In es, this message translates to:
+  /// **'Promociones aplicadas al carrito'**
+  String get promotionsApplied;
+
+  /// No description provided for @confirmAllBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar todas las reservas'**
+  String get confirmAllBookings;
+
+  /// No description provided for @signInToReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes iniciar sesión para calificar'**
+  String get signInToReview;
+
+  /// No description provided for @howWasThePlace.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Qué tal te pareció el lugar?'**
+  String get howWasThePlace;
+
+  /// No description provided for @yourOpinionHelps.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu opinión ayuda a otros viajeros a elegir mejor.'**
+  String get yourOpinionHelps;
+
+  /// No description provided for @writeYourRecommendation.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe tu recomendación o comentario...'**
+  String get writeYourRecommendation;
+
+  /// No description provided for @pleaseWriteAComment.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor escribe un comentario'**
+  String get pleaseWriteAComment;
+
+  /// No description provided for @thanksForYourOpinion.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Gracias por tu opinión!'**
+  String get thanksForYourOpinion;
+
+  /// No description provided for @errorSendingReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al enviar la reseña'**
+  String get errorSendingReview;
+
+  /// No description provided for @publishReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Publicar Opinión'**
+  String get publishReview;
+
+  /// No description provided for @couldNotLoadInformation.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cargar la información'**
+  String get couldNotLoadInformation;
+
+  /// No description provided for @seeAvailableRooms.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver Habitaciones Disponibles'**
+  String get seeAvailableRooms;
+
+  /// No description provided for @customerBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas de Clientes'**
+  String get customerBookings;
+
+  /// No description provided for @logOut.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar Sesión'**
+  String get logOut;
+
+  /// No description provided for @welcomeAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Bienvenido, {name}!'**
+  String welcomeAdmin(String name);
+
+  /// No description provided for @adminSummary.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen de tu plataforma web de administración B2B.'**
+  String get adminSummary;
+
+  /// No description provided for @activeHostels.
+  ///
+  /// In es, this message translates to:
+  /// **'Hosterías Activas'**
+  String get activeHostels;
+
+  /// No description provided for @activeBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas Activas'**
+  String get activeBookings;
+
+  /// No description provided for @totalIncome.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos Totales'**
+  String get totalIncome;
+
+  /// No description provided for @rooms.
+  ///
+  /// In es, this message translates to:
+  /// **'Habitaciones'**
+  String get rooms;
+
+  /// No description provided for @selectDates.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar fechas'**
+  String get selectDates;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In es, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @myHostels.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis Hosterías'**
+  String get myHostels;
+
+  /// No description provided for @promotions.
+  ///
+  /// In es, this message translates to:
+  /// **'Promociones'**
+  String get promotions;
+
+  /// No description provided for @addHostel.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir Hostería'**
+  String get addHostel;
+
+  /// No description provided for @cancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get save;
+
+  /// No description provided for @totalPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio Total'**
+  String get totalPrice;
+
+  /// No description provided for @guests.
+  ///
+  /// In es, this message translates to:
+  /// **'Huéspedes'**
+  String get guests;
+
+  /// No description provided for @night.
+  ///
+  /// In es, this message translates to:
+  /// **'noche'**
+  String get night;
+
+  /// No description provided for @nights.
+  ///
+  /// In es, this message translates to:
+  /// **'noche(s)'**
+  String get nights;
+
+  /// No description provided for @incompleteProfileTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa tu perfil'**
+  String get incompleteProfileTitle;
+
+  /// No description provided for @incompleteProfileDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Hemos notado que tu perfil está incompleto. Te recomendamos llenar tus datos personales (como cédula y teléfono) ya que serán necesarios para realizar reservas.'**
+  String get incompleteProfileDesc;
+
+  /// No description provided for @completeNow.
+  ///
+  /// In es, this message translates to:
+  /// **'Completar ahora'**
+  String get completeNow;
+
+  /// No description provided for @later.
+  ///
+  /// In es, this message translates to:
+  /// **'Más tarde'**
+  String get later;
+
+  /// No description provided for @verifyEmailToContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor, verifica tu correo antes de continuar.'**
+  String get verifyEmailToContinue;
+
+  /// No description provided for @landingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Descubre HostSigchos'**
+  String get landingTitle;
+
+  /// No description provided for @landingSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Encuentra el lugar perfecto para tu próxima aventura en la naturaleza.'**
+  String get landingSubtitle;
+
+  /// No description provided for @supportInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Para soporte técnico, contacta a:'**
+  String get supportInfo;
+
+  /// No description provided for @chatbotWelcome.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Hola! Soy tu asistente virtual. ¿Prefieres comunicarte solo por texto o también con audio? Puedes activar el volumen arriba. ¿En qué te ayudo hoy?'**
+  String get chatbotWelcome;
+
+  /// No description provided for @virtualAssistant.
+  ///
+  /// In es, this message translates to:
+  /// **'Asistente Virtual'**
+  String get virtualAssistant;
+
+  /// No description provided for @loginSuccessTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio de sesión exitoso'**
+  String get loginSuccessTitle;
+
+  /// No description provided for @loginSuccessBody.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Bienvenido de vuelta, {name}!'**
+  String loginSuccessBody(String name);
+
+  /// No description provided for @bookingCancelledTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva cancelada'**
+  String get bookingCancelledTitle;
+
+  /// No description provided for @bookingCancelledBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu reserva ha sido cancelada exitosamente.'**
+  String get bookingCancelledBody;
+
+  /// No description provided for @bookingBlockedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva bloqueada'**
+  String get bookingBlockedTitle;
+
+  /// No description provided for @bookingBlockedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar la reserva para {roomType}. {error}'**
+  String bookingBlockedBody(String roomType, String error);
+
+  /// No description provided for @voiceMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'🎵 Mensaje de voz'**
+  String get voiceMessage;
+
+  /// No description provided for @viewSuggestion.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver Sugerencia'**
+  String get viewSuggestion;
+
+  /// No description provided for @suggestionsForYou.
+  ///
+  /// In es, this message translates to:
+  /// **'Sugerencias para ti'**
+  String get suggestionsForYou;
+
+  /// No description provided for @noSuggestionsAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay sugerencias disponibles.'**
+  String get noSuggestionsAvailable;
+
+  /// No description provided for @typeMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un mensaje...'**
+  String get typeMessage;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones'**
+  String get notificationsTitle;
+
+  /// No description provided for @markAsRead.
+  ///
+  /// In es, this message translates to:
+  /// **'Leídas'**
+  String get markAsRead;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrar'**
+  String get deleteAll;
+
+  /// No description provided for @suggestedRooms.
+  ///
+  /// In es, this message translates to:
+  /// **'Habitaciones sugeridas'**
+  String get suggestedRooms;
+
+  /// No description provided for @unknownHotel.
+  ///
+  /// In es, this message translates to:
+  /// **'Hotel Desconocido'**
+  String get unknownHotel;
+
+  /// No description provided for @addressNotAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección no disponible'**
+  String get addressNotAvailable;
+
+  /// No description provided for @roomFallback.
+  ///
+  /// In es, this message translates to:
+  /// **'Habitación'**
+  String get roomFallback;
+
+  /// No description provided for @noHosteriasFound.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron hosterías.'**
+  String get noHosteriasFound;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar por nombre, ubicación...'**
+  String get searchHint;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In es, this message translates to:
+  /// **'Términos y Condiciones'**
+  String get termsAndConditions;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In es, this message translates to:
+  /// **'Políticas de Privacidad'**
+  String get privacyPolicy;
 }
 
 class _AppLocalizationsDelegate

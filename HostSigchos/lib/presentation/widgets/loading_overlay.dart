@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/app_localizations.dart';
 
 class LoadingOverlay extends StatelessWidget {
   const LoadingOverlay({
@@ -17,16 +18,16 @@ class LoadingOverlay extends StatelessWidget {
         if (isLoading)
           ColoredBox(
             color: Colors.black.withValues(alpha: 0.3),
-            child: const Center(
+            child: Center(
               child: Card(
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Por favor espera...'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(AppLocalizations.of(context)?.pleaseWait ?? 'Por favor espera...'),
                     ],
                   ),
                 ),

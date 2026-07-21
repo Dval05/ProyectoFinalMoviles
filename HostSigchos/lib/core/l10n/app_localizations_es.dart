@@ -57,6 +57,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reservations => 'Reservas';
 
   @override
+  String get searchPlaceholder => 'Buscar por nombre, ubicación...';
+
+  @override
+  String get chooseDates => 'Elige tus fechas';
+
+  @override
+  String get stop => 'Detener';
+
+  @override
+  String get followRoute => 'Seguir Ruta';
+
+  @override
+  String get calculatingRoute => 'Calculando ruta...';
+
+  @override
+  String get routeRecalculated => 'Ruta recalculada automáticamente';
+
+  @override
+  String get noPlacesFound => 'No se encontraron hosterías';
+
+  @override
   String get map => 'Mapa';
 
   @override
@@ -69,10 +90,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchHosterias => 'Buscar hosterías...';
 
   @override
-  String get rooms => 'Habitaciones';
+  String get settings => 'Ajustes';
 
   @override
-  String get services => 'Servicios';
+  String get deleteAccount => 'Eliminar Cuenta';
 
   @override
   String get location => 'Ubicación';
@@ -93,22 +114,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pricePerNight => 'Precio por noche';
 
   @override
-  String get guests => 'Huéspedes';
-
-  @override
   String get checkIn => 'Check-in';
 
   @override
   String get checkOut => 'Check-out';
-
-  @override
-  String get nights => 'noches';
-
-  @override
-  String get night => 'noche';
-
-  @override
-  String get totalPrice => 'Precio total';
 
   @override
   String get bookNow => 'Reservar ahora';
@@ -186,16 +195,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logoutConfirm => '¿Deseas cerrar sesión?';
 
   @override
-  String get cancel => 'Cancelar';
-
-  @override
   String get confirm => 'Confirmar';
 
   @override
   String get accept => 'Aceptar';
-
-  @override
-  String get save => 'Guardar';
 
   @override
   String get delete => 'Eliminar';
@@ -232,9 +235,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get viewOnMap => 'Ver en mapa';
-
-  @override
-  String get selectDates => 'Seleccionar fechas';
 
   @override
   String get reservationDetails => 'Detalles de la reserva';
@@ -496,8 +496,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cancelError => 'Error al cancelar: ';
 
   @override
-  String get supportInfoText =>
-      'Para soporte técnico, contacta a:\n\nEmail: soporte@hostsigchos.com\nTeléfono: +593 99 123 4567';
+  String get supportInfoText => 'Para soporte técnico, contacta a:';
 
   @override
   String get advancedFilters => 'Filtros Avanzados';
@@ -537,4 +536,429 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sortRatingAsc => 'Peor valorados';
+
+  @override
+  String get discoverSigchos => 'Descubre Sigchos';
+
+  @override
+  String get topRated => 'Top Valorados';
+
+  @override
+  String get noPlacesAvailable =>
+      'No hay lugares disponibles para estas fechas.';
+
+  @override
+  String get about => 'Acerca de';
+
+  @override
+  String get popularServices => 'Servicios Populares';
+
+  @override
+  String get servicesNotSpecified => 'Servicios no especificados';
+
+  @override
+  String get reviews => 'Opiniones';
+
+  @override
+  String get writeReview => 'Escribir';
+
+  @override
+  String get noReviewsYet => 'No hay opiniones todavía.';
+
+  @override
+  String get beTheFirstToReview => '¡Sé el primero en calificar este lugar!';
+
+  @override
+  String get welcomeTo => 'Bienvenido a HostSigchos';
+
+  @override
+  String get signInToContinue => 'Inicia sesión para continuar';
+
+  @override
+  String get emailOrPlaceName => 'Correo / Nombre de local';
+
+  @override
+  String get registerHere => 'Regístrate aquí';
+
+  @override
+  String get biometricLogin => 'Huella/Face ID';
+
+  @override
+  String get biometricSetupMessage =>
+      'Inicia sesión con correo y contraseña primero para habilitar esta opción.';
+
+  @override
+  String get keepSession => 'Mantener sesión iniciada';
+
+  @override
+  String get emailNotVerified =>
+      'Por favor verifica tu correo electrónico antes de iniciar sesión.';
+
+  @override
+  String get idTypeCedula => 'Cédula';
+
+  @override
+  String get idTypePassport => 'Pasaporte';
+
+  @override
+  String get pleaseWait => 'Por favor espera...';
+
+  @override
+  String get yourCartIsEmpty => 'Tu carrito está vacío';
+
+  @override
+  String errorGeneric(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get noRoomsAvailable => 'No hay habitaciones disponibles';
+
+  @override
+  String get pleaseSelectDates => 'Por favor selecciona las fechas de estadía';
+
+  @override
+  String get pleaseEnterOtherPersonName =>
+      'Por favor ingresa el nombre de la otra persona';
+
+  @override
+  String get addedToCart => 'Añadido a tu reserva (Carrito)';
+
+  @override
+  String get addRoom => 'Añadir Habitación';
+
+  @override
+  String get roomDataNotAvailable =>
+      'Error: Datos de habitación no disponibles';
+
+  @override
+  String get roomDetails => 'Detalles de la Habitación';
+
+  @override
+  String get bookForOtherPerson => 'Reservar para otra persona';
+
+  @override
+  String get activateIfYouWontStay => 'Activa esto si no te hospedarás tú';
+
+  @override
+  String get totalToPay => 'Total a pagar:';
+
+  @override
+  String get bookingConfirmed => 'Reserva Confirmada';
+
+  @override
+  String get proceedToPayment => 'Proceder al Pago';
+
+  @override
+  String get payLater => 'Pagar más tarde';
+
+  @override
+  String get mustSignInToBook => 'Debes iniciar sesión para reservar';
+
+  @override
+  String get bookingCheckout => 'Checkout Reserva';
+
+  @override
+  String get cartIsEmpty => 'El carrito está vacío';
+
+  @override
+  String get clientBookings => 'Reservas de Clientes';
+
+  @override
+  String get noHostelsRegistered => 'No tienes hosterías registradas.';
+
+  @override
+  String get hostelSavedSuccessfully => 'Hostería guardada exitosamente';
+
+  @override
+  String get noBookingsRegistered => 'No hay reservas registradas.';
+
+  @override
+  String get bookingId => 'ID Reserva';
+
+  @override
+  String get userId => 'Usuario ID';
+
+  @override
+  String get dates => 'Fechas';
+
+  @override
+  String get status => 'Estado';
+
+  @override
+  String get action => 'Acción';
+
+  @override
+  String get manage => 'Gestionar';
+
+  @override
+  String get manageBooking => 'Gestionar Reserva';
+
+  @override
+  String get changeStatus => 'Cambiar estado:';
+
+  @override
+  String get statusUpdatedSuccessfully => 'Estado actualizado exitosamente';
+
+  @override
+  String get newPromotion => 'Nueva Promoción';
+
+  @override
+  String get noPromotionsRegistered => 'No hay promociones registradas.';
+
+  @override
+  String get guestsBedsToBook => 'Huéspedes (Camas a reservar)';
+
+  @override
+  String get max => 'Máx.';
+
+  @override
+  String get otherPersonName => 'Nombre de la otra persona';
+
+  @override
+  String get specialRequests => 'Peticiones especiales (opcional)';
+
+  @override
+  String get payInNextStep => 'Podrás realizar el pago en el siguiente paso';
+
+  @override
+  String get addToMyBooking => 'Añadir a mi Reserva';
+
+  @override
+  String get notEnoughRooms =>
+      'No hay suficientes habitaciones disponibles para esas fechas.';
+
+  @override
+  String get overlappingBooking =>
+      'Ya tienes una reserva activa en estas fechas. Activa la opción \'Reservar para otra persona\' si la reserva no es para ti.';
+
+  @override
+  String get perBedPerNight => 'cama / noche';
+
+  @override
+  String get bookingCreatedSuccessfully => '¡Reserva Creada Exitosamente!';
+
+  @override
+  String get bookingRequestRegistered =>
+      'Hemos registrado tu solicitud de reserva en la hostería.';
+
+  @override
+  String get bookingCodes => 'Códigos de Reserva:';
+
+  @override
+  String get paymentReminder =>
+      'Te recordaremos realizar tu pago para confirmar la reserva.';
+
+  @override
+  String errorProcessingBooking(String tipo, String error) {
+    return 'Error al procesar reserva de $tipo: $error';
+  }
+
+  @override
+  String bookingFor(String name) {
+    return 'Para: $name';
+  }
+
+  @override
+  String get promotionsApplied => 'Promociones aplicadas al carrito';
+
+  @override
+  String get confirmAllBookings => 'Confirmar todas las reservas';
+
+  @override
+  String get signInToReview => 'Debes iniciar sesión para calificar';
+
+  @override
+  String get howWasThePlace => '¿Qué tal te pareció el lugar?';
+
+  @override
+  String get yourOpinionHelps =>
+      'Tu opinión ayuda a otros viajeros a elegir mejor.';
+
+  @override
+  String get writeYourRecommendation =>
+      'Escribe tu recomendación o comentario...';
+
+  @override
+  String get pleaseWriteAComment => 'Por favor escribe un comentario';
+
+  @override
+  String get thanksForYourOpinion => '¡Gracias por tu opinión!';
+
+  @override
+  String get errorSendingReview => 'Error al enviar la reseña';
+
+  @override
+  String get publishReview => 'Publicar Opinión';
+
+  @override
+  String get couldNotLoadInformation => 'No se pudo cargar la información';
+
+  @override
+  String get seeAvailableRooms => 'Ver Habitaciones Disponibles';
+
+  @override
+  String get customerBookings => 'Reservas de Clientes';
+
+  @override
+  String get logOut => 'Cerrar Sesión';
+
+  @override
+  String welcomeAdmin(String name) {
+    return '¡Bienvenido, $name!';
+  }
+
+  @override
+  String get adminSummary =>
+      'Resumen de tu plataforma web de administración B2B.';
+
+  @override
+  String get activeHostels => 'Hosterías Activas';
+
+  @override
+  String get activeBookings => 'Reservas Activas';
+
+  @override
+  String get totalIncome => 'Ingresos Totales';
+
+  @override
+  String get rooms => 'Habitaciones';
+
+  @override
+  String get selectDates => 'Seleccionar fechas';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get myHostels => 'Mis Hosterías';
+
+  @override
+  String get promotions => 'Promociones';
+
+  @override
+  String get addHostel => 'Añadir Hostería';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get totalPrice => 'Precio Total';
+
+  @override
+  String get guests => 'Huéspedes';
+
+  @override
+  String get night => 'noche';
+
+  @override
+  String get nights => 'noche(s)';
+
+  @override
+  String get incompleteProfileTitle => 'Completa tu perfil';
+
+  @override
+  String get incompleteProfileDesc =>
+      'Hemos notado que tu perfil está incompleto. Te recomendamos llenar tus datos personales (como cédula y teléfono) ya que serán necesarios para realizar reservas.';
+
+  @override
+  String get completeNow => 'Completar ahora';
+
+  @override
+  String get later => 'Más tarde';
+
+  @override
+  String get verifyEmailToContinue =>
+      'Por favor, verifica tu correo antes de continuar.';
+
+  @override
+  String get landingTitle => 'Descubre HostSigchos';
+
+  @override
+  String get landingSubtitle =>
+      'Encuentra el lugar perfecto para tu próxima aventura en la naturaleza.';
+
+  @override
+  String get supportInfo => 'Para soporte técnico, contacta a:';
+
+  @override
+  String get chatbotWelcome =>
+      '¡Hola! Soy tu asistente virtual. ¿Prefieres comunicarte solo por texto o también con audio? Puedes activar el volumen arriba. ¿En qué te ayudo hoy?';
+
+  @override
+  String get virtualAssistant => 'Asistente Virtual';
+
+  @override
+  String get loginSuccessTitle => 'Inicio de sesión exitoso';
+
+  @override
+  String loginSuccessBody(String name) {
+    return '¡Bienvenido de vuelta, $name!';
+  }
+
+  @override
+  String get bookingCancelledTitle => 'Reserva cancelada';
+
+  @override
+  String get bookingCancelledBody =>
+      'Tu reserva ha sido cancelada exitosamente.';
+
+  @override
+  String get bookingBlockedTitle => 'Reserva bloqueada';
+
+  @override
+  String bookingBlockedBody(String roomType, String error) {
+    return 'No se pudo completar la reserva para $roomType. $error';
+  }
+
+  @override
+  String get voiceMessage => '🎵 Mensaje de voz';
+
+  @override
+  String get viewSuggestion => 'Ver Sugerencia';
+
+  @override
+  String get suggestionsForYou => 'Sugerencias para ti';
+
+  @override
+  String get noSuggestionsAvailable => 'No hay sugerencias disponibles.';
+
+  @override
+  String get typeMessage => 'Escribe un mensaje...';
+
+  @override
+  String get notificationsTitle => 'Notificaciones';
+
+  @override
+  String get markAsRead => 'Leídas';
+
+  @override
+  String get deleteAll => 'Borrar';
+
+  @override
+  String get suggestedRooms => 'Habitaciones sugeridas';
+
+  @override
+  String get unknownHotel => 'Hotel Desconocido';
+
+  @override
+  String get addressNotAvailable => 'Dirección no disponible';
+
+  @override
+  String get roomFallback => 'Habitación';
+
+  @override
+  String get noHosteriasFound => 'No se encontraron hosterías.';
+
+  @override
+  String get searchHint => 'Buscar por nombre, ubicación...';
+
+  @override
+  String get termsAndConditions => 'Términos y Condiciones';
+
+  @override
+  String get privacyPolicy => 'Políticas de Privacidad';
 }

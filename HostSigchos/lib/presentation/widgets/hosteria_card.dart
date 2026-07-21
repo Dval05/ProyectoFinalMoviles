@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/l10n/app_localizations.dart';
 import '../../domain/entities/hosteria.dart';
+import '../../themes/esquema_color.dart';
 
 class HosteriaCard extends StatelessWidget {
   const HosteriaCard({
@@ -20,194 +22,277 @@ class HosteriaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    if (isGrid) {
+      return _buildGridCard(context, theme);
+    }
+    return _buildListCard(context, theme);
+  }
+
+  Widget _buildListCard(BuildContext context, ThemeData theme) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 240,
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Imagen principal con Hero
               Hero(
                 tag: 'hosteria_image_${hosteria.id}',
-                child: SizedBox(
-                  height: isGrid ? 120 : 200,
-                  width: double.infinity,
-                  child: hosteria.imagenes.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: hosteria.imagenes.first,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Colors.grey[100]),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[100],
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: Colors.grey[100],
-                          child: const Icon(
-                            Icons.landscape,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
+                child: hosteria.imagenes.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: hosteria.imagenes.first,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 600,
+                        placeholder: (context, url) => Container(color: Colors.grey[200]),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.broken_image, color: Colors.grey),
                         ),
+                      )
+                    : Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.landscape, size: 50, color: Colors.grey),
+                      ),
+              ),
+              // Gradiente Metálico Oscuro
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.2),
+                        Colors.black.withValues(alpha: 0.8),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.4, 0.7, 1.0],
+                    ),
+                  ),
                 ),
               ),
 
-              // Detalles
-              Padding(
-                padding: EdgeInsets.all(isGrid ? 12 : 20),
+              // Información Inferior
+              Positioned(
+                bottom: 24,
+                left: 20,
+                right: 20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
                           child: Text(
                             hosteria.nombre,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: isGrid ? 16 : 22,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                              height: 1.1,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (!isGrid) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFD4AF37), Color(0xFFFFD700)],
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  hosteria.rating.toStringAsFixed(1),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.amber,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ColorSchemeApp.goldenAccent.withValues(alpha: 0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
                           ),
-                        ],
-                      ],
-                    ),
-                    if (!isGrid)
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            color: Colors.grey,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              distancia != null
-                                  ? '$distancia - ${hosteria.direccion}'
-                                  : hosteria.direccion,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      )
-                    else if (distancia != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on,
-                              color: Colors.grey,
-                              size: 12,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              distancia!,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    SizedBox(height: isGrid ? 8 : 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '\$${hosteria.precioPorNoche.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              fontSize: isGrid ? 16 : 20,
-                              fontWeight: FontWeight.bold,
-                              color: theme.primaryColor,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (!isGrid)
-                          Text(
-                            ' / noche',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        if (isGrid)
-                          Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 14,
-                              ),
+                              const Icon(Icons.star, color: Colors.white, size: 16),
+                              const SizedBox(width: 4),
                               Text(
                                 hosteria.rating.toStringAsFixed(1),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.amber,
-                                  fontSize: 12,
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
                           ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, color: Colors.white.withValues(alpha: 0.8), size: 16),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            distancia != null
+                                ? '$distancia - ${hosteria.direccion}'
+                                : hosteria.direccion,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Text(
+                          '\$${hosteria.precioPorNoche.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          ' / ${AppLocalizations.of(context)!.night}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGridCard(BuildContext context, ThemeData theme) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Hero(
+                tag: 'hosteria_image_${hosteria.id}_grid',
+                child: hosteria.imagenes.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: hosteria.imagenes.first,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 600,
+                      )
+                    : Container(color: Colors.grey[200]),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.4),
+                        Colors.black.withValues(alpha: 0.8),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.3, 0.6, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 12,
+                left: 12,
+                right: 12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hosteria.nombre,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        height: 1.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    if (distancia != null)
+                      Row(
+                        children: [
+                          Icon(Icons.location_on, color: Colors.white.withValues(alpha: 0.8), size: 10),
+                          const SizedBox(width: 2),
+                          Text(
+                            distancia!,
+                            style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '\$${hosteria.precioPorNoche.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: ColorSchemeApp.goldenAccent, size: 10),
+                            const SizedBox(width: 2),
+                            Text(
+                              hosteria.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],

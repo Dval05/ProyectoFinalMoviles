@@ -14,7 +14,6 @@ class UsuarioModel extends Usuario {
     super.ubicacion,
     super.fotoUrl,
     super.idioma,
-    super.rol,
   });
 
   factory UsuarioModel.fromFirestore(DocumentSnapshot doc) {
@@ -31,7 +30,6 @@ class UsuarioModel extends Usuario {
       fechaRegistro:
           (data['fechaRegistro'] as Timestamp?)?.toDate() ?? DateTime.now(),
       idioma: (data['idioma'] as String?) ?? 'es',
-      rol: (data['rol'] as String?) ?? 'usuario',
     );
   }
 
@@ -47,7 +45,6 @@ class UsuarioModel extends Usuario {
       fotoUrl: entity.fotoUrl,
       fechaRegistro: entity.fechaRegistro,
       idioma: entity.idioma,
-      rol: entity.rol,
     );
   }
 
@@ -63,7 +60,6 @@ class UsuarioModel extends Usuario {
       'fotoUrl': fotoUrl,
       'fechaRegistro': Timestamp.fromDate(fechaRegistro),
       'idioma': idioma,
-      'rol': rol,
     };
   }
 }

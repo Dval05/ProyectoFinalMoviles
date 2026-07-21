@@ -7,12 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:344844210027:android:f08802e0a185fd07b2c62e",
+        "mobilesdk_app_id": "1:344844210027:android:e7d0de838ae69b4ab2c62e",
         "android_client_info": {
-          "package_name": "com.example.frontend"
+          "package_name": "com.hostsigchos.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "344844210027-1ebdksh4kgcvn4ledaf2raflfptsbnaa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hostsigchos.app",
+            "certificate_hash": "aaa4ffa94ffe6f71e91fec7e64fd4085ed8e0b32"
+          }
+        },
+        {
+          "client_id": "344844210027-kpchtbb65k7q6aq8kc7fn7vk6ta2c7lr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hostsigchos.app",
+            "certificate_hash": "1a0a34cf21dcbc0a08256fa9c38f86a8dcfc32f4"
+          }
+        },
         {
           "client_id": "344844210027-6nm86tmhkph0l9vktdu57i9ndtt8f7kj.apps.googleusercontent.com",
           "client_type": 3
@@ -31,10 +47,10 @@
               "client_type": 3
             },
             {
-              "client_id": "344844210027-s6ckho6clpvo1de40ku2qtp78s2aj16p.apps.googleusercontent.com",
+              "client_id": "344844210027-d6ohgufp8397kavc821fejdbc83dnsg9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.frontend"
+                "bundle_id": "com.hostsigchos.app"
               }
             }
           ]

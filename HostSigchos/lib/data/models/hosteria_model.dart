@@ -14,10 +14,10 @@ class HosteriaModel extends Hosteria {
     super.email,
     super.sitioWeb,
     super.rating,
+    super.totalResenas,
     super.imagenes,
     super.servicios,
     super.activa,
-    super.propietarioId,
     super.precioPorNoche,
   });
 
@@ -33,10 +33,10 @@ class HosteriaModel extends Hosteria {
       email: entity.email,
       sitioWeb: entity.sitioWeb,
       rating: entity.rating,
+      totalResenas: entity.totalResenas,
       imagenes: entity.imagenes,
       servicios: entity.servicios,
       activa: entity.activa,
-      propietarioId: entity.propietarioId,
       precioPorNoche: entity.precioPorNoche,
     );
   }
@@ -54,10 +54,10 @@ class HosteriaModel extends Hosteria {
       email: data['email'],
       sitioWeb: data['sitioWeb'],
       rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
+      totalResenas: data['totalResenas'] as int? ?? 0,
       imagenes: List<String>.from(data['imagenes'] ?? []),
       servicios: List<String>.from(data['servicios'] ?? []),
       activa: data['activa'] ?? true,
-      propietarioId: data['propietarioId'],
       precioPorNoche: (data['precioPorNoche'] as num?)?.toDouble() ?? 50.0,
     );
   }
@@ -73,10 +73,10 @@ class HosteriaModel extends Hosteria {
       'email': email,
       'sitioWeb': sitioWeb,
       'rating': rating,
+      'totalResenas': totalResenas,
       'imagenes': imagenes,
       'servicios': servicios,
       'activa': activa,
-      'propietarioId': propietarioId,
       'precioPorNoche': precioPorNoche,
     };
   }
@@ -95,7 +95,6 @@ class HosteriaModel extends Hosteria {
       'imagenes': imagenes,
       'servicios': servicios,
       'activa': activa,
-      'propietarioId': propietarioId,
     };
   }
 }

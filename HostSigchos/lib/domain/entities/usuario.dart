@@ -11,7 +11,6 @@ class Usuario {
     this.ubicacion,
     this.fotoUrl,
     this.idioma = 'es',
-    this.rol = 'usuario',
   });
   final String id;
   final String nombre;
@@ -23,7 +22,6 @@ class Usuario {
   final String? fotoUrl;
   final DateTime fechaRegistro;
   final String idioma;
-  final String rol;
 
   Usuario copyWith({
     String? id,
@@ -36,7 +34,6 @@ class Usuario {
     String? fotoUrl,
     DateTime? fechaRegistro,
     String? idioma,
-    String? rol,
   }) {
     return Usuario(
       id: id ?? this.id,
@@ -49,7 +46,6 @@ class Usuario {
       fotoUrl: fotoUrl ?? this.fotoUrl,
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
       idioma: idioma ?? this.idioma,
-      rol: rol ?? this.rol,
     );
   }
 }

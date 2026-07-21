@@ -2,16 +2,20 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../../core/services/biometric_service.dart';
+import '../../core/utils/error_handler.dart';
 import '../../domain/entities/usuario.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/auth/actualizar_perfil_usecase.dart';
+import '../../domain/usecases/auth/eliminar_cuenta_usecase.dart';
 import '../../domain/usecases/auth/google_signin_usecase.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
 import '../../domain/usecases/auth/logout_usecase.dart';
+import '../../domain/usecases/auth/recuperar_password_usecase.dart';
 import '../../domain/usecases/auth/register_usecase.dart';
 import '../../domain/usecases/auth/verificar_email_usecase.dart';
-import '../../domain/usecases/auth/verificar_telefono_usecase.dart';
 import '../../domain/usecases/auth/vincular_password_usecase.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -23,7 +27,8 @@ class AuthViewModel extends ChangeNotifier {
     required this.actualizarPerfilUseCase,
     required this.vincularPasswordUseCase,
     required this.verificarEmailUseCase,
-    required this.verificarTelefonoUseCase,
+    required this.recuperarPasswordUseCase,
+    required this.eliminarCuentaUseCase,
     required this.authRepository,
   }) {
     _checkBiometricStatus();
@@ -35,17 +40,17 @@ class AuthViewModel extends ChangeNotifier {
   final ActualizarPerfilUseCase actualizarPerfilUseCase;
   final VincularPasswordUseCase vincularPasswordUseCase;
   final VerificarEmailUseCase verificarEmailUseCase;
-  final VerificarTelefonoUseCase verificarTelefonoUseCase;
+  final RecuperarPasswordUseCase recuperarPasswordUseCase;
+  final EliminarCuentaUseCase eliminarCuentaUseCase;
   final AuthRepository authRepository;
 
   Usuario? _usuarioActual;
   bool _isLoading = false;
   String? _errorMessage;
+  bool _keepSession = true;
 
   // Estado de verificación
   bool _isEmailVerified = false;
-  bool _isPhoneVerified = false;
-  String? _verificationId;
   bool _isUsuarioSoloGoogle = false;
 
   // Biometría
@@ -56,11 +61,15 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isEmailVerified => _isEmailVerified;
-  bool get isPhoneVerified => _isPhoneVerified;
-  String? get verificationId => _verificationId;
   bool get isUsuarioSoloGoogle => _isUsuarioSoloGoogle;
   bool get isBiometricAvailable => _isBiometricAvailable;
   bool get hasSavedCredentials => _hasSavedCredentials;
+  bool get keepSession => _keepSession;
+
+  void setKeepSession({required bool value}) {
+    _keepSession = value;
+    notifyListeners();
+  }
 
   Future<void> _checkBiometricStatus() async {
     final service = BiometricService();
@@ -91,14 +100,35 @@ class AuthViewModel extends ChangeNotifier {
     try {
       _usuarioActual = await loginUseCase(email, password);
 
+      // Verificar email (no bloquea el login, solo registra el estado)
+      if (!_usuarioActual!.email.endsWith('@hostsigchos.com')) {
+         final isVerified = await authRepository.verificarEmailConfirmado();
+         _isEmailVerified = isVerified;
+         if (!isVerified) {
+            debugPrint('[Auth] Email no verificado para: ${_usuarioActual!.email}');
+            // No bloqueamos el login - el usuario puede usar la app
+            // pero se le recordará verificar su email
+         }
+      } else {
+        _isEmailVerified = true;
+      }
+
       if (_isBiometricAvailable) {
         await BiometricService().saveCredentials(email, password);
         _hasSavedCredentials = true;
       }
 
+      // Handle keep session
+      const storage = FlutterSecureStorage();
+      if (!_keepSession) {
+        await storage.write(key: 'keep_session', value: 'false');
+      } else {
+        await storage.delete(key: 'keep_session');
+      }
+
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -114,7 +144,6 @@ class AuthViewModel extends ChangeNotifier {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
-    String rol = 'usuario',
   }) async {
     _setLoading(true);
     try {
@@ -127,12 +156,19 @@ class AuthViewModel extends ChangeNotifier {
         telefono: telefono,
         ubicacion: ubicacion,
         fotoBytes: fotoBytes,
-        rol: rol,
       );
+      
+      // Enviar correo de verificación automáticamente
+      try {
+        await verificarEmailUseCase.enviar();
+      } catch (e) {
+        debugPrint('Error enviando correo de verificación inicial: $e');
+      }
+      
       _errorMessage = null;
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -148,7 +184,7 @@ class AuthViewModel extends ChangeNotifier {
       await _checkIfGoogleOnly();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -161,12 +197,11 @@ class AuthViewModel extends ChangeNotifier {
       await logoutUseCase();
       _usuarioActual = null;
       _isEmailVerified = false;
-      _isPhoneVerified = false;
       _isUsuarioSoloGoogle = false;
       // No borramos las credenciales biométricas aquí, así el usuario puede volver a entrar
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
     } finally {
       _setLoading(false);
     }
@@ -195,7 +230,7 @@ class AuthViewModel extends ChangeNotifier {
       _errorMessage = null;
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -213,7 +248,7 @@ class AuthViewModel extends ChangeNotifier {
       _errorMessage = null;
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -230,6 +265,21 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
+  /// Enviar correo de recuperación de contraseña
+  Future<bool> recuperarPassword(String email) async {
+    _setLoading(true);
+    try {
+      await recuperarPasswordUseCase(email);
+      _errorMessage = null;
+      return true;
+    } catch (e) {
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   /// Enviar correo de verificación
   Future<bool> enviarVerificacionEmail() async {
     _setLoading(true);
@@ -238,7 +288,7 @@ class AuthViewModel extends ChangeNotifier {
       _errorMessage = null;
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
@@ -254,56 +304,29 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
       return _isEmailVerified;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
       return false;
     } finally {
       _setLoading(false);
     }
   }
 
-  /// Enviar código SMS al teléfono
-  Future<bool> enviarCodigoTelefono(String telefono) async {
-    _setLoading(true);
-    try {
-      await verificarTelefonoUseCase.enviarCodigo(
-        telefono: telefono,
-        onCodeSent: (verificationId) {
-          _verificationId = verificationId;
-          _errorMessage = null;
-          notifyListeners();
-        },
-        onError: (error) {
-          _errorMessage = error;
-          notifyListeners();
-        },
-      );
-      return true;
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
 
-  /// Verificar código SMS ingresado
-  Future<bool> verificarCodigoTelefono(String code) async {
-    if (_verificationId == null) {
-      _errorMessage = 'No se ha enviado un código de verificación';
-      notifyListeners();
-      return false;
-    }
+
+  /// Eliminar cuenta de usuario
+  Future<bool> eliminarCuenta() async {
     _setLoading(true);
     try {
-      _isPhoneVerified = await verificarTelefonoUseCase.verificarCodigo(
-        verificationId: _verificationId!,
-        code: code,
-      );
+      await eliminarCuentaUseCase();
+      _usuarioActual = null;
+      _isEmailVerified = false;
+      _isUsuarioSoloGoogle = false;
       _errorMessage = null;
       notifyListeners();
-      return _isPhoneVerified;
+      return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = ErrorHandler.getFriendlyMessage(e);
+      notifyListeners();
       return false;
     } finally {
       _setLoading(false);
@@ -356,7 +379,12 @@ class AuthViewModel extends ChangeNotifier {
       _setLoading(false);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('canceled') || errorStr.contains('cancelled')) {
+        _errorMessage = null;
+      } else {
+        _errorMessage = ErrorHandler.getFriendlyMessage(e);
+      }
       _setLoading(false);
       return false;
     }

@@ -28,6 +28,20 @@ class HabitacionDataSource {
     }
   }
 
+  Future<List<HabitacionModel>> getTodasLasHabitaciones() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection(FirestorePaths.habitaciones)
+          .get();
+
+      return querySnapshot.docs.map(HabitacionModel.fromFirestore).toList();
+    } catch (e) {
+      throw const FirestoreFailure(
+        'Error al obtener todas las habitaciones',
+      );
+    }
+  }
+
   Future<HabitacionModel> getHabitacionById(String id) async {
     try {
       final doc = await _firestore

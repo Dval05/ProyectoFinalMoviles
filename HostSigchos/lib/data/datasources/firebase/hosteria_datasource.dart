@@ -70,26 +70,4 @@ class HosteriaDataSource {
       throw const FirestoreFailure('Error al buscar hosterías');
     }
   }
-
-  Future<void> crearHosteria(HosteriaModel hosteria) async {
-    try {
-      await _firestore
-          .collection(FirestorePaths.hosterias)
-          .doc(hosteria.id)
-          .set(hosteria.toFirestore());
-    } catch (e) {
-      throw const FirestoreFailure('Error al crear la hostería');
-    }
-  }
-
-  Future<void> actualizarHosteria(HosteriaModel hosteria) async {
-    try {
-      await _firestore
-          .collection(FirestorePaths.hosterias)
-          .doc(hosteria.id)
-          .update(hosteria.toFirestore());
-    } catch (e) {
-      throw const FirestoreFailure('Error al actualizar la hostería');
-    }
-  }
 }

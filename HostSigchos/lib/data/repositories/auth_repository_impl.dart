@@ -25,7 +25,6 @@ class AuthRepositoryImpl implements AuthRepository {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
-    String rol = 'usuario',
   }) async {
     final model = await _authDataSource.registrarse(
       nombre: nombre,
@@ -36,7 +35,6 @@ class AuthRepositoryImpl implements AuthRepository {
       telefono: telefono,
       ubicacion: ubicacion,
       fotoBytes: fotoBytes,
-      rol: rol,
     );
     return model;
   }
@@ -95,31 +93,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> enviarCodigoTelefono({
-    required String telefono,
-    required Function(String verificationId) onCodeSent,
-    required Function(String error) onError,
-  }) async {
-    return _authDataSource.enviarCodigoTelefono(
-      telefono: telefono,
-      onCodeSent: onCodeSent,
-      onError: onError,
-    );
+  Future<void> enviarCorreoRecuperacionPassword(String email) async {
+    return _authDataSource.enviarCorreoRecuperacionPassword(email);
   }
 
-  @override
-  Future<bool> verificarCodigoTelefono({
-    required String verificationId,
-    required String code,
-  }) async {
-    return _authDataSource.verificarCodigoTelefono(
-      verificationId: verificationId,
-      code: code,
-    );
-  }
+
 
   @override
   Future<bool> esUsuarioSoloGoogle() async {
     return _authDataSource.esUsuarioSoloGoogle();
+  }
+
+  @override
+  Future<void> eliminarCuenta() async {
+    return _authDataSource.eliminarCuenta();
   }
 }

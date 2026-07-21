@@ -1,16 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import '../../../core/constants/app_constants.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../domain/entities/hosteria.dart';
 import '../../../themes/esquema_color.dart';
 import '../../routes/app_routes.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/hosteria_viewmodel.dart';
+import '../../viewmodels/notificacion_viewmodel.dart';
 import '../../viewmodels/weather_viewmodel.dart';
 import '../../widgets/hosteria_card.dart';
 
@@ -22,592 +20,411 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _profileChecked = false;
-  DateTimeRange? _selectedDateRange;
-  bool _isGridView = false;
-  Position? _currentPosition;
-
-  Future<void> _seleccionarFechas() async {
-    final DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      initialDateRange: _selectedDateRange,
-    );
-    if (picked != null && picked != _selectedDateRange) {
-      setState(() {
-        _selectedDateRange = picked;
-      });
-    }
-  }
+  final ScrollController _scrollController = ScrollController();
+  bool _isCercanosGridView = false; // Toggle for "Cerca de ti" section
 
   @override
   void initState() {
     super.initState();
-    _obtenerUbicacion();
-    // Cargar hosterías y clima al iniciar el home
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HosteriaViewModel>().cargarHosterias();
-      context.read<WeatherViewModel>().fetchWeather();
-
-      if (!_profileChecked) {
-        _profileChecked = true;
-        final authViewModel = context.read<AuthViewModel>();
-        final usuario = authViewModel.usuarioActual;
-        if (usuario != null) {
-          final isIncomplete =
-              usuario.cedula == null ||
-              usuario.cedula!.isEmpty ||
-              usuario.telefono == null ||
-              usuario.telefono!.isEmpty ||
-              usuario.fechaNacimiento == null;
-          if (isIncomplete) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(AppLocalizations.of(context)!.profileIncomplete),
-                duration: const Duration(seconds: 5),
-                action: SnackBarAction(
-                  label: AppLocalizations.of(context)!.edit,
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.editarPerfil);
-                  },
-                ),
-              ),
-            );
-          }
-        }
+      context.read<WeatherViewModel>().fetchWeather(); // Fetch weather on load
+      final authVm = context.read<AuthViewModel>();
+      if (authVm.usuarioActual != null) {
+        context.read<NotificacionViewModel>().listenToNotificaciones(authVm.usuarioActual!.id);
       }
     });
   }
 
-  Future<void> _obtenerUbicacion() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
+  Future<void> _selectDateRange(BuildContext context) async {
+    final viewModel = context.read<HosteriaViewModel>();
+    final initialDateRange = viewModel.filtroFechas ?? 
+        DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(days: 1)));
 
-    if (permission == LocationPermission.deniedForever) return;
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: initialDateRange,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: ColorSchemeApp.primaryGreen,
+              onPrimary: Colors.white,
+              onSurface: ColorSchemeApp.darkText,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
 
-    final position = await Geolocator.getCurrentPosition();
-    if (mounted) {
-      setState(() {
-        _currentPosition = position;
-      });
+    if (picked != null && picked != viewModel.filtroFechas) {
+      viewModel.aplicarFiltrosAvanzados(fechas: picked);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authViewModel = context.watch<AuthViewModel>();
-    final hosteriaViewModel = context.watch<HosteriaViewModel>();
-    final weatherViewModel = context.watch<WeatherViewModel>();
-
-    final theme = Theme.of(context);
+    final hosteriaVm = context.watch<HosteriaViewModel>();
+    final authVm = context.watch<AuthViewModel>();
     final l10n = AppLocalizations.of(context)!;
+    final weatherVm = context.watch<WeatherViewModel>();
+    
+    final userName = authVm.usuarioActual?.nombre.split(' ').first ?? 'Viajero';
+    final hosterias = List<Hosteria>.from(hosteriaVm.todasHosterias);
+    
+    // Sort logic
+    // 1. Top Valorados (Top 3)
+    final topValorados = List<Hosteria>.from(hosterias)
+      ..sort((a, b) => b.rating.compareTo(a.rating));
+    final top3 = topValorados.take(3).toList();
+
+    // 2. Cerca de Ti (Mock distance based on name length or random for visual purposes, 
+    // real app would calculate haversine distance to user location)
+    final cercanos = List<Hosteria>.from(hosterias)
+      ..sort((a, b) => a.nombre.length.compareTo(b.nombre.length)); // Mock sort
+    final cercanosTop = cercanos.take(4).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.helloUser(
-                authViewModel.usuarioActual == null
-                    ? 'Viajero'
-                    : authViewModel.usuarioActual!.nombre.split(' ').first,
-              ),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+      backgroundColor: ColorSchemeApp.pearlWhite,
+      body: Column(
+        children: [
+          // CABECERA FIJA
+          Container(
+            color: ColorSchemeApp.pearlWhite,
+            padding: EdgeInsets.only(
+              left: 20, 
+              right: 20, 
+              top: MediaQuery.of(context).padding.top + 20,
+              bottom: 16,
             ),
-            Text(
-              l10n.appTagline,
-              style: theme.textTheme.bodySmall,
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.perfil),
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => context.read<HosteriaViewModel>().cargarHosterias(),
-        color: ColorSchemeApp.primaryGreen,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              // Hero Section - Fechas
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: InkWell(
-                  onTap: _seleccionarFechas,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: ColorSchemeApp.primaryGreen),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_month,
-                          color: ColorSchemeApp.primaryGreen,
-                          size: 32,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.whatDates,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: ColorSchemeApp.darkGreen,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _selectedDateRange == null
-                                    ? AppLocalizations.of(context)!.tapToChoose
-                                    : '${DateFormat('dd MMM').format(_selectedDateRange!.start)} - ${DateFormat('dd MMM').format(_selectedDateRange!.end)}',
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward_ios,
-                          color: ColorSchemeApp.primaryGreen,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Buscador rápido
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  readOnly: true,
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.hosteriasList),
-                  decoration: InputDecoration(
-                    hintText: l10n.searchHosterias,
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Widget de Clima
-              if (!weatherViewModel.isLoading &&
-                  weatherViewModel.temperature != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          ColorSchemeApp.primaryGreen,
-                          ColorSchemeApp.lightGreen,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorSchemeApp.primaryGreen.withValues(
-                            alpha: 0.3,
-                          ),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Clima en Sigchos',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${weatherViewModel.temperature}°C',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Icon(
-                          weatherViewModel.getWeatherIcon(),
-                          size: 48,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-              // Carrusel de destacadas
-              if (hosteriaViewModel.isLoading)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(40),
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-              else if (hosteriaViewModel.hosterias.isNotEmpty)
-                Column(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        _selectedDateRange == null
-                            ? l10n.popularHosterias
-                            : AppLocalizations.of(context)!.availableDatesTitle,
-                        style: theme.textTheme.titleLarge,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    CarouselSlider(
-                      options: CarouselOptions(
-                        height: 200,
-                        enlargeCenterPage: true,
-                        autoPlay: true,
-                        viewportFraction: 0.85,
-                      ),
-                      items: hosteriaViewModel.destacadas.map((
-                        hosteria,
-                      ) {
-                        return Builder(
-                          builder: (context) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.hosteriaDetail,
-                                  arguments: hosteria.id,
-                                );
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      if (hosteria.imagenes.isNotEmpty)
-                                        CachedNetworkImage(
-                                          imageUrl: hosteria.imagenes.first,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              Container(
-                                                color: Colors.grey[300],
-                                              ),
-                                        )
-                                      else
-                                        Container(color: Colors.grey[300]),
-                                      // Gradiente inferior para texto
-                                      Positioned(
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.bottomCenter,
-                                              end: Alignment.topCenter,
-                                              colors: [
-                                                Colors.black.withValues(
-                                                  alpha: 0.8,
-                                                ),
-                                                Colors.transparent,
-                                              ],
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.all(16),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  hosteria.nombre,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.star,
-                                                    color: Colors.amber,
-                                                    size: 20,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    hosteria.rating
-                                                        .toStringAsFixed(1),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-
-              const SizedBox(height: 24),
-
-              // Lista de "Cerca de ti" o "Todas"
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Expanded(
-                      child: Text(
-                        _selectedDateRange == null
-                            ? l10n.nearYou
-                            : AppLocalizations.of(context)!.availableDatesTitle,
-                        style: theme.textTheme.titleLarge,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.helloUser(userName),
+                            style: const TextStyle(
+                              color: ColorSchemeApp.softGray,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            l10n.discoverSigchos,
+                            style: const TextStyle(
+                              color: ColorSchemeApp.primaryGreen,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 30,
+                              letterSpacing: -0.5,
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          icon: Icon(
-                            _isGridView ? Icons.view_list : Icons.grid_view,
-                          ),
-                          onPressed: () =>
-                              setState(() => _isGridView = !_isGridView),
+                        Consumer<NotificacionViewModel>(
+                          builder: (context, notifVm, _) {
+                            final noLeidas = notifVm.notificaciones.where((n) => !n.leida).length;
+                            return Stack(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.notifications_outlined, color: ColorSchemeApp.darkText),
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, AppRoutes.notificaciones);
+                                  },
+                                ),
+                                if (noLeidas > 0)
+                                  Positioned(
+                                    right: 12,
+                                    top: 12,
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        color: ColorSchemeApp.primaryGreen,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
-                        TextButton(
-                          onPressed: () => Navigator.pushNamed(
-                            context,
-                            AppRoutes.hosteriasList,
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRoutes.perfil);
+                          },
+                          borderRadius: BorderRadius.circular(24),
+                          child: CircleAvatar(
+                            radius: 24,
+                            backgroundColor: ColorSchemeApp.primaryGreen.withValues(alpha: 0.1),
+                            backgroundImage: (authVm.usuarioActual?.fotoUrl != null && authVm.usuarioActual!.fotoUrl!.isNotEmpty)
+                                ? CachedNetworkImageProvider(authVm.usuarioActual!.fotoUrl!)
+                                : null,
+                            child: (authVm.usuarioActual?.fotoUrl == null || authVm.usuarioActual!.fotoUrl!.isEmpty)
+                                ? Text(
+                                    userName[0].toUpperCase(),
+                                    style: const TextStyle(
+                                      color: ColorSchemeApp.primaryGreen,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  )
+                                : null,
                           ),
-                          child: Text(l10n.viewAll),
                         ),
                       ],
                     ),
                   ],
                 ),
-              ),
-
-              if (!hosteriaViewModel.isLoading)
-                Builder(
-                  builder: (context) {
-                    final lat =
-                        _currentPosition?.latitude ??
-                        AppConstants.sigchosLatitud;
-                    final lng =
-                        _currentPosition?.longitude ??
-                        AppConstants.sigchosLongitud;
-                    final cercanas = hosteriaViewModel.obtenerCercanas(
-                      lat,
-                      lng,
-                      count: 4,
-                    );
-
-                    if (_isGridView) {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 0.68,
+                const SizedBox(height: 32),
+                // Fila con Clima y Filtro de Fechas
+                Row(
+                  children: [
+                    // Weather Widget
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          if (weatherVm.isLoading)
+                            const SizedBox(
+                              width: 16, height: 16, 
+                              child: CircularProgressIndicator(strokeWidth: 2)
+                            )
+                          else ...[
+                            Icon(weatherVm.getWeatherIcon(), color: Colors.orangeAccent, size: 20),
+                            const SizedBox(width: 6),
+                            Text(
+                              weatherVm.temperature != null 
+                                ? '${weatherVm.temperature!.round()}°C' 
+                                : '--°C',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: ColorSchemeApp.darkText),
                             ),
-                        itemCount: cercanas.length,
-                        itemBuilder: (context, index) {
-                          final hosteria = cercanas[index];
-                          String? distanciaTexto;
-                          if (_currentPosition != null) {
-                            final dist = Geolocator.distanceBetween(
-                              _currentPosition!.latitude,
-                              _currentPosition!.longitude,
-                              hosteria.latitud,
-                              hosteria.longitud,
-                            );
-                            distanciaTexto =
-                                '${(dist / 1000).toStringAsFixed(1)} km';
-                          }
-                          return HosteriaCard(
-                            hosteria: hosteria,
-                            isGrid: true,
-                            distancia: distanciaTexto,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.hosteriaDetail,
-                                arguments: hosteria.id,
-                              );
-                            },
-                          );
-                        },
-                      );
-                    }
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: cercanas.length,
-                      itemBuilder: (context, index) {
-                        final hosteria = cercanas[index];
-                        String? distanciaTexto;
-                        if (_currentPosition != null) {
-                          final dist = Geolocator.distanceBetween(
-                            _currentPosition!.latitude,
-                            _currentPosition!.longitude,
-                            hosteria.latitud,
-                            hosteria.longitud,
-                          );
-                          distanciaTexto =
-                              '${(dist / 1000).toStringAsFixed(1)} km';
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: HosteriaCard(
-                            hosteria: hosteria,
-                            distancia: distanciaTexto,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.hosteriaDetail,
-                                arguments: hosteria.id,
-                              );
-                            },
+                          ]
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Date Filter Widget
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => _selectDateRange(context),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: ColorSchemeApp.primaryGreen.withValues(alpha: 0.3)),
                           ),
-                        );
-                      },
-                    );
-                  },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.calendar_month, color: ColorSchemeApp.primaryGreen, size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  hosteriaVm.filtroFechas != null
+                                      ? '${DateFormat('d MMM').format(hosteriaVm.filtroFechas!.start)} - ${DateFormat('d MMM').format(hosteriaVm.filtroFechas!.end)}'
+                                      : l10n.chooseDates,
+                                  style: const TextStyle(
+                                    color: ColorSchemeApp.primaryGreen,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.chatbot),
-        backgroundColor: ColorSchemeApp.primaryGreen,
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // Ya estamos en Home
-              break;
-            case 1:
-              Navigator.pushNamed(context, AppRoutes.hosteriasList);
-            case 2:
-              Navigator.pushNamed(context, AppRoutes.historialReservas);
-            case 3:
-              Navigator.pushNamed(context, AppRoutes.mapa);
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home),
-            label: l10n.home,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.search),
-            label: l10n.search,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_today_outlined),
-            activeIcon: const Icon(Icons.calendar_today),
-            label: l10n.reservations,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.map_outlined),
-            activeIcon: const Icon(Icons.map),
-            label: l10n.map,
+          
+          // CUERPO DESPLAZABLE
+          Expanded(
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: hosteriaVm.isLoading
+                      ? const Padding(
+                          padding: EdgeInsets.only(top: 100),
+                          child: Center(child: CircularProgressIndicator(color: ColorSchemeApp.primaryGreen)),
+                        )
+                      : hosterias.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 100),
+                              child: Center(child: Text(l10n.noPlacesAvailable)),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 32),
+                                
+                                // SECCIÓN 1: Top Valorados (Horizontal Scroll)
+                                if (top3.isNotEmpty) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.local_fire_department, color: Colors.orangeAccent),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            l10n.topRated,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w900,
+                                              color: ColorSchemeApp.darkText,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    height: 260, // Altura de tarjeta lista apaisada + márgenes
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.only(left: 20, right: 4),
+                                      itemCount: top3.length,
+                                      itemBuilder: (context, index) {
+                                        final hosteria = top3[index];
+                                        return Container(
+                                          width: MediaQuery.of(context).size.width * 0.85,
+                                          margin: const EdgeInsets.only(right: 16),
+                                          child: HosteriaCard(
+                                            hosteria: hosteria,
+                                            isGrid: false,
+                                            onTap: () {
+                                              Navigator.pushNamed(context, AppRoutes.hosteriaDetail, arguments: hosteria.id);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                ],
+
+                                // SECCIÓN 2: Cerca de ti (Toggleable)
+                                if (cercanosTop.isNotEmpty) ...[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.location_on, color: ColorSchemeApp.primaryGreen),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              l10n.nearYou,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w900,
+                                                color: ColorSchemeApp.darkText,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            _isCercanosGridView ? Icons.view_list : Icons.grid_view_rounded,
+                                            color: ColorSchemeApp.softGray,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _isCercanosGridView = !_isCercanosGridView;
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (_isCercanosGridView)
+                                    GridView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 1.4, // Cartas rectangulares (horizontales)
+                                        crossAxisSpacing: 16,
+                                        mainAxisSpacing: 16,
+                                      ),
+                                      itemCount: cercanosTop.length,
+                                      itemBuilder: (context, index) {
+                                        final hosteria = cercanosTop[index];
+                                        return HosteriaCard(
+                                          hosteria: hosteria,
+                                          isGrid: true,
+                                          distancia: '1.${index + 1} km',
+                                          onTap: () => Navigator.pushNamed(context, AppRoutes.hosteriaDetail, arguments: hosteria.id),
+                                        );
+                                      },
+                                    )
+                                  else
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      itemCount: cercanosTop.length,
+                                      itemBuilder: (context, index) {
+                                        final hosteria = cercanosTop[index];
+                                        return HosteriaCard(
+                                          hosteria: hosteria,
+                                          isGrid: false,
+                                          distancia: '1.${index + 1} km',
+                                          onTap: () => Navigator.pushNamed(context, AppRoutes.hosteriaDetail, arguments: hosteria.id),
+                                        );
+                                      },
+                                    ),
+                                ],
+                                const SizedBox(height: 80), // Padding inferior
+                              ],
+                            ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

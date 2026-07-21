@@ -16,7 +16,6 @@ abstract class AuthRepository {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
-    String rol = 'usuario',
   });
 
   /// Login con Google Sign-In
@@ -51,19 +50,14 @@ abstract class AuthRepository {
   /// Verificar si el email fue confirmado
   Future<bool> verificarEmailConfirmado();
 
-  /// Enviar código SMS al teléfono
-  Future<void> enviarCodigoTelefono({
-    required String telefono,
-    required Function(String verificationId) onCodeSent,
-    required Function(String error) onError,
-  });
+  /// Enviar correo de recuperación de contraseña
+  Future<void> enviarCorreoRecuperacionPassword(String email);
 
-  /// Verificar código SMS del teléfono
-  Future<bool> verificarCodigoTelefono({
-    required String verificationId,
-    required String code,
-  });
+
 
   /// Verificar si el usuario actual es solo de Google (sin contraseña vinculada)
   Future<bool> esUsuarioSoloGoogle();
+
+  /// Eliminar cuenta de usuario
+  Future<void> eliminarCuenta();
 }

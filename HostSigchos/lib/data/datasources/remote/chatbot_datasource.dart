@@ -1,6 +1,8 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:http/http.dart' as http;
+
+import '../../../core/constants/env.dart';
 
 class ChatbotDataSource {
   static const String _systemPrompt = r'''
@@ -18,11 +20,22 @@ REGLAS IMPORTANTES DEL SISTEMA:
 1. SIEMPRE responde en formato JSON válido. 
 2. El JSON debe tener exactamente esta estructura:
 {
-    "action": "NAVIGATE_TO_ROOMS" (opcional, usa null si no aplica),
-    "action_data": {"hosteriaId": "id_de_la_hosteria_aqui"} (opcional, usa null si no aplica)
+    "text": "Tu respuesta amigable al usuario (DEBES mencionar el nombre de la hostería si estás haciendo una sugerencia)",
+    "action": "SHOW_SUGGESTIONS" (opcional, usa null si no aplica),
+    "action_data": {
+      "suggestions": [
+        {
+          "hosteriaId": "id_de_la_hosteria_aqui",
+          "hosteriaNombre": "Nombre de la Hostería",
+          "habitaciones": [
+            {"id": "id_de_la_habitacion", "tipo": "Suite", "precio": 50}
+          ]
+        }
+      ]
+    } (opcional, usa null si no aplica)
 }
 3. Las acciones permitidas en `action` son:
-    - "NAVIGATE_TO_ROOMS": Cuando recomiendas revisar la lista de habitaciones de una hostería específica. DEBES incluir "hosteriaId" en "action_data" con el id que te pasamos en el contexto.
+    - "SHOW_SUGGESTIONS": Cuando recomiendas revisar una lista de habitaciones o sugerencias de una o varias hosterías. DEBES incluir "suggestions" en "action_data" agrupadas por hostería con las habitaciones específicas que sugieres, basándote en la lista "habitaciones_disponibles" del contexto.
     - "NAVIGATE_TO_HOSTERIAS": Cuando recomiendas revisar la lista general de hosterías.
 4. MUY IMPORTANTE: Debes responder en el mismo idioma en el que el usuario te está hablando (español, inglés, etc.).
 5. Si el usuario te da fechas en el contexto, úsalas para recomendar.
@@ -34,15 +47,18 @@ REGLAS IMPORTANTES DEL SISTEMA:
     Map<String, dynamic> contexto, {
     bool isAudioText = false,
   }) async {
-    final apiKey = dotenv.env['GROQ_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
+    final apiKey = Env.groqApiKey;
+    if (apiKey.isEmpty) {
       throw Exception('Falta GROQ_API_KEY en el .env');
     }
 
+    final idiomaApp = contexto['idioma'] == 'en' ? 'INGLÉS (ENGLISH)' : 'ESPAÑOL (SPANISH)';
     final contextStr = jsonEncode(contexto);
     final userMessage = isAudioText
         ? 'Contexto actual del usuario: $contextStr\n\nMensaje del usuario (transcrito de un audio): $mensaje'
         : 'Contexto actual del usuario: $contextStr\n\nMensaje del usuario: $mensaje';
+
+    final promptConIdioma = '$_systemPrompt\n\nMUY IMPORTANTE: EL IDIOMA ACTUAL DE LA APP ES $idiomaApp. DEBES RESPONDER ESTRICTAMENTE EN ESE IDIOMA.';
 
     final response = await http
         .post(
@@ -54,7 +70,7 @@ REGLAS IMPORTANTES DEL SISTEMA:
           body: jsonEncode({
             'model': 'llama-3.3-70b-versatile',
             'messages': [
-              {'role': 'system', 'content': _systemPrompt},
+              {'role': 'system', 'content': promptConIdioma},
               {'role': 'user', 'content': userMessage},
             ],
             'temperature': 0.5,
@@ -78,8 +94,8 @@ REGLAS IMPORTANTES DEL SISTEMA:
     String filePath,
     Map<String, dynamic> contexto,
   ) async {
-    final apiKey = dotenv.env['GROQ_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
+    final apiKey = Env.groqApiKey;
+    if (apiKey.isEmpty) {
       throw Exception('Falta GROQ_API_KEY en el .env');
     }
 

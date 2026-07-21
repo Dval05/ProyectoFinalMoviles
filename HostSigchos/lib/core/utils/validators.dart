@@ -12,13 +12,25 @@ class Validators {
     return null;
   }
 
-  /// Valida contraseña (mínimo 6 caracteres)
+  /// Valida contraseña (mínima longitud, mayúscula, minúscula, número, especial)
   static String? password(String? value) {
     if (value == null || value.isEmpty) {
       return 'La contraseña es requerida';
     }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+    if (value.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres';
+    }
+    if (!RegExp('(?=.*[a-z])').hasMatch(value)) {
+      return 'La contraseña debe tener al menos una letra minúscula';
+    }
+    if (!RegExp('(?=.*[A-Z])').hasMatch(value)) {
+      return 'La contraseña debe tener al menos una letra mayúscula';
+    }
+    if (!RegExp(r'(?=.*\d)').hasMatch(value)) {
+      return 'La contraseña debe tener al menos un número';
+    }
+    if (!RegExp(r'(?=.*[\W_])').hasMatch(value)) {
+      return 'La contraseña debe tener al menos un carácter especial';
     }
     return null;
   }
@@ -57,8 +69,8 @@ class Validators {
     return null;
   }
 
-  /// Valida cédula ecuatoriana (Módulo 10) o Pasaporte extranjero
-  static String? identificacion(String? value, String tipo) {
+  /// Valida cédula ecuatoriana (Módulo 10) o Pasaporte extranjero/ecuatoriano
+  static String? identificacion(String? value, String tipo, [String pais = 'Ecuador']) {
     if (value == null || value.trim().isEmpty) {
       return 'La identificación es requerida';
     }
@@ -73,9 +85,15 @@ class Validators {
       }
     } else {
       // Pasaporte
-      final passportRegex = RegExp(r'^[a-zA-Z0-9]{6,20}$');
-      if (!passportRegex.hasMatch(doc)) {
-        return 'El pasaporte debe ser alfanumérico (6-20 caracteres)';
+      if (pais == 'Ecuador') {
+        if (!RegExp(r'^[a-zA-Z]\d{8}$').hasMatch(doc)) {
+          return 'El pasaporte ecuatoriano debe tener 1 letra y 8 números';
+        }
+      } else {
+        final passportRegex = RegExp(r'^[a-zA-Z0-9]{6,20}$');
+        if (!passportRegex.hasMatch(doc)) {
+          return 'El pasaporte debe ser alfanumérico (6-20 caracteres)';
+        }
       }
     }
 

@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../core/constants/env.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/errors/failures.dart';
 import '../../../core/utils/error_handler.dart';
@@ -61,7 +62,6 @@ class AuthDataSource {
     String? telefono,
     String? ubicacion,
     Uint8List? fotoBytes,
-    String rol = 'usuario',
   }) async {
     try {
       final cred = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -87,7 +87,6 @@ class AuthDataSource {
         ubicacion: ubicacion,
         fotoUrl: fotoUrl,
         fechaRegistro: DateTime.now(),
-        rol: rol,
       );
 
       await _firestore
@@ -105,21 +104,35 @@ class AuthDataSource {
     try {
       auth.User? user;
 
-      if (kIsWeb) {
-        final googleProvider = auth.GoogleAuthProvider();
-        final userCredential = await _firebaseAuth.signInWithPopup(
-          googleProvider,
-        );
-        user = userCredential.user;
-      } else {
-        if (!_isGoogleSignInInitialized) {
-          await _googleSignIn.initialize();
-          _isGoogleSignInInitialized = true;
-        }
-        final GoogleSignInAccount googleUser = await _googleSignIn
-            .authenticate();
 
-        final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+        // Inicializar Google Sign-In con el Web Client ID
+        if (!_isGoogleSignInInitialized) {
+          final webClientId = Env.googleWebClientId;
+          debugPrint('[GoogleAuth] Inicializando con serverClientId: '
+              '${webClientId.isNotEmpty ? '${webClientId.substring(0, 10)}...' : 'VACÍO'}');
+          await _googleSignIn.initialize(
+            serverClientId: webClientId,
+          );
+          _isGoogleSignInInitialized = true;
+          debugPrint('[GoogleAuth] Inicialización completada');
+        }
+
+        // Autenticar con Google
+        debugPrint('[GoogleAuth] Iniciando authenticate()...');
+        final GoogleSignInAccount googleUser;
+        try {
+          googleUser = await _googleSignIn.authenticate();
+        } catch (e) {
+          debugPrint('[GoogleAuth] Error en authenticate(): $e');
+          debugPrint('[GoogleAuth] Tipo de error: ${e.runtimeType}');
+          rethrow;
+        }
+        debugPrint('[GoogleAuth] Autenticación exitosa: ${googleUser.email}');
+
+        // Obtener tokens
+        final GoogleSignInAuthentication googleAuth =
+            googleUser.authentication;
+        debugPrint('[GoogleAuth] idToken presente: ${googleAuth.idToken != null}');
 
         final cred = auth.GoogleAuthProvider.credential(
           idToken: googleAuth.idToken,
@@ -127,7 +140,8 @@ class AuthDataSource {
 
         final userCredential = await _firebaseAuth.signInWithCredential(cred);
         user = userCredential.user;
-      }
+        debugPrint('[GoogleAuth] Firebase signIn exitoso: ${user?.uid}');
+        debugPrint('[GoogleAuth] Firebase signIn exitoso: ${user?.uid}');
 
       if (user == null) throw const AuthFailure('Error al autenticar usuario');
 
@@ -144,7 +158,6 @@ class AuthDataSource {
           email: user.email!,
           fotoUrl: user.photoURL,
           fechaRegistro: DateTime.now(),
-          rol: 'usuario',
         );
         await _firestore
             .collection(FirestorePaths.usuarios)
@@ -155,16 +168,18 @@ class AuthDataSource {
 
       return UsuarioModel.fromFirestore(doc);
     } catch (e) {
+      debugPrint('[GoogleAuth] ERROR FINAL: $e');
+      debugPrint('[GoogleAuth] Tipo: ${e.runtimeType}');
       throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
     }
   }
 
   Future<void> cerrarSesion() async {
     try {
-      await Future.wait([
-        _firebaseAuth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
+      await _firebaseAuth.signOut();
+      // Disparamos el cierre de sesión de Google sin esperar (fire-and-forget)
+      // para evitar que bloquee la interfaz si la plataforma no lo soporta bien o tarda.
+      _googleSignIn.signOut().catchError((_) => null);
     } catch (e) {
       throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
     }
@@ -269,11 +284,25 @@ class AuthDataSource {
     }
   }
 
+  /// Enviar correo de recuperación de contraseña
+  Future<void> enviarCorreoRecuperacionPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
+    }
+  }
+
   /// Verificar si el email del usuario actual fue confirmado
   Future<bool> verificarEmailConfirmado() async {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) return false;
+
+      // Las cuentas vinculadas con Google ya tienen el email verificado
+      final providers = user.providerData.map((p) => p.providerId).toList();
+      if (providers.contains('google.com')) return true;
+
       await user.reload();
       // Obtener el usuario actualizado después del reload
       final updatedUser = _firebaseAuth.currentUser;
@@ -283,65 +312,7 @@ class AuthDataSource {
     }
   }
 
-  /// Enviar código SMS al teléfono
-  Future<void> enviarCodigoTelefono({
-    required String telefono,
-    required Function(String verificationId) onCodeSent,
-    required Function(String error) onError,
-  }) async {
-    try {
-      await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: telefono,
-        verificationCompleted: (credential) async {
-          // Auto-verificación en Android (lectura automática de SMS)
-          try {
-            final user = _firebaseAuth.currentUser;
-            if (user != null) {
-              await user.linkWithCredential(credential);
-            }
-          } catch (e) {
-            debugPrint('Error en auto-verificación: $e');
-          }
-        },
-        verificationFailed: (e) {
-          onError(e.message ?? 'Error al enviar código SMS');
-        },
-        codeSent: (verificationId, resendToken) {
-          onCodeSent(verificationId);
-        },
-        codeAutoRetrievalTimeout: (verificationId) {
-          // Timeout de auto-lectura del SMS
-          debugPrint('Timeout de auto-lectura SMS: $verificationId');
-        },
-        timeout: const Duration(seconds: 60),
-      );
-    } catch (e) {
-      throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
-    }
-  }
 
-  /// Verificar código SMS ingresado por el usuario
-  Future<bool> verificarCodigoTelefono({
-    required String verificationId,
-    required String code,
-  }) async {
-    try {
-      final credential = auth.PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: code,
-      );
-
-      final user = _firebaseAuth.currentUser;
-      if (user != null) {
-        // Vincular teléfono al usuario existente
-        await user.linkWithCredential(credential);
-        return true;
-      }
-      return false;
-    } catch (e) {
-      throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
-    }
-  }
 
   /// Verificar si el usuario actual solo tiene proveedor Google (sin password)
   Future<bool> esUsuarioSoloGoogle() async {
@@ -350,5 +321,38 @@ class AuthDataSource {
 
     final providers = user.providerData.map((p) => p.providerId).toList();
     return providers.contains('google.com') && !providers.contains('password');
+  }
+
+  /// Eliminar cuenta (borrado lógico en Firestore y físico en Auth)
+  Future<void> eliminarCuenta() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) throw const AuthFailure('No hay usuario autenticado');
+
+      // 1. Borrado lógico en Firestore
+      final docRef = _firestore.collection(FirestorePaths.usuarios).doc(user.uid);
+      await docRef.update({
+        'nombre': 'Usuario Eliminado',
+        'email': 'eliminado_${user.uid}@hostsigchos.com',
+        'telefono': FieldValue.delete(),
+        'cedula': FieldValue.delete(),
+        'edad': FieldValue.delete(),
+        'fechaNacimiento': FieldValue.delete(),
+        'fotoUrl': FieldValue.delete(),
+        'ubicacion': FieldValue.delete(),
+        'estado': 'eliminado',
+      });
+
+      // 2. Eliminar de Firebase Auth
+      await user.delete();
+
+      // 3. Cerrar sesión en Google Sign In por si acaso
+      _googleSignIn.signOut().catchError((_) => null);
+    } catch (e) {
+      if (e is auth.FirebaseAuthException && e.code == 'requires-recent-login') {
+        throw const AuthFailure('Por seguridad, cierra sesión, vuelve a ingresar e intenta nuevamente.');
+      }
+      throw AuthFailure(ErrorHandler.getFriendlyMessage(e));
+    }
   }
 }

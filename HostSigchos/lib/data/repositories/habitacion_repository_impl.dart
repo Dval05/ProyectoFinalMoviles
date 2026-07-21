@@ -12,6 +12,11 @@ class HabitacionRepositoryImpl implements HabitacionRepository {
   }
 
   @override
+  Future<List<Habitacion>> getTodasLasHabitaciones() async {
+    return _dataSource.getTodasLasHabitaciones();
+  }
+
+  @override
   Future<Habitacion> getHabitacionById(String id) async {
     return _dataSource.getHabitacionById(id);
   }

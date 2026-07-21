@@ -9,16 +9,28 @@ class ChatbotViewModel extends ChangeNotifier {
     required this.enviarMensajeUseCase,
     required this.enviarAudioUseCase,
   }) {
-    // Añadir mensaje de bienvenida
     _messages.add(
       ChatMessage(
-        text:
-            '¡Hola! Soy tu asistente virtual de HostSigchos. ¿En qué te puedo ayudar hoy con tus reservas?',
+        text: '¡Hola! Soy tu asistente virtual. ¿Prefieres comunicarte solo por texto o también con audio? Puedes activar el volumen arriba. ¿En qué te ayudo hoy?',
         isUser: false,
         timestamp: DateTime.now(),
       ),
     );
     _initTts();
+  }
+
+  void updateLanguage(String languageCode, String welcomeMessage) {
+    flutterTts.setLanguage(languageCode == 'en' ? 'en-US' : 'es-US');
+    if (_messages.length == 1 && !_messages[0].isUser) {
+      _messages[0] = ChatMessage(
+        text: welcomeMessage,
+        isUser: _messages[0].isUser,
+        timestamp: _messages[0].timestamp,
+        action: _messages[0].action,
+        actionData: _messages[0].actionData,
+      );
+      notifyListeners();
+    }
   }
 
   final FlutterTts flutterTts = FlutterTts();
@@ -32,13 +44,21 @@ class ChatbotViewModel extends ChangeNotifier {
     await flutterTts.setPitch(1);
 
     // Hablar el mensaje inicial
-    if (_messages.isNotEmpty) {
+    if (_messages.isNotEmpty && _isAudioEnabled) {
       await flutterTts.speak(_messages.first.text);
     }
   }
 
   final EnviarMensajeUseCase enviarMensajeUseCase;
   final EnviarAudioUseCase enviarAudioUseCase;
+
+  bool _isAudioEnabled = true;
+  bool get isAudioEnabled => _isAudioEnabled;
+
+  void toggleAudio() {
+    _isAudioEnabled = !_isAudioEnabled;
+    notifyListeners();
+  }
 
   final List<ChatMessage> _messages = [];
   List<ChatMessage> get messages => _messages;
@@ -71,16 +91,19 @@ class ChatbotViewModel extends ChangeNotifier {
     notifyListeners();
 
     // Leer respuesta del bot en voz alta
-    await flutterTts.speak(botResponse.text);
+    if (_isAudioEnabled) {
+      await flutterTts.speak(botResponse.text);
+    }
   }
 
   Future<void> sendAudioMessage(
     String filePath, {
+    required String voiceMessageLabel,
     Map<String, dynamic> contexto = const {},
   }) async {
     // Agregar mensaje "visual" del usuario
     final userMessage = ChatMessage(
-      text: '🎵 Mensaje de voz',
+      text: voiceMessageLabel,
       isUser: true,
       timestamp: DateTime.now(),
     );
@@ -97,6 +120,8 @@ class ChatbotViewModel extends ChangeNotifier {
     notifyListeners();
 
     // Leer respuesta del bot en voz alta
-    await flutterTts.speak(botResponse.text);
+    if (_isAudioEnabled) {
+      await flutterTts.speak(botResponse.text);
+    }
   }
 }

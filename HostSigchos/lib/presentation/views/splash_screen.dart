@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../../themes/esquema_color.dart';
@@ -38,23 +38,49 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    final user = await FirebaseAuth.instance.authStateChanges().first;
+    User? user;
+    try {
+      user = await FirebaseAuth.instance.authStateChanges().first.timeout(
+        const Duration(seconds: 5),
+      );
+    } catch (e) {
+      debugPrint('Error verificando sesión: $e');
+      if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.landing);
+      return;
+    }
 
     if (!mounted) return;
 
     final authViewModel = context.read<AuthViewModel>();
 
     if (user != null) {
-      await authViewModel.checkCurrentSession();
+      // Comprobar si eligió mantener sesión
+      const storage = FlutterSecureStorage();
+      final keepSessionStr = await storage.read(key: 'keep_session');
+      if (keepSessionStr == 'false') {
+        // No quería mantener sesión -> cerramos y vamos a landing
+        await FirebaseAuth.instance.signOut();
+        if (mounted) Navigator.pushReplacementNamed(context, AppRoutes.landing);
+        return;
+      }
+
+      try {
+        await authViewModel.checkCurrentSession().timeout(
+          const Duration(seconds: 8),
+        );
+      } catch (e) {
+        debugPrint('Error cargando sesión actual: $e');
+      }
       if (!mounted) return;
 
-      if (kIsWeb) {
-        Navigator.pushReplacementNamed(context, AppRoutes.propietarioDashboard);
-      } else {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      // Siempre ir a landing, independientemente de si hay sesión o no.
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.landing);
       }
     } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.landing);
+      }
     }
   }
 
