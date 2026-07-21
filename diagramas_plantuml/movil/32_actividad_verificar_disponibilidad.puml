@@ -1,0 +1,64 @@
+@startuml Actividad_Verificar_Disponibilidad
+skinparam dpi 300
+title Diagrama de Actividad — Verificación de Disponibilidad de Habitaciones
+caption Algoritmo de solapamiento de fechas para determinar disponibilidad
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+
+start
+
+:Usuario selecciona fechas\nCheck-In y Check-Out;
+
+:HabitacionViewModel\n.verificarDisponibilidadTodas(\ncheckIn, checkOut);
+
+partition "Por cada habitación cargada" {
+    :Obtener habitacion.id;
+    
+    :CheckDisponibilidadUseCase\n.call(habitacionId, checkIn,\ncheckOut, cantidadSolicitada);
+    
+    :Consultar Firestore:\ncollection('reservas')\n.where('habitacionId' == id);
+    
+    :Obtener todas las reservas\nexistentes para esa habitación;
+    
+    :cantidadReservada = 0;
+    
+    partition "Por cada reserva existente" {
+        if (reserva.estado es\n'pendiente', 'confirmada'\no 'en_revision'?) then (Sí - Activa)
+            if (checkIn < reserva.fechaCheckOut\nAND\ncheckOut > reserva.fechaCheckIn?) then (Sí - HAY SOLAPAMIENTO)
+                :cantidadReservada +=\nreserva.numHabitaciones;
+            else (No hay solapamiento)
+                :No afecta la disponibilidad;
+            endif
+        else (No - Cancelada/Completada)
+            :Ignorar esta reserva;
+        endif
+    }
+    
+    :disponiblesReales =\nhabitacion.cantidadTotal\n- cantidadReservada;
+    
+    if (disponiblesReales >=\ncantidadSolicitada?) then (Sí)
+        :habitación DISPONIBLE ✅;
+        :_disponibilidadPorHabitacion\n[hab.id] = true;
+    else (No)
+        :habitación NO DISPONIBLE ❌;
+        :_disponibilidadPorHabitacion\n[hab.id] = false;
+    endif
+}
+
+:notifyListeners()\n→ UI muestra indicadores\n✅/❌ por habitación;
+
+stop
+
+note right
+  **Regla de negocio:**
+  cantidadTotal por defecto = 10
+  
+  **Solapamiento:**
+  Dos rangos [A,B] y [C,D]
+  se solapan si A < D AND B > C
+end note
+
+@enduml

@@ -1,0 +1,97 @@
+@startuml Secuencia_Login_Email
+skinparam dpi 300
+title Diagrama de Secuencia — Login con Email y Contraseña
+caption Flujo completo desde la UI hasta Firebase y de vuelta
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "LoginScreen" as LS
+participant "AuthViewModel" as AVM
+participant "LoginUseCase" as LUC
+participant "AuthRepository\n(Interface)" as AR
+participant "AuthRepositoryImpl" as ARI
+participant "AuthDataSource" as ADS
+participant "Firebase Auth" as FA
+participant "Firestore" as FS
+participant "BiometricService" as BIO
+
+U -> LS : Ingresa email + contraseña
+U -> LS : Pulsa "Iniciar Sesión"
+
+LS -> AVM : login(email, password)
+activate AVM
+
+AVM -> AVM : _setLoading(true)\nnotifyListeners()
+AVM -> LUC : call(email, password)
+activate LUC
+
+LUC -> AR : loginConEmail(email, password)
+activate AR
+note over AR : La interfaz delega\na la implementación
+
+AR -> ARI : loginConEmail(email, password)
+activate ARI
+
+ARI -> ADS : signInWithEmailAndPassword(email, password)
+activate ADS
+
+ADS -> FA : FirebaseAuth.signInWithEmailAndPassword()
+activate FA
+FA --> ADS : UserCredential (uid)
+deactivate FA
+
+ADS -> FS : doc('usuarios/{uid}').get()
+activate FS
+FS --> ADS : DocumentSnapshot (JSON)
+deactivate FS
+
+ADS -> ADS : UsuarioModel.fromFirestore(doc)
+ADS --> ARI : UsuarioModel
+deactivate ADS
+
+ARI -> ARI : model.toEntity()
+ARI --> AR : Entity Usuario
+deactivate ARI
+
+AR --> LUC : Entity Usuario
+deactivate AR
+
+LUC --> AVM : Entity Usuario
+deactivate LUC
+
+AVM -> AVM : _usuarioActual = usuario
+
+== Verificación de Email ==
+
+alt Email NO termina en @hostsigchos.com
+    AVM -> AR : verificarEmailConfirmado()
+    AR --> AVM : bool isVerified
+    AVM -> AVM : _isEmailVerified = isVerified
+else Email interno (@hostsigchos.com)
+    AVM -> AVM : _isEmailVerified = true
+end
+
+== Guardar Credenciales Biométricas ==
+
+alt Biometría disponible en dispositivo
+    AVM -> BIO : saveCredentials(email, password)
+    BIO -> BIO : FlutterSecureStorage.write()
+    BIO --> AVM : Credenciales guardadas
+    AVM -> AVM : _hasSavedCredentials = true
+end
+
+== Persistencia de Sesión ==
+
+AVM -> AVM : FlutterSecureStorage\n→ keep_session
+
+AVM -> AVM : _setLoading(false)\nnotifyListeners()
+AVM --> LS : return true
+deactivate AVM
+
+LS -> LS : Navigator.pushReplacementNamed('/home')
+
+@enduml

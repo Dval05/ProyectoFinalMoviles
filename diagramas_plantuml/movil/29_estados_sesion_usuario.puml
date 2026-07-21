@@ -1,0 +1,88 @@
+@startuml Estados_Sesion_Usuario
+skinparam dpi 300
+title Diagrama de Estados — Sesión del Usuario
+caption Estados de autenticación del usuario en la app móvil
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+skinparam state {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+[*] --> SplashScreen : App abierta
+
+state SplashScreen {
+    SplashScreen : Verifica sesión activa
+    SplashScreen : checkCurrentSession()
+}
+
+state NoAutenticado {
+    state LandingScreen {
+        LandingScreen : Pantalla de bienvenida
+    }
+    state LoginScreen {
+        LoginScreen : Formulario email/password
+        LoginScreen : Botón Google
+        LoginScreen : Botón Biometría
+    }
+    state RegisterScreen {
+        RegisterScreen : Formulario de registro completo
+    }
+    state ForgotPasswordScreen {
+        ForgotPasswordScreen : Envío de correo de recuperación
+    }
+    
+    LandingScreen --> LoginScreen : "Iniciar Sesión"
+    LandingScreen --> RegisterScreen : "Registrarse"
+    LoginScreen --> ForgotPasswordScreen : "¿Olvidaste tu contraseña?"
+}
+
+state VerificandoEmail {
+    VerificandoEmail : Esperando verificación
+    VerificandoEmail : Botón "Reenviar correo"
+    VerificandoEmail : Botón "Ya verifiqué"
+}
+
+state Autenticado {
+    state MainScreen {
+        MainScreen : Home + BottomNavigationBar
+        MainScreen : Navegación a todas las funciones
+    }
+    state PerfilScreen {
+        PerfilScreen : Ver/Editar perfil
+        PerfilScreen : Vincular password (si Google only)
+        PerfilScreen : Eliminar cuenta
+    }
+    
+    MainScreen --> PerfilScreen : "Mi Perfil"
+    PerfilScreen --> MainScreen : Navigator.pop()
+}
+
+SplashScreen --> NoAutenticado : No hay sesión activa
+SplashScreen --> Autenticado : Sesión activa encontrada
+
+NoAutenticado --> VerificandoEmail : Registro exitoso
+NoAutenticado --> Autenticado : Login exitoso\n(email, Google o biometría)
+
+VerificandoEmail --> Autenticado : Email verificado
+
+Autenticado --> NoAutenticado : logout()\no eliminarCuenta()
+
+note right of Autenticado
+  **keepSession:**
+  Si el usuario desmarca
+  "Mantener sesión", al cerrar
+  la app se limpia la sesión.
+end note
+
+note left of VerificandoEmail
+  No bloquea el login.
+  El usuario puede usar
+  la app sin verificar,
+  pero se le recuerda.
+end note
+
+@enduml

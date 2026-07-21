@@ -1,0 +1,93 @@
+@startuml Estados_Reserva
+skinparam dpi 300
+title Diagrama de Estados — Ciclo de Vida de una Reserva
+caption Transiciones de estados con condiciones y acciones
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+skinparam state {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+[*] --> pendiente : Usuario crea\nreserva en la app
+
+state pendiente #FFF9C4 {
+    pendiente : Estado inicial
+    pendiente : Esperando comprobante de pago
+    pendiente : Límite: 48 horas
+}
+
+state en_revision #FFE0B2 {
+    en_revision : Usuario envió comprobante
+    en_revision : Propietario debe revisar
+}
+
+state confirmada #C8E6C9 {
+    confirmada : Pago aprobado
+    confirmada : Reserva garantizada
+    confirmada : Notificación enviada al usuario
+}
+
+state cancelada #FFCDD2 {
+    cancelada : Reserva inactiva
+    cancelada : Queda en historial permanente
+    cancelada : No se puede borrar
+}
+
+state completada #B3E5FC {
+    completada : Check-out realizado
+    completada : Estadía finalizada
+}
+
+pendiente --> en_revision : Usuario envía\ncomprobante de pago\n[actualizarEstado('en_revision')]
+pendiente --> cancelada : Usuario cancela\nmanualmente\n[cancelarReservaUsuario()]
+pendiente --> cancelada : **Auto-cancelación**\n48h sin confirmar\n[_verificarReservasNoConfirmadas()]
+
+en_revision --> confirmada : Propietario aprueba\npago/comprobante\n[updateReservationStatus('confirmada')]
+en_revision --> cancelada : Propietario rechaza\n[updateReservationStatus('cancelada')]
+en_revision --> cancelada : Usuario cancela\nmanualmente
+en_revision --> cancelada : Expira 48h desde\ncreación
+
+confirmada --> completada : Fecha de check-out\nha pasado
+confirmada --> cancelada : Usuario o propietario\ncancela\n[cancelarReserva()]
+
+cancelada --> [*]
+completada --> [*]
+
+note right of pendiente
+  **Notificación generada:**
+  Título: "Reserva Creada Exitosamente"
+  Mensaje: "Tu reserva está pendiente
+  de confirmación."
+end note
+
+note right of en_revision
+  **Notificación generada:**
+  Título: "Reserva en revisión"
+  Mensaje: "Estamos revisando tu
+  comprobante..."
+end note
+
+note right of confirmada
+  **Notificación generada:**
+  Título: "Reserva confirmada"
+  Mensaje: "¡Tu reserva ha sido
+  confirmada con éxito!"
+end note
+
+note left of cancelada
+  **Notificación generada:**
+  Título: "Reserva cancelada"
+  Mensaje: "Tu reserva ha sido
+  cancelada."
+  
+  **Firestore Rules:**
+  No se permite DELETE.
+  Las reservas canceladas
+  permanecen en historial.
+end note
+
+@enduml

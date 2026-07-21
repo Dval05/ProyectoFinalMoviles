@@ -1,0 +1,111 @@
+@startuml Despliegue_HostSigchos
+skinparam dpi 300
+left to right direction
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+title Diagrama de Despliegue — HostSigchos
+caption Infraestructura y nodos del sistema
+
+skinparam backgroundColor #FAFAFA
+skinparam node {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+node "Dispositivo Android" as android <<device>> #A5D6A7 {
+    artifact "HostSigchos.apk" as apk
+    component [Flutter Runtime] as flutter_android
+    component [Firebase SDK Android] as fb_android
+    component [Geolocator / GPS] as gps
+    component [BiometricService\n(Huella/FaceID)] as bio
+    component [FlutterTTS] as tts
+    
+    apk --> flutter_android
+    flutter_android --> fb_android
+    flutter_android --> gps
+    flutter_android --> bio
+    flutter_android --> tts
+}
+
+node "Dispositivo iOS" as ios <<device>> #90CAF9 {
+    artifact "HostSigchos.ipa" as ipa
+    component [Flutter Runtime] as flutter_ios
+    component [Firebase SDK iOS] as fb_ios
+    
+    ipa --> flutter_ios
+    flutter_ios --> fb_ios
+}
+
+node "Navegador Web\n(Chrome, Firefox, Safari)" as browser <<device>> #CE93D8 {
+    artifact "React SPA\n(Vite Build)" as spa
+    component [Firebase JS SDK] as fb_web
+    
+    spa --> fb_web
+}
+
+cloud "Vercel CDN" as vercel <<cloud>> #212121 {
+    artifact "dist/\n(HTML + JS + CSS)" as dist
+    component [Edge Network\nGlobal] as edge
+    
+    dist --> edge
+}
+
+cloud "Google Cloud Platform" as gcp <<cloud>> #FFF9C4 {
+    node "Firebase" as firebase {
+        component [Firebase Authentication\n(Email + Google)] as auth
+        database "Cloud Firestore\nDB: hostsigchos" as firestore {
+            collections "usuarios"
+            collections "hosterias"
+            collections "habitaciones"
+            collections "reservas"
+            collections "notificaciones"
+            collections "resenas"
+            collections "promociones"
+            collections "propietarios"
+            collections "administradores"
+        }
+        component [Firebase Storage\n(Bucket de Imágenes)] as storage
+    }
+    
+    component [Google Geocoding API] as geocoding
+}
+
+cloud "APIs Externas" as external <<cloud>> #E8F5E9 {
+    component [Chatbot IA API\n(NLP + STT)] as chatbot_api
+    component [Weather API] as weather_api
+    component [OpenStreetMap\nTile Server] as osm
+}
+
+' Conexiones dispositivos → cloud
+fb_android --> auth : "HTTPS\n(gRPC)"
+fb_android --> firestore : "HTTPS\n(WebSocket)"
+fb_android --> storage : "HTTPS"
+flutter_android --> geocoding : "HTTPS REST"
+flutter_android --> chatbot_api : "HTTPS REST"
+flutter_android --> weather_api : "HTTPS REST"
+flutter_android --> osm : "HTTPS\n(Tile Requests)"
+
+fb_ios --> auth : "HTTPS"
+fb_ios --> firestore : "HTTPS"
+
+fb_web --> auth : "HTTPS"
+fb_web --> firestore : "HTTPS\n(onSnapshot\nRealtime)"
+
+browser --> vercel : "HTTPS"
+
+note right of firestore
+  **Persistencia:**
+  - databaseId: 'hostsigchos'
+  - Reglas de seguridad personalizadas
+  - Índices compuestos para queries
+end note
+
+note bottom of vercel
+  **Hosting Web:**
+  - vercel.json con rewrites
+  - SPA: todas las rutas → index.html
+  - Deploy automático desde Git
+end note
+
+@enduml

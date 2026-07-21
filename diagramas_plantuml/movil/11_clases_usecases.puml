@@ -1,0 +1,176 @@
+@startuml Clases_UseCases
+skinparam dpi 300
+title Diagrama de Clases — Casos de Uso (domain/usecases/)
+caption Cada UseCase ejecuta una única acción de negocio (Single Responsibility)
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+    HeaderBackgroundColor #FFE082
+}
+
+package "usecases/auth/" {
+    class LoginUseCase {
+        - _repository: AuthRepository
+        + call(email: String, password: String): Future<Usuario>
+    }
+    class RegisterUseCase {
+        - _repository: AuthRepository
+        + call(nombre, email, password, cedula, ...): Future<Usuario>
+    }
+    class GoogleSignInUseCase {
+        - _repository: AuthRepository
+        + call(): Future<Usuario>
+    }
+    class LogoutUseCase {
+        - _repository: AuthRepository
+        + call(): Future<void>
+    }
+    class ActualizarPerfilUseCase {
+        - _repository: AuthRepository
+        + call(uid, nombre, cedula, ...): Future<Usuario>
+    }
+    class VincularPasswordUseCase {
+        - _repository: AuthRepository
+        + call(password: String): Future<void>
+        + esUsuarioSoloGoogle(): Future<bool>
+    }
+    class VerificarEmailUseCase {
+        - _repository: AuthRepository
+        + enviar(): Future<void>
+        + verificar(): Future<bool>
+    }
+    class RecuperarPasswordUseCase {
+        - _repository: AuthRepository
+        + call(email: String): Future<void>
+    }
+    class EliminarCuentaUseCase {
+        - _repository: AuthRepository
+        + call(): Future<void>
+    }
+}
+
+package "usecases/hosteria/" {
+    class GetHosteriasUseCase {
+        - _repository: HosteriaRepository
+        + call(): Future<List<Hosteria>>
+    }
+    class GetHosteriaDetailUseCase {
+        - _repository: HosteriaRepository
+        + call(id: String): Future<Hosteria>
+    }
+}
+
+package "usecases/habitacion/" {
+    class GetHabitacionesUseCase {
+        - _repository: HabitacionRepository
+        + call(hosteriaId: String): Future<List<Habitacion>>
+    }
+    class CheckDisponibilidadUseCase {
+        - _repository: HabitacionRepository
+        + call(habitacionId, checkIn, checkOut, cantidad): Future<bool>
+    }
+    class GetTodasLasHabitacionesUseCase {
+        - _repository: HabitacionRepository
+        + call(): Future<List<Habitacion>>
+    }
+}
+
+package "usecases/reserva/" {
+    class CrearReservaUseCase {
+        - _repository: ReservaRepository
+        + call(reserva: Reserva): Future<Reserva>
+    }
+    class GetHistorialReservasUseCase {
+        - _repository: ReservaRepository
+        + call(usuarioId: String): Future<List<Reserva>>
+    }
+    class GetTodasLasReservasUseCase {
+        - _repository: ReservaRepository
+        + call(): Future<List<Reserva>>
+    }
+    class ActualizarEstadoReservaUseCase {
+        - _repository: ReservaRepository
+        + call(reservaId, nuevoEstado): Future<void>
+    }
+    class CancelarReservaUseCase {
+        - _repository: ReservaRepository
+        + call(reservaId: String): Future<void>
+    }
+}
+
+package "usecases/chatbot/" {
+    class EnviarMensajeUseCase {
+        - _repository: ChatbotRepository
+        + execute(text, contexto): Future<ChatMessage>
+    }
+    class EnviarAudioUseCase {
+        - _repository: ChatbotRepository
+        + execute(filePath, contexto): Future<ChatMessage>
+    }
+}
+
+package "usecases/geocoding/" {
+    class GetDireccionUseCase {
+        - _repository: GeocodingRepository
+        + call(lat, lng): Future<String>
+    }
+}
+
+package "usecases/resena/" {
+    class AgregarResenaUseCase {
+        - _repository: ResenaRepository
+        + call(resena: Resena): Future<void>
+    }
+    class GetResenasPorHosteriaUseCase {
+        - _repository: ResenaRepository
+        + call(hosteriaId): Stream<List<Resena>>
+    }
+}
+
+' === Dependencias hacia Repositories (Interfaces) ===
+LoginUseCase --> AuthRepository
+RegisterUseCase --> AuthRepository
+GoogleSignInUseCase --> AuthRepository
+LogoutUseCase --> AuthRepository
+ActualizarPerfilUseCase --> AuthRepository
+VincularPasswordUseCase --> AuthRepository
+VerificarEmailUseCase --> AuthRepository
+RecuperarPasswordUseCase --> AuthRepository
+EliminarCuentaUseCase --> AuthRepository
+
+GetHosteriasUseCase --> HosteriaRepository
+GetHosteriaDetailUseCase --> HosteriaRepository
+
+GetHabitacionesUseCase --> HabitacionRepository
+CheckDisponibilidadUseCase --> HabitacionRepository
+GetTodasLasHabitacionesUseCase --> HabitacionRepository
+
+CrearReservaUseCase --> ReservaRepository
+GetHistorialReservasUseCase --> ReservaRepository
+GetTodasLasReservasUseCase --> ReservaRepository
+ActualizarEstadoReservaUseCase --> ReservaRepository
+CancelarReservaUseCase --> ReservaRepository
+
+EnviarMensajeUseCase --> ChatbotRepository
+EnviarAudioUseCase --> ChatbotRepository
+
+GetDireccionUseCase --> GeocodingRepository
+
+AgregarResenaUseCase --> ResenaRepository
+GetResenasPorHosteriaUseCase --> ResenaRepository
+
+note bottom of LoginUseCase
+  Cada UseCase:
+  1. Recibe un Repository (interfaz) por constructor
+  2. Ejecuta UNA sola operación
+  3. Retorna resultado al ViewModel
+end note
+
+@enduml
+

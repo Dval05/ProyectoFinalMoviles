@@ -1,0 +1,99 @@
+@startuml Arquitectura_Componentes_HostSigchos
+skinparam dpi 300
+left to right direction
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+title Diagrama de Componentes — Sistema HostSigchos
+caption Arquitectura general del ecosistema: App Móvil + Panel Web + Backend Firebase
+
+skinparam componentStyle uml2
+skinparam backgroundColor #FAFAFA
+skinparam component {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+skinparam package {
+    BackgroundColor #F5F5F5
+    BorderColor #616161
+}
+skinparam database {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+}
+skinparam cloud {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+actor "Turista\n(Usuario Final)" as turista
+actor "Propietario\nde Hostería" as propietario
+actor "Administrador\ndel Sistema" as admin
+
+package "App Móvil Flutter" <<Rectangle>> #E3F2FD {
+    component [Presentation Layer\n(Views + Widgets + ViewModels)] as PRES
+    component [Domain Layer\n(Entities + UseCases + Repository Interfaces)] as DOM
+    component [Data Layer\n(Models + DataSources + Repository Impl)] as DATA
+    component [Core\n(Constants + Services + L10n + Utils)] as CORE
+
+    PRES --> DOM : "Usa UseCases\nvía ViewModels"
+    DOM --> DATA : "Repository\nInterface → Impl"
+    PRES ..> CORE : "Constantes, i18n"
+    DATA ..> CORE : "Paths, Config"
+}
+
+package "Panel Web React (Vite)" <<Rectangle>> #C8E6C9 {
+    component [Pages\n(Dashboard, Rooms, Reservations\nPromotions, Admin...)] as PAGES
+    component [AppContext\n(Estado Global + Firebase SDK)] as APPCTX
+    component [Config\n(firebase.js)] as WEBCONFIG
+
+    PAGES --> APPCTX : "useAppContext()"
+    APPCTX --> WEBCONFIG : "Inicializa Firebase"
+}
+
+cloud "Google Cloud Platform" {
+    component [Firebase Authentication\n(Email/Password + Google)] as AUTH
+    database "Cloud Firestore\n(DB: hostsigchos)" as FS
+    component [Firebase Storage\n(Imágenes)] as STORAGE
+    component [Google Geocoding API] as GEOCODING
+}
+
+cloud "APIs Externas" {
+    component [Chatbot IA API\n(Texto + Audio)] as CHATBOT
+    component [Weather API\n(Clima)] as WEATHER
+    component [OpenStreetMap\n(Tiles de Mapas)] as OSM
+}
+
+turista --> PRES : "Interactúa con\nla app móvil"
+propietario --> PAGES : "Gestiona su\nhostería via web"
+admin --> PAGES : "Administra\ntodo el sistema"
+
+DATA --> AUTH : "Login / Registro"
+DATA --> FS : "CRUD Datos"
+DATA --> STORAGE : "Subir/Leer Fotos"
+DATA --> GEOCODING : "Geocoding Inverso"
+DATA --> CHATBOT : "Enviar mensajes IA"
+DATA --> WEATHER : "Consultar clima"
+DATA --> OSM : "Renderizar mapas"
+
+APPCTX --> AUTH : "Login Web"
+APPCTX --> FS : "Gestión en\nTiempo Real"
+
+note right of FS
+  Base de datos nombrada: 
+  **hostsigchos**
+  (No usa la DB default)
+  
+  Colecciones:
+  - usuarios
+  - hosterias
+  - habitaciones
+  - reservas
+  - notificaciones
+  - resenas
+  - promociones
+  - propietarios
+  - administradores
+end note
+
+@enduml

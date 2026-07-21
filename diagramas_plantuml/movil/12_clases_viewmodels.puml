@@ -1,0 +1,242 @@
+@startuml Clases_ViewModels
+skinparam dpi 300
+title Diagrama de Clases — ViewModels (presentation/viewmodels/)
+caption Gestores de estado reactivo usando ChangeNotifier (Provider)
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #BBDEFB
+    BorderColor #0D47A1
+    HeaderBackgroundColor #90CAF9
+}
+
+abstract class ChangeNotifier {
+    + notifyListeners(): void
+    + dispose(): void
+}
+
+class AuthViewModel extends ChangeNotifier {
+    - loginUseCase: LoginUseCase
+    - registerUseCase: RegisterUseCase
+    - googleSignInUseCase: GoogleSignInUseCase
+    - logoutUseCase: LogoutUseCase
+    - actualizarPerfilUseCase: ActualizarPerfilUseCase
+    - vincularPasswordUseCase: VincularPasswordUseCase
+    - verificarEmailUseCase: VerificarEmailUseCase
+    - recuperarPasswordUseCase: RecuperarPasswordUseCase
+    - eliminarCuentaUseCase: EliminarCuentaUseCase
+    - authRepository: AuthRepository
+    --
+    - _usuarioActual: Usuario?
+    - _isLoading: bool
+    - _errorMessage: String?
+    - _keepSession: bool
+    - _isEmailVerified: bool
+    - _isUsuarioSoloGoogle: bool
+    - _isBiometricAvailable: bool
+    - _hasSavedCredentials: bool
+    ==
+    + login(email, password): Future<bool>
+    + register(nombre, email, password, cedula, ...): Future<bool>
+    + loginConGoogle(): Future<bool>
+    + loginConBiometria(): Future<bool>
+    + logout(): Future<void>
+    + actualizarPerfil(uid, nombre, ...): Future<bool>
+    + vincularPassword(password): Future<bool>
+    + enviarVerificacionEmail(): Future<bool>
+    + verificarEmail(): Future<bool>
+    + recuperarPassword(email): Future<bool>
+    + eliminarCuenta(): Future<bool>
+    + checkCurrentSession(): Future<void>
+    + setKeepSession(value): void
+    + clearError(): void
+}
+
+class HosteriaViewModel extends ChangeNotifier {
+    - _getHosteriasUseCase: GetHosteriasUseCase
+    - _getHosteriaDetailUseCase: GetHosteriaDetailUseCase
+    - _getHabitacionesUseCase: GetHabitacionesUseCase
+    --
+    - _hosterias: List<Hosteria>
+    - _hosteriasFiltradas: List<Hosteria>
+    - _hosteriaSeleccionada: Hosteria?
+    - _isLoading: bool
+    - _errorMessage: String?
+    - _searchQuery: String
+    - _filtroFechas: DateTimeRange?
+    - _filtroPrecios: RangeValues?
+    - _ordenActual: OrdenHosterias
+    ==
+    + cargarHosterias(): Future<void>
+    + cargarHosteriaDetalle(id): Future<void>
+    + filtrarHosterias(query): void
+    + cambiarOrden(orden): void
+    + aplicarFiltrosAvanzados(fechas, precios): void
+    + limpiarFiltrosAvanzados(): void
+    + destacadas: List<Hosteria> {computed}
+    + obtenerCercanas(lat, lng, count): List<Hosteria>
+}
+
+class HabitacionViewModel extends ChangeNotifier {
+    - getHabitacionesUseCase: GetHabitacionesUseCase
+    - checkDisponibilidadUseCase: CheckDisponibilidadUseCase
+    - getTodasLasHabitacionesUseCase: GetTodasLasHabitacionesUseCase
+    --
+    - _habitaciones: List<Habitacion>
+    - _todasLasHabitaciones: List<Habitacion>
+    - _disponibilidadPorHabitacion: Map<String, bool>
+    - _isLoading: bool
+    ==
+    + cargarHabitacionesPorHosteria(hosteriaId): Future<void>
+    + cargarTodasLasHabitaciones(): Future<void>
+    + verificarDisponibilidadTodas(checkIn, checkOut): Future<void>
+    + getDisponibilidad(habitacionId): bool?
+}
+
+class ReservaViewModel extends ChangeNotifier {
+    - _crearReservaUseCase: CrearReservaUseCase
+    - _getHistorialReservasUseCase: GetHistorialReservasUseCase
+    - _getTodasLasReservasUseCase: GetTodasLasReservasUseCase
+    - _actualizarEstadoReservaUseCase: ActualizarEstadoReservaUseCase
+    - _cancelarReservaUseCase: CancelarReservaUseCase
+    - _checkDisponibilidadUseCase: CheckDisponibilidadUseCase
+    --
+    - _reservas: List<Reserva>
+    - _reservaActual: Reserva?
+    - _isLoading: bool
+    ==
+    + crearReserva(reserva): Future<bool>
+    + cargarHistorial(usuarioId): Future<void>
+    + cargarTodasLasReservas(): Future<void>
+    + actualizarEstadoReserva(reservaId, estado): Future<bool>
+    + cancelarReserva(reservaId): Future<bool>
+    + cancelarReservaUsuario(reservaId): Future<bool>
+    + existeSolapamiento(usuarioId, checkIn, checkOut): Future<bool>
+    + verificarDisponibilidad(habitacion, checkIn, checkOut, cantidad): Future<bool>
+    - _verificarReservasNoConfirmadas(): Future<void>
+    - _enviarNotificacion(usuarioId, titulo, mensaje): Future<void>
+}
+
+class CarritoReservaViewModel extends ChangeNotifier {
+    - _items: List<ItemCarrito>
+    --
+    + items: List<ItemCarrito>
+    + isEmpty: bool
+    + itemCount: int
+    + totalCarrito: double {computed}
+    ==
+    + agregarItem(item: ItemCarrito): void
+    + eliminarItem(item: ItemCarrito): void
+    + vaciarCarrito(): void
+}
+
+class ChatbotViewModel extends ChangeNotifier {
+    - enviarMensajeUseCase: EnviarMensajeUseCase
+    - enviarAudioUseCase: EnviarAudioUseCase
+    - flutterTts: FlutterTts
+    --
+    - _messages: List<ChatMessage>
+    - _isLoading: bool
+    - _isAudioEnabled: bool
+    ==
+    + sendMessage(text, contexto): Future<void>
+    + sendAudioMessage(filePath, voiceLabel, contexto): Future<void>
+    + toggleAudio(): void
+    + updateLanguage(languageCode, welcomeMessage): void
+}
+
+class NotificacionViewModel extends ChangeNotifier {
+    - _repository: NotificacionRepository
+    --
+    - _notificaciones: List<NotificacionApp>
+    - _isLoading: bool
+    - _subscription: StreamSubscription?
+    ==
+    + listenToNotificaciones(usuarioId): void
+    + marcarLeida(id): Future<void>
+    + marcarTodasComoLeidas(usuarioId): Future<void>
+    + borrarTodas(usuarioId): Future<void>
+}
+
+class ResenaViewModel extends ChangeNotifier {
+    - agregarResenaUseCase: AgregarResenaUseCase
+    - getResenasPorHosteriaUseCase: GetResenasPorHosteriaUseCase
+    --
+    - _resenas: List<Resena>
+    - _isLoading: bool
+    - _subscription: StreamSubscription?
+    ==
+    + listenToResenas(hosteriaId): void
+    + agregarResena(resena): Future<bool>
+}
+
+class GeocodingViewModel extends ChangeNotifier {
+    - getDireccionUseCase: GetDireccionUseCase
+    --
+    + getDireccion(lat, lng): Future<String>
+}
+
+class LocaleViewModel extends ChangeNotifier {
+    - _locale: Locale
+    ==
+    + locale: Locale
+    + setLocale(locale): void
+}
+
+class WeatherViewModel extends ChangeNotifier {
+    - _weatherApi: WeatherApi
+    --
+    + temperatura: String?
+    + descripcion: String?
+    + icono: String?
+    ==
+    + cargarClima(lat, lng): Future<void>
+}
+
+enum OrdenHosterias {
+    ninguno
+    precioMenorAMayor
+    precioMayorAMenor
+    nombreAZ
+    nombreZA
+    ratingMayorAMenor
+    ratingMenorAMayor
+}
+
+class ItemCarrito {
+    + habitacion: Habitacion
+    + fechaCheckIn: DateTime
+    + fechaCheckOut: DateTime
+    + numHuespedes: int
+    + numHabitaciones: int
+    + notas: String?
+    + esParaOtraPersona: bool
+    + nombreOtraPersona: String?
+    --
+    + noches: int {computed}
+    + precioTotal: double {computed}
+}
+
+HosteriaViewModel --> OrdenHosterias : "usa"
+CarritoReservaViewModel --> ItemCarrito : "contiene *"
+
+' === LAYOUT INVISIBLE GRID ===
+AuthViewModel -[hidden]right-> HosteriaViewModel
+HosteriaViewModel -[hidden]right-> HabitacionViewModel
+
+AuthViewModel -[hidden]down-> ReservaViewModel
+HosteriaViewModel -[hidden]down-> CarritoReservaViewModel
+HabitacionViewModel -[hidden]down-> ChatbotViewModel
+
+ReservaViewModel -[hidden]down-> NotificacionViewModel
+CarritoReservaViewModel -[hidden]down-> ResenaViewModel
+ChatbotViewModel -[hidden]down-> GeocodingViewModel
+
+NotificacionViewModel -[hidden]right-> LocaleViewModel
+LocaleViewModel -[hidden]right-> WeatherViewModel
+
+@enduml

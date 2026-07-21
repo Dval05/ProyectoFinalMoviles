@@ -1,0 +1,104 @@
+@startuml Actividad_Autenticacion
+skinparam dpi 300
+title Diagrama de Actividad — Proceso de Autenticación
+caption Decisiones de login con múltiples métodos
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+
+start
+
+:Usuario abre la app;
+
+:SplashScreen verifica\nsesión activa;
+
+if (¿Sesión activa?) then (Sí)
+    :checkCurrentSession()\nretorna Usuario;
+    :Navegar a MainScreen;
+    stop
+else (No)
+    :Navegar a LandingScreen;
+endif
+
+:Usuario selecciona acción;
+
+switch (Método elegido?)
+case (Registrarse)
+    :Llenar formulario completo:\nnombre, email, password,\ncédula, fecha, teléfono,\nubicación, foto;
+    
+    :RegisterUseCase → Firebase Auth\ncreateUser + Firestore doc;
+    
+    if (¿Registro exitoso?) then (Sí)
+        :Enviar correo de\nverificación automáticamente;
+        :Navegar a VerificacionScreen;
+        
+        :Usuario verifica email\nen su bandeja de correo;
+        
+        :Navegar a MainScreen;
+    else (No)
+        :Mostrar error:\nEmail ya existe / Datos inválidos;
+        stop
+    endif
+
+case (Login Email)
+    :Ingresar email + contraseña;
+    
+    :LoginUseCase → Firebase Auth\nsignInWithEmailAndPassword;
+    
+    if (¿Login exitoso?) then (Sí)
+        :Verificar estado de email;
+        
+        if (¿Biometría disponible?) then (Sí)
+            :Guardar credenciales\nen FlutterSecureStorage;
+        else (No)
+        endif
+        
+        :Navegar a MainScreen;
+    else (No)
+        :Mostrar error:\nCredenciales incorrectas;
+        
+        if (¿Olvidó contraseña?) then (Sí)
+            :Navegar a ForgotPasswordScreen;
+            :Enviar correo de\nrecuperación;
+            :Volver a LoginScreen;
+        else (No)
+            stop
+        endif
+    endif
+
+case (Login Google)
+    :GoogleSignIn().signIn()\n→ Obtener idToken;
+    
+    :signInWithCredential\n(GoogleAuthProvider);
+    
+    if (¿Login exitoso?) then (Sí)
+        :Verificar si es usuario\nsolo Google (sin password);
+        :Navegar a MainScreen;
+    else (No)
+        :Mostrar error;
+        stop
+    endif
+
+case (Login Biometría)
+    if (¿Biometría disponible\ny credenciales guardadas?) then (Sí)
+        :BiometricService.authenticate();
+        
+        if (¿Autenticación exitosa?) then (Sí)
+            :Obtener credenciales\nde SecureStorage;
+            :LoginUseCase(email, password);
+            :Navegar a MainScreen;
+        else (No)
+            :Cancelado o fallido;
+            stop
+        endif
+    else (No)
+        :Mostrar mensaje:\n"Inicia sesión normalmente primero";
+        stop
+    endif
+endswitch
+
+stop
+
+@enduml

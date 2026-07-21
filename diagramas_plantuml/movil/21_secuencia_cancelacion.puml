@@ -1,0 +1,74 @@
+@startuml Secuencia_Cancelacion
+skinparam dpi 300
+title Diagrama de Secuencia — Cancelación de Reserva (Manual + Auto 48h)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "HistorialReservasScreen" as HRS
+participant "ReservaViewModel" as RVM
+participant "CancelarReservaUseCase" as CUC
+participant "GetHistorialUseCase" as GHUC
+participant "ReservaRepository" as RR
+participant "Firestore" as FS
+
+== Cargar historial con auto-cancelación ==
+
+U -> HRS : Abre HistorialReservasScreen
+
+HRS -> RVM : cargarHistorial(usuarioId)
+activate RVM
+
+RVM -> GHUC : call(usuarioId)
+GHUC -> RR : getReservasPorUsuario(usuarioId)
+RR -> FS : query reservas where usuarioId
+FS --> RR : List<ReservaModel>
+RR --> GHUC : List<Reserva>
+GHUC --> RVM : List<Reserva>
+
+RVM -> RVM : _verificarReservasNoConfirmadas()
+
+loop Para cada reserva con estado 'pendiente' o 'en_revision'
+    RVM -> RVM : limiteConfirmacion =\nreserva.fechaCreacion + 48 horas
+    
+    alt DateTime.now() > limiteConfirmacion (EXPIRADA)
+        RVM -> CUC : call(reserva.id)
+        CUC -> RR : cancelarReserva(reserva.id)
+        RR -> FS : update('reservas/{id}',\n{ estado: 'cancelada' })
+        FS --> RR : Actualizado
+        RVM -> RVM : reserva.copyWith(estado: 'cancelada')
+    else Aún dentro del plazo
+        RVM -> RVM : Mantiene estado actual
+    end
+end
+
+RVM --> HRS : notifyListeners()\nLista actualizada
+deactivate RVM
+
+== Cancelación manual por el usuario ==
+
+U -> HRS : Pulsa "Cancelar" en reserva activa
+
+HRS -> RVM : cancelarReservaUsuario(reservaId)
+activate RVM
+RVM -> RVM : _setLoading(true)
+
+RVM -> CUC : call(reservaId)\n[timeout: 5 segundos]
+CUC -> RR : cancelarReserva(reservaId)
+RR -> FS : update('reservas/{id}',\n{ estado: 'cancelada' })
+FS --> RR : Actualizado
+RR --> CUC : void
+CUC --> RVM : void
+
+RVM -> RVM : Actualiza estado local\nen _reservas[]
+
+RVM -> RVM : _setLoading(false)
+RVM --> HRS : return true
+deactivate RVM
+
+HRS -> HRS : Muestra SnackBar\n"Reserva cancelada exitosamente"
+
+@enduml

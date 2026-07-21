@@ -1,0 +1,110 @@
+@startuml Caso_Uso_Propietario
+skinparam dpi 300
+title Diagrama de Casos de Uso — Actor: Propietario de Hostería
+caption Funcionalidades del panel web para propietarios
+
+skinparam backgroundColor #FAFAFA
+skinparam usecase {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+}
+
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 40
+
+actor "Propietario\nde Hostería" as P #FFE0B2
+
+rectangle "Sistema HostSigchos — Panel Web (Propietario)" {
+
+    package "Autenticación Web" {
+        usecase "Iniciar Sesión\nen el Panel" as UC_LOGIN
+        usecase "Cerrar Sesión" as UC_LOGOUT
+    }
+
+    package "Dashboard" {
+        usecase "Ver resumen\ngeneral (KPIs)" as UC_DASH
+        usecase "Ver total de\nreservas activas" as UC_KPIRES
+        usecase "Ver ingresos\nestimados" as UC_KPIING
+        usecase "Ver total de\nhabitaciones" as UC_KPIHAB
+    }
+
+    package "Gestión de Habitaciones" {
+        usecase "Ver lista de\nhabitaciones" as UC_ROOMS
+        usecase "Cambiar disponibilidad\n(Abrir/Cerrar)" as UC_TOGGLE
+        usecase "Editar datos de\nhabitación (precio, desc)" as UC_EDIT
+        usecase "Establecer cierre\ntemporal con fecha" as UC_CLOSE
+    }
+
+    package "Gestión de Reservas" {
+        usecase "Ver todas las reservas\nde mi hostería" as UC_VIEWRES
+        usecase "Confirmar reserva\n(aprobar pago)" as UC_CONFIRM
+        usecase "Rechazar/Cancelar\nreserva" as UC_REJECT
+        usecase "Cambiar estado\nde reserva" as UC_STATUS
+        usecase "Ver nombre del\ncliente de la reserva" as UC_CLIENT
+    }
+
+    package "Gestión de Promociones" {
+        usecase "Crear nueva\npromoción" as UC_ADDPROMO
+        usecase "Aplicar descuento\na habitaciones" as UC_DISCOUNT
+        usecase "Eliminar promoción\n(restaurar precios)" as UC_DELPROMO
+        usecase "Ver promociones\nactivas" as UC_VIEWPROMO
+    }
+
+    package "Gestión de Clientes" {
+        usecase "Ver lista de\nclientes que reservaron" as UC_CLIENTS
+    }
+
+    package "Configuración" {
+        usecase "Editar datos de\nla hostería" as UC_SETTINGS
+        usecase "Actualizar descripción\ny servicios" as UC_DESC
+        usecase "Actualizar contacto\ny dirección" as UC_CONTACT
+    }
+}
+
+' === Conexiones ===
+P --> UC_LOGIN
+P --> UC_LOGOUT
+P --> UC_DASH
+P --> UC_ROOMS
+P --> UC_TOGGLE
+P --> UC_EDIT
+P --> UC_VIEWRES
+P --> UC_CONFIRM
+P --> UC_REJECT
+P --> UC_ADDPROMO
+P --> UC_DELPROMO
+P --> UC_CLIENTS
+P --> UC_SETTINGS
+
+' === Relaciones ===
+UC_DASH ..> UC_KPIRES : <<include>>
+UC_DASH ..> UC_KPIING : <<include>>
+UC_DASH ..> UC_KPIHAB : <<include>>
+
+UC_TOGGLE ..> UC_CLOSE : <<extend>>
+UC_VIEWRES ..> UC_STATUS : <<include>>
+UC_VIEWRES ..> UC_CLIENT : <<include>>
+UC_STATUS ..> UC_CONFIRM : <<extend>>
+UC_STATUS ..> UC_REJECT : <<extend>>
+
+UC_ADDPROMO ..> UC_DISCOUNT : <<include>>
+UC_DELPROMO ..> UC_VIEWPROMO : <<include>>
+
+UC_SETTINGS ..> UC_DESC : <<include>>
+UC_SETTINGS ..> UC_CONTACT : <<include>>
+
+note right of UC_CONFIRM
+  Al confirmar, se genera
+  una notificación automática
+  al turista en la app móvil.
+end note
+
+note right of UC_DISCOUNT
+  El descuento modifica directamente
+  el campo precioPorNoche de la
+  habitación en Firestore, guardando
+  el precio original en precioOriginal.
+end note
+
+@enduml

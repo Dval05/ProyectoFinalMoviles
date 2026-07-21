@@ -1,0 +1,117 @@
+@startuml Actividad_Flujo_Reserva
+skinparam dpi 300
+title Diagrama de Actividad — Proceso Completo de Reserva
+caption Desde la exploración hasta la confirmación
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+skinparam activity {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+start
+
+:Usuario abre la app;
+
+:Explora catálogo de hosterías;
+note right
+  HosteriaViewModel.cargarHosterias()
+  Puede buscar, filtrar por precio,
+  ordenar por rating/nombre
+end note
+
+:Selecciona una hostería;
+
+:Ve detalle de la hostería\n(fotos, servicios, ubicación, reseñas);
+
+:Pulsa "Ver Habitaciones";
+
+:Se cargan habitaciones\nde esa hostería;
+note right
+  HabitacionViewModel
+  .cargarHabitacionesPorHosteria()
+end note
+
+:Selecciona fechas\nCheck-In / Check-Out;
+
+:Sistema verifica disponibilidad\nde todas las habitaciones;
+note right
+  CheckDisponibilidadUseCase
+  Compara reservas existentes
+  vs cantidadTotal de la habitación
+end note
+
+if (¿Habitación disponible?) then (Sí)
+    :Muestra indicador ✅ Disponible;
+else (No)
+    :Muestra indicador ❌ No disponible;
+    :Sugiere cambiar fechas;
+    stop
+endif
+
+:Usuario pulsa "Reservar"\nen la habitación deseada;
+
+:Navega a CrearReservaScreen;
+
+:Configura datos de reserva:
+- Número de huéspedes (máx 8)
+- Número de habitaciones
+- Notas especiales;
+
+if (¿Es para otra persona?) then (Sí)
+    :Ingresa nombre de\nla otra persona;
+else (No)
+    :Reserva a nombre propio;
+endif
+
+:Sistema calcula precio total\n= noches × precio × numHabitaciones;
+
+:Pulsa "Agregar al Carrito";
+note right
+  CarritoReservaViewModel
+  .agregarItem(ItemCarrito)
+end note
+
+if (¿Agregar más habitaciones?) then (Sí)
+    :Vuelve a lista de habitaciones;
+    ' Loop back
+else (No)
+    :Navega a CheckoutReservaScreen;
+endif
+
+:Revisa resumen del carrito:
+- Detalle de cada item
+- Total general;
+
+:Pulsa "Confirmar Reserva";
+
+partition "Por cada item del carrito" {
+    :ReservaViewModel.crearReserva();
+    
+    :CrearReservaUseCase → ReservaRepository;
+    
+    :Firestore: crear documento\nen colección 'reservas'\nestado = 'pendiente';
+    
+    :Enviar notificación:\n"Reserva Creada Exitosamente";
+}
+
+:Vaciar carrito;
+note right
+  CarritoReservaViewModel
+  .vaciarCarrito()
+end note
+
+:Navegar a ConfirmacionReservaScreen;
+
+:Mostrar resumen exitoso\ny código de reserva;
+
+:Usuario pulsa "Volver al Inicio";
+
+:Navegar a MainScreen (Home);
+
+stop
+
+@enduml

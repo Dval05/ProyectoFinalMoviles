@@ -1,0 +1,77 @@
+@startuml Secuencia_Notificaciones
+skinparam dpi 300
+title Diagrama de Secuencia — Sistema de Notificaciones en Tiempo Real
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+participant "ReservaViewModel\n(Generador)" as RVM
+participant "Firestore" as FS
+participant "NotificacionViewModel\n(Listener)" as NVM
+participant "NotificacionesScreen" as NS
+actor "Usuario" as U
+
+== Generación de notificaciones ==
+
+RVM -> FS : collection('notificaciones').add({\n  usuarioId: uid,\n  titulo: 'Reserva Creada',\n  mensaje: 'Tu reserva está pendiente...',\n  fecha: serverTimestamp(),\n  leida: false,\n  tipo: 'reserva'\n})
+FS --> RVM : DocumentReference
+
+note over RVM
+  Las notificaciones se generan
+  en estos eventos:
+  - Reserva creada
+  - Estado cambiado a 'en_revision'
+  - Estado cambiado a 'confirmada'
+  - Estado cambiado a 'cancelada'
+end note
+
+== Escucha en tiempo real ==
+
+U -> NS : Abre NotificacionesScreen
+NS -> NVM : listenToNotificaciones(usuarioId)
+activate NVM
+
+NVM -> FS : onSnapshot(\n  query('notificaciones')\n  .where('usuarioId' == uid)\n  .orderBy('fecha', desc)\n)
+activate FS
+
+FS --> NVM : Stream<List<NotificacionApp>>
+NVM -> NVM : _notificaciones = data
+NVM -> NVM : notifyListeners()
+NVM --> NS : UI actualizada con lista
+
+note over FS, NVM
+  El listener se mantiene activo.
+  Cada vez que se agrega/modifica
+  una notificación, la UI se actualiza
+  automáticamente.
+end note
+
+== Marcar como leída ==
+
+U -> NS : Pulsa una notificación
+NS -> NVM : marcarLeida(id)
+NVM -> FS : update('notificaciones/{id}',\n{ leida: true })
+FS --> NVM : Actualizado → Stream emite
+
+== Marcar todas como leídas ==
+
+U -> NS : Pulsa "Marcar todas como leídas"
+NS -> NVM : marcarTodasComoLeidas(usuarioId)
+NVM -> FS : Batch update:\nleida = true (todas del usuario)
+FS --> NVM : Actualizado → Stream emite
+
+== Borrar todas ==
+
+U -> NS : Pulsa "Borrar todas"
+NS -> NVM : borrarTodas(usuarioId)
+NVM -> FS : Batch delete\n(todas las del usuario)
+FS --> NVM : Eliminadas → Stream emite
+deactivate FS
+
+NVM -> NVM : _notificaciones = []
+NVM --> NS : UI vacía
+deactivate NVM
+
+@enduml

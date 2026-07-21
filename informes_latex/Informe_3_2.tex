@@ -1,0 +1,241 @@
+\documentclass[12pt,letterpaper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{setspace}
+
+\geometry{top=2.4cm,bottom=2.4cm,left=2.4cm,right=2.4cm}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.22}
+
+% Paleta de colores de HostSigchos
+\definecolor{sigchosGreen}{HTML}{41C717}
+\definecolor{sigchosDarkGreen}{HTML}{1CA81F}
+\definecolor{sigchosDark}{HTML}{172033}
+\definecolor{sigchosMuted}{HTML}{64748B}
+\definecolor{sigchosLight}{HTML}{E8EEF5}
+\definecolor{codeBack}{HTML}{F6F8FA}
+\definecolor{codeFrame}{HTML}{D0D7DE}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=sigchosDarkGreen,
+  citecolor=sigchosDarkGreen,
+  urlcolor=sigchosGreen,
+  pdftitle={Informe 3.2 del proyecto HostSigchos},
+  pdfauthor={Andrade Danna, Lainez Ricardo, Santi Jeancarlo, Tufiño Erick}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textcolor{sigchosMuted}{HostSigchos}}
+\rhead{\textcolor{sigchosMuted}{Informe 3.2 - Avance Tercer Parcial}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\chapter}{\normalfont\Huge\bfseries\color{sigchosDarkGreen}}{\thechapter}{1em}{}
+\titleformat{\section}{\normalfont\Large\bfseries\color{sigchosDarkGreen}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{sigchosGreen}}{\thesubsection}{1em}{}
+
+\lstdefinestyle{codeblock}{
+  backgroundcolor=\color{codeBack},
+  frame=single,
+  rulecolor=\color{codeFrame},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries\color{sigchosDarkGreen},
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\newcommand{\tech}[1]{\textbf{\textcolor{sigchosDarkGreen}{#1}}}
+\newcommand{\important}[1]{\textbf{\textcolor{sigchosGreen}{#1}}}
+\newcommand{\pathtext}[1]{\texttt{\detokenize{#1}}}
+
+\begin{document}
+
+% ═══════════════ PORTADA ═══════════════
+\begin{titlepage}
+\thispagestyle{empty}
+\newgeometry{left=2cm, right=1cm, top=2cm, bottom=2cm}
+\begin{tikzpicture}[overlay, fill opacity=0.7]
+    \fill[sigchosGreen] (15,-27) rectangle (18,4);
+    \rotatebox{-90}{\fill[sigchosDarkGreen] (0,-9) rectangle (2,20);}
+\end{tikzpicture}
+\begin{spacing}{1.5}
+{\huge \bfseries UNIVERSIDAD DE LAS FUERZAS ARMADAS}\\[10pt]
+\centering
+\end{spacing}
+\vspace{1cm}
+\begin{minipage}{2cm}
+\hspace{0.5cm}\rotatebox{90}{\huge INGENIERIA EN SOFTWARE}
+\end{minipage}\hfill
+\begin{minipage}{9cm}
+    % [Espacio para: Logo de la universidad o carrera]
+    \centering
+    \vspace{2cm}
+    \textit{[Logo ESPE]}
+\end{minipage}\hfill
+\begin{minipage}{3cm}
+\hspace{1cm}
+\vspace{1.cm}
+\begin{spacing}{4}
+ {\color{white}\fontsize{60}{70}\selectfont\bfseries 2\\0\\2\\6}
+\end{spacing}
+\end{minipage}
+
+\vspace{3cm}
+\begin{flushleft}
+{\LARGE
+\textbf{Estudiantes:}\\
+\hspace{1cm} Andrade Danna, Lainez Ricardo, \\
+\hspace{1cm} Santi Jeancarlo, Tufiño Erick\\[10pt]
+\textbf{Asignatura:} Desarrollo de Aplicaciones Móviles\\
+\textbf{Tema:} Informe 3.2 -- Avance Tercer Parcial HostSigchos\\
+\textbf{NRC:} 30738\\
+\textbf{Docente:} Doris Karina Chicaiza Angamarca\\
+\textbf{Fecha:} \today\\}
+\end{flushleft}
+\end{titlepage}
+\restoregeometry
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\chapter*{Resumen ejecutivo}
+\addcontentsline{toc}{chapter}{Resumen ejecutivo}
+Este documento técnico corresponde al Informe 3.2 (Deber del tercer parcial) y describe el progreso y avance tecnológico de HostSigchos, un sistema multiplataforma de reservas hoteleras. Se detallan exhaustivamente la arquitectura aplicada (Clean Architecture), la estructura del código, las pantallas finalizadas, la implementación con Firebase y las áreas que se encuentran en consolidación, como las fases formales de pruebas unitarias (Testing).
+
+\chapter{Arquitectura aplicada y estructura}
+
+HostSigchos ha logrado un avance del 95\% en su fase de desarrollo funcional. La aplicación móvil se ha orquestado íntegramente bajo el estándar de \tech{Clean Architecture} con el patrón \tech{MVVM (Model-View-ViewModel)} y utilizando \tech{Provider} para la inyección y gestión del estado, garantizando la escalabilidad. Cabe destacar que el diseño, refactorización y depuración de la arquitectura fue asistido de manera eficiente por \textbf{Antigravity}, una herramienta avanzada de inteligencia artificial agentiva que contribuyó a la estandarización del código.
+
+\begin{itemize}[label=\color{sigchosDarkGreen}$\blacksquare$]
+    \item \textbf{Capa Domain:} Consta de 7 Entidades (Usuario, Hosteria, Habitacion, Reserva, Resena, Notificacion, ChatMessage) y más de 25 \pathtext{UseCases} completamente desvinculados de librerías externas.
+    \item \textbf{Capa Data:} Implementación de 7 DataSources conectados a Firebase y 3 DataSources remotos para consumo de APIs REST (\tech{OpenWeatherMap}, Geocoding y \tech{Gemini AI}).
+    \item \textbf{Capa Presentation:} Un conjunto robusto de 11 \pathtext{ViewModels} operando reactivamente sobre un catálogo de 19 pantallas completamente diseñadas.
+\end{itemize}
+
+\section{Estructura del proyecto (Clean Architecture)}
+La raíz \pathtext{lib/} se ha segmentado estratégicamente de la siguiente forma:
+
+\begin{tcolorbox}[colback=codeBack,colframe=codeFrame,boxrule=0.8pt,arc=6pt]
+\begin{verbatim}
+HostSigchos/lib/
+|-- core/                     # Validadores, constantes, l10n
+|-- data/                     # Acceso a Firestore, APIs, Models JSON
+|-- domain/                   # Entidades Vainilla y Casos de uso core
+|-- presentation/             # Pantallas UI (19 pantallas en total)
+|   |-- routes/               # Tabla de enrutamiento estricto
+|   |-- viewmodels/           # Gestores de estado MVVM (Provider)
+|   |-- views/                # Pantallas UI reales
+|   +-- widgets/              # Componentes UI reutilizables
+|-- injection_container.dart  # Locator (GetIt) para inyección de dependencias
++-- main.dart                 # Inicializador App y MultiProvider
+\end{verbatim}
+\end{tcolorbox}
+
+\chapter{Desarrollo y funcionalidad}
+
+\section{Pantallas desarrolladas y Hardware}
+Se completó el desarrollo de \textbf{19 pantallas funcionales} (superando ampliamente el mínimo de 4). El flujo completo del turista incluye el ingreso, catálogo, mapa con \tech{Geolocator/Compass}, asistente virtual y creación de reservas.
+
+\begin{itemize}
+    \item \textbf{Autenticación:} Login, Register, Forgot Password, Verificación (integrando \tech{local\_auth} para biometría y Firebase Google Sign-In).
+    \item \textbf{Exploración:} Home (Dashboard), HosteríasList, HosteríaDetail, Mapa (integrado con \tech{flutter\_map} nativo sin costos de Google Maps).
+    \item \textbf{IA y Hardware:} Chatbot interactivo (texto a voz con \tech{flutter\_tts} y grabación de audio con el micrófono del hardware).
+    \item \textbf{Transaccional:} Habitaciones, CrearReserva, Checkout, Confirmación (con persistencia atómica en Firestore).
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/dashboard.png}
+  \caption{Catálogo de exploración y búsqueda reactiva de hosterías.}
+\end{figure}
+
+\section{Base de Datos utilizada: Cloud Firestore}
+Toda la persistencia de datos (usuarios, inventario, precios y transacciones) se maneja a través de \tech{Cloud Firestore}. Al ser NoSQL documental, se emplean id's de referencia para simular las claves foráneas y unificar las consultas en los repositorios locales. Se configuraron las \textit{Security Rules} para bloquear intrusiones.
+
+Se implementó además \tech{Firebase Storage} para la carga y descarga masiva de los avatares (imágenes de perfil capturadas con \tech{image\_picker}) e imágenes pesadas del carrusel de las hosterías.
+
+\section{Código principal explicado: Prevención del Overbooking}
+El principal logro técnico fue resolver la asincronía en las reservas para evitar la sobreventa. Se utilizó una validación booleana estricta en el archivo \pathtext{verificar_disponibilidad_usecase.dart}:
+
+\begin{lstlisting}[style=codeblock,caption={Lógica de validación matemática en el Caso de Uso de Dominio.}]
+Future<bool> call(Habitacion habitacion, DateTime checkIn, DateTime checkOut, int cantidadSolicitada) async {
+    // 1. Obtiene las reservas desde el repositorio (Data Layer)
+    final reservas = await _repository.getReservasPorHabitacion(habitacion.id);
+
+    int habitacionesOcupadas = 0;
+    for (final r in reservas) {
+      if (r.estaActiva) {
+        // Logica matematica para cruce de fechas
+        if (checkIn.isBefore(r.fechaCheckOut) && checkOut.isAfter(r.fechaCheckIn)) {
+          habitacionesOcupadas += r.numHabitaciones;
+        }
+      }
+    }
+    return (habitacion.cantidadTotal - habitacionesOcupadas) >= cantidadSolicitada;
+}
+\end{lstlisting}
+
+\chapter{Problemas, evidencia y pendientes}
+
+\section{Evidencia de funcionamiento}
+La aplicación móvil se conecta correctamente con el backend de Firebase en la nube y realiza el despliegue del mapa con el GPS del hardware. Las notificaciones Push (vía \tech{flutter\_local\_notifications}) operan cuando el estado de una reserva cambia en el panel web.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/checkout_success.png}
+  \caption{Flujo transaccional finalizado exitosamente.}
+\end{figure}
+
+\section{Problemas encontrados en la iteración actual}
+\begin{itemize}[label=\color{red}$\blacksquare$]
+    \item \textbf{Latencia de consultas complejas:} Al inicio, la pantalla de "Hosterías" colapsaba si la latencia era alta. Se solucionó añadiendo el paquete \tech{shimmer} para brindar un esqueleto de carga y no bloquear la UI principal.
+    \item \textbf{Rate limit de Gemini API:} La capa del chatbot fallaba ocasionalmente con código \texttt{429}. Se debió abstraer el manejo del error devolviendo un estado \pathtext{Failure} ordenado al \pathtext{ViewModel} para notificar al usuario que reintente luego de unos segundos.
+\end{itemize}
+
+\section{Mejoras pendientes y siguientes pasos}
+Si bien se han superado todos los hitos del tercer parcial, siempre existen oportunidades de mejora para el sistema en producción.
+
+\textbf{Mejoras pendientes:}
+\begin{itemize}[label=\color{orange}$\blacksquare$]
+    \item \textbf{Pruebas de software formales (Testing):} La implementación exhaustiva de las pruebas automatizadas (Tests Unitarios utilizando \tech{flutter\_test} y \tech{mockito}, así como tests de integración con \tech{Appium}) se encuentra programada para la última fase del desarrollo antes de la generación del entregable final.
+    \item \textbf{Firma del APK y Despliegue en Tiendas:} El paso inminente es generar las llaves criptográficas seguras (\textit{Keystore}) para firmar el APK en modo Release y enviarlo a Firebase App Distribution o a la Google Play Store.
+    \item \textbf{Gestión de caché offline:} Añadir persistencia de caché local para que los turistas puedan consultar sus reservas aunque no tengan conexión a internet en ciertas zonas geográficas de montaña.
+\end{itemize}
+
+Todos los conflictos de dependencias actuales y los \textit{warnings} del linter fueron superados exitosamente, lo que deja el proyecto con una base sólida y limpia para poder afrontar la fase de pruebas formales sin inconvenientes técnicos.
+
+\bibliographystyle{ieeetr}
+\bibliography{referencias}
+
+\end{document}

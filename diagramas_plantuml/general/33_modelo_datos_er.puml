@@ -1,0 +1,155 @@
+@startuml Modelo_Datos_ER
+skinparam dpi 300
+title Diagrama Entidad-Relación — Cloud Firestore
+caption Colecciones y relaciones del backend de HostSigchos
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #FFF9C4
+    BorderColor #F57F17
+    HeaderBackgroundColor #FFE082
+}
+
+entity "usuarios" as U {
+    * id : String <<PK>> (UID Firebase Auth)
+    --
+    nombre : String
+    email : String
+    cedula : String
+    fechaNacimiento : Timestamp
+    telefono : String
+    ubicacion : String
+    fotoUrl : String
+    fechaRegistro : Timestamp
+    idioma : String ("es" | "en")
+}
+
+entity "hosterias" as H {
+    * id : String <<PK>> (Auto)
+    --
+    nombre : String
+    descripcion : String
+    direccion : String
+    latitud : Number
+    longitud : Number
+    telefono : String
+    email : String
+    sitioWeb : String
+    rating : Number
+    totalResenas : Number
+    imagenes : Array<String>
+    servicios : Array<String>
+    activa : Boolean
+    precioPorNoche : Number
+}
+
+entity "habitaciones" as HAB {
+    * id : String <<PK>> (Auto)
+    --
+    * hosteriaId : String <<FK>>
+    tipo : String
+    descripcion : String
+    capacidad : Number
+    precioPorNoche : Number
+    precioOriginal : Number (Opcional)
+    imagenes : Array<String>
+    amenidades : Array<String>
+    disponible : Boolean
+    cantidadTotal : Number
+    closedUntil : Timestamp (Opcional)
+}
+
+entity "reservas" as R {
+    * id : String <<PK>> (Auto)
+    --
+    * usuarioId : String <<FK>>
+    * hosteriaId : String <<FK>>
+    * habitacionId : String <<FK>>
+    fechaCheckIn : Timestamp
+    fechaCheckOut : Timestamp
+    numHuespedes : Number
+    numHabitaciones : Number
+    precioTotal : Number
+    estado : String (pendiente|en_revision|confirmada|cancelada|completada)
+    fechaCreacion : Timestamp
+    notas : String
+    nombreHosteria : String
+    tipoHabitacion : String
+    esParaOtraPersona : Boolean
+    nombreOtraPersona : String
+}
+
+entity "notificaciones" as N {
+    * id : String <<PK>> (Auto)
+    --
+    * usuarioId : String <<FK>>
+    titulo : String
+    mensaje : String
+    fecha : Timestamp
+    leida : Boolean
+    tipo : String (reserva|oferta|sistema)
+}
+
+entity "resenas" as RES {
+    * id : String <<PK>> (Auto)
+    --
+    * hosteriaId : String <<FK>>
+    * usuarioId : String <<FK>>
+    nombreUsuario : String
+    comentario : String
+    rating : Number (1-5)
+    fecha : Timestamp
+}
+
+entity "promociones" as PROM {
+    * id : String <<PK>> (Auto)
+    --
+    * hosteriaId : String <<FK>>
+    nombre : String
+    descripcion : String
+    discount : Number (%)
+    fechaInicio : Timestamp
+    fechaFin : Timestamp
+    habitacionesAplicables : Array<String>
+    createdAt : Timestamp
+}
+
+entity "propietarios" as PROP {
+    * id : String <<PK>> (UID Firebase Auth)
+    --
+    nombre : String
+    email : String
+    telefono : String
+}
+
+entity "administradores" as ADM {
+    * email : String <<PK>>
+    --
+    nombre : String
+    creadoEn : Timestamp
+}
+
+' Relaciones (Aunque es NoSQL, representamos la lógica relacional por FKs)
+U -[hidden]down-> H
+H -[hidden]down-> HAB
+HAB -[hidden]down-> R
+N -[hidden]down-> RES
+RES -[hidden]down-> PROM
+U -[hidden]right-> N
+
+U ||--o{ R : realiza
+U ||--o{ N : recibe
+U ||--o{ RES : escribe
+
+H ||--o{ HAB : contiene
+H ||--o{ R : recibe
+H ||--o{ RES : tiene
+H ||--o{ PROM : ofrece
+
+HAB ||--o{ R : reservada en
+
+PROP ||--|| H : administra
+@enduml

@@ -1,0 +1,135 @@
+@startuml Caso_Uso_General
+skinparam dpi 300
+title Diagrama General de Casos de Uso — Todos los Actores
+caption Vista panorámica de todos los actores y sus interacciones con el sistema
+
+skinparam backgroundColor #FAFAFA
+skinparam usecase {
+    BackgroundColor #F5F5F5
+    BorderColor #424242
+}
+
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 40
+
+actor "Turista\n(App Móvil)" as T #C8E6C9
+actor "Propietario\n(Panel Web)" as P #FFE0B2
+actor "Administrador\n(Panel Web)" as A #FFCDD2
+
+actor "Firebase Auth" as FA <<system>>
+actor "Cloud Firestore" as FS <<system>>
+actor "Chatbot IA API" as BOT <<system>>
+actor "Google Geocoding" as GEO <<system>>
+
+rectangle "HostSigchos" {
+
+    ' --- Autenticación ---
+    usecase "Registrarse" as REG
+    usecase "Login Email" as LOGIN_E
+    usecase "Login Google" as LOGIN_G
+    usecase "Login Biometría" as LOGIN_B
+    usecase "Login Web" as LOGIN_W
+    usecase "Verificar Email" as VEMAIL
+    usecase "Recuperar Password" as RECPW
+
+    ' --- Exploración ---
+    usecase "Explorar Hosterías" as EXPLORE
+    usecase "Ver Detalle Hostería" as DETAIL
+    usecase "Buscar y Filtrar" as SEARCH
+
+    ' --- Habitaciones ---
+    usecase "Ver Habitaciones" as ROOMS
+    usecase "Verificar Disponibilidad" as AVAIL
+
+    ' --- Reservas ---
+    usecase "Crear Reserva" as CREATE_RES
+    usecase "Ver Historial" as HIST
+    usecase "Cancelar Reserva" as CANCEL
+
+    ' --- Interacción ---
+    usecase "Usar Chatbot IA" as CHAT
+    usecase "Ver Mapa GPS" as MAP
+    usecase "Escribir Reseña" as REVIEW
+    usecase "Ver Notificaciones" as NOTIF
+    usecase "Editar Perfil" as PROFILE
+
+    ' --- Propietario ---
+    usecase "Gestionar Habitaciones" as GEST_ROOMS
+    usecase "Gestionar Reservas" as GEST_RES
+    usecase "Confirmar/Rechazar\nReservas" as CONFIRM
+    usecase "Gestionar Promociones" as GEST_PROMO
+    usecase "Configurar Hostería" as CONFIG
+
+    ' --- Admin ---
+    usecase "Ver Estadísticas\nGlobales" as STATS
+    usecase "Gestionar Usuarios" as GEST_USERS
+    usecase "Gestionar Hosterías\n(Global)" as GEST_HOST
+    usecase "Gestionar Admins" as GEST_ADM
+}
+
+' === Turista ===
+T --> REG
+T --> LOGIN_E
+T --> LOGIN_G
+T --> LOGIN_B
+T --> EXPLORE
+T --> ROOMS
+T --> CREATE_RES
+T --> HIST
+T --> CANCEL
+T --> CHAT
+T --> MAP
+T --> REVIEW
+T --> NOTIF
+T --> PROFILE
+
+' === Propietario ===
+P --> LOGIN_W
+P --> GEST_ROOMS
+P --> GEST_RES
+P --> GEST_PROMO
+P --> CONFIG
+
+' === Admin ===
+A --> LOGIN_W
+A --> STATS
+A --> GEST_USERS
+A --> GEST_HOST
+A --> GEST_ADM
+
+' === Sistemas Externos ===
+REG --> FA : <<uses>>
+LOGIN_E --> FA : <<uses>>
+LOGIN_G --> FA : <<uses>>
+LOGIN_W --> FA : <<uses>>
+VEMAIL --> FA : <<uses>>
+
+EXPLORE --> FS : <<uses>>
+CREATE_RES --> FS : <<uses>>
+GEST_ROOMS --> FS : <<uses>>
+GEST_RES --> FS : <<uses>>
+CONFIRM --> FS : <<uses>>
+STATS --> FS : <<uses>>
+REVIEW --> FS : <<uses>>
+NOTIF --> FS : <<uses>>
+
+CHAT --> BOT : <<uses>>
+MAP --> GEO : <<uses>>
+
+' === Relaciones ===
+EXPLORE ..> SEARCH : <<extend>>
+EXPLORE ..> DETAIL : <<include>>
+DETAIL ..> ROOMS : <<include>>
+ROOMS ..> AVAIL : <<include>>
+CREATE_RES ..> AVAIL : <<include>>
+REG ..> VEMAIL : <<include>>
+LOGIN_E ..> RECPW : <<extend>>
+
+GEST_RES ..> CONFIRM : <<include>>
+CONFIRM ..> NOTIF : "genera"
+
+' === Herencia ===
+A --|> P : "hereda\nfuncionalidades"
+
+@enduml

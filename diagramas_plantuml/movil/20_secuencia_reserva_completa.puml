@@ -1,0 +1,91 @@
+@startuml Secuencia_Reserva_Completa
+skinparam dpi 300
+title Diagrama de Secuencia — Flujo Completo de Reserva
+caption Crear → Carrito → Checkout → Confirmar → Notificación
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "HabitacionesListScreen" as HLS
+participant "CrearReservaScreen" as CRS
+participant "CarritoReservaVM" as CVM
+participant "CheckoutReservaScreen" as COS
+participant "ReservaViewModel" as RVM
+participant "CrearReservaUseCase" as CRUC
+participant "ReservaRepository" as RR
+participant "Firestore" as FS
+participant "ConfirmacionScreen" as CONS
+
+== Paso 1: Seleccionar habitación ==
+
+U -> HLS : Selecciona habitación disponible
+HLS -> CRS : Navigator → '/crear-reserva'\n(con Habitacion)
+
+== Paso 2: Configurar reserva ==
+
+U -> CRS : Selecciona fechas Check-In / Check-Out
+U -> CRS : Define número de huéspedes (máx 8)
+U -> CRS : Define número de habitaciones
+U -> CRS : Agrega notas (opcional)
+U -> CRS : ¿Para otra persona? (opcional)
+
+CRS -> CRS : Calcula:\nnoches = checkOut - checkIn\nprecioTotal = noches × precio × numHab
+
+== Paso 3: Agregar al carrito ==
+
+U -> CRS : Pulsa "Agregar al Carrito"
+CRS -> CVM : agregarItem(ItemCarrito)
+activate CVM
+CVM -> CVM : _items.add(item)
+CVM -> CVM : notifyListeners()
+CVM --> CRS
+deactivate CVM
+
+CRS -> COS : Navigator → '/checkout-reserva'
+
+== Paso 4: Checkout y Confirmación ==
+
+U -> COS : Ve resumen del carrito:\n- Items con detalles\n- Total general
+
+U -> COS : Pulsa "Confirmar Reserva"
+
+loop Para cada item del carrito
+    COS -> RVM : crearReserva(reserva)
+    activate RVM
+    RVM -> RVM : _setLoading(true)
+    
+    RVM -> CRUC : call(reserva)
+    activate CRUC
+    CRUC -> RR : crearReserva(reserva)
+    RR -> FS : collection('reservas').add({\n  ...reserva.toJson(),\n  estado: 'pendiente',\n  fechaCreacion: serverTimestamp\n})
+    FS --> RR : DocumentReference (ID)
+    RR --> CRUC : Reserva con ID
+    CRUC --> RVM : Reserva creada
+    deactivate CRUC
+    
+    == Notificación automática ==
+    
+    RVM -> FS : collection('notificaciones').add({\n  usuarioId,\n  titulo: 'Reserva Creada Exitosamente',\n  mensaje: 'Tu reserva está pendiente\nde confirmación.',\n  tipo: 'reserva',\n  leida: false,\n  fecha: serverTimestamp\n})
+    FS --> RVM : Notificación creada
+    
+    RVM -> RVM : _setLoading(false)
+    RVM --> COS : return true
+    deactivate RVM
+end
+
+COS -> CVM : vaciarCarrito()
+CVM -> CVM : _items.clear()
+
+COS -> CONS : Navigator → '/confirmacion'
+
+== Paso 5: Pantalla de Éxito ==
+
+CONS -> CONS : Muestra resumen exitoso\ny código de reserva
+
+U -> CONS : Pulsa "Volver al Inicio"
+CONS -> CONS : Navigator → '/home'
+
+@enduml

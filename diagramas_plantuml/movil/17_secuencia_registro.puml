@@ -1,0 +1,76 @@
+@startuml Secuencia_Registro
+skinparam dpi 300
+title Diagrama de Secuencia — Registro de Usuario Nuevo
+caption Flujo completo: formulario → Firebase Auth → Firestore → verificación email
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "RegisterScreen" as RS
+participant "AuthViewModel" as AVM
+participant "RegisterUseCase" as RUC
+participant "AuthRepository" as AR
+participant "AuthDataSource" as ADS
+participant "Firebase Auth" as FA
+participant "Firebase Storage" as ST
+participant "Firestore" as FS
+
+U -> RS : Llena formulario:\nnombre, email, password,\ncédula, fecha nacimiento,\nteléfono, ubicación, foto
+U -> RS : Pulsa "Registrarse"
+
+RS -> AVM : register(nombre, email, password, cedula, ...)
+activate AVM
+AVM -> AVM : _setLoading(true)
+
+AVM -> RUC : call(datos...)
+activate RUC
+
+RUC -> AR : registrarse(datos...)
+activate AR
+
+AR -> ADS : createUserWithEmailAndPassword(email, password)
+activate ADS
+
+ADS -> FA : FirebaseAuth.createUser(email, password)
+activate FA
+FA --> ADS : UserCredential (uid generado)
+deactivate FA
+
+opt Foto adjunta (fotoBytes != null)
+    ADS -> ST : uploadImage('fotos_perfil/{uid}', fotoBytes)
+    activate ST
+    ST --> ADS : URL de la foto
+    deactivate ST
+end
+
+ADS -> FS : collection('usuarios').doc(uid).set({\n  nombre, email, cedula,\n  fechaNacimiento, telefono,\n  ubicacion, fotoUrl,\n  fechaRegistro: serverTimestamp,\n  idioma: 'es'\n})
+activate FS
+FS --> ADS : Documento creado
+deactivate FS
+
+ADS --> AR : UsuarioModel
+deactivate ADS
+
+AR --> RUC : Entity Usuario
+deactivate AR
+
+RUC --> AVM : Entity Usuario
+deactivate RUC
+
+AVM -> AVM : _usuarioActual = usuario
+
+== Enviar Correo de Verificación ==
+
+AVM -> AVM : verificarEmailUseCase.enviar()
+AVM -> FA : currentUser.sendEmailVerification()
+FA --> AVM : Correo enviado
+
+AVM -> AVM : _setLoading(false)
+AVM --> RS : return true
+
+RS -> RS : Navigator.pushReplacementNamed('/verificacion')
+
+@enduml

@@ -1,0 +1,98 @@
+@startuml Secuencia_Chatbot
+skinparam dpi 300
+title Diagrama de Secuencia — Chatbot IA (Texto y Audio)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "ChatbotScreen" as CS
+participant "ChatbotViewModel" as CVM
+participant "EnviarMensajeUseCase" as EMUC
+participant "EnviarAudioUseCase" as EAUC
+participant "ChatbotRepository" as CR
+participant "ChatbotDataSource" as CDS
+participant "API IA Externa" as API
+participant "FlutterTTS" as TTS
+
+== Inicialización ==
+
+CVM -> CVM : Agrega mensaje de bienvenida:\n"¡Hola! Soy tu asistente virtual..."
+CVM -> TTS : _initTts()\nsetLanguage('es-US')\nsetSpeechRate(0.5)
+alt Audio habilitado
+    CVM -> TTS : speak(mensaje_bienvenida)
+    TTS -> TTS : Reproduce en altavoz
+end
+
+== Envío de Mensaje de Texto ==
+
+U -> CS : Escribe mensaje
+U -> CS : Pulsa "Enviar"
+
+CS -> CVM : sendMessage(text, contexto)
+activate CVM
+
+CVM -> CVM : ChatMessage(text, isUser: true)\n_messages.insert(0, userMsg)
+CVM -> CVM : _isLoading = true\nnotifyListeners()
+
+CVM -> EMUC : execute(text, contexto)
+EMUC -> CR : enviarMensaje(text, contexto)
+CR -> CDS : sendMessage(text, contexto)
+CDS -> API : HTTP POST {\n  message: text,\n  context: contexto\n}
+API --> CDS : {\n  response: "...",\n  action: "navigate"?,\n  actionData: {...}?\n}
+CDS --> CR : ChatMessage(bot)
+CR --> EMUC : ChatMessage
+EMUC --> CVM : ChatMessage (botResponse)
+
+CVM -> CVM : _messages.insert(0, botResponse)\n_isLoading = false\nnotifyListeners()
+
+alt Audio habilitado (_isAudioEnabled)
+    CVM -> TTS : speak(botResponse.text)
+    TTS -> TTS : Reproduce respuesta en voz alta
+end
+
+CVM --> CS : UI actualizada
+deactivate CVM
+
+== Envío de Mensaje de Audio ==
+
+U -> CS : Mantiene pulsado botón de micrófono
+CS -> CS : Graba audio → filePath
+
+U -> CS : Suelta el botón
+CS -> CVM : sendAudioMessage(filePath,\n'Mensaje de voz', contexto)
+activate CVM
+
+CVM -> CVM : ChatMessage('Mensaje de voz',\nisUser: true)
+CVM -> CVM : _isLoading = true
+
+CVM -> EAUC : execute(filePath, contexto)
+EAUC -> CR : enviarAudio(filePath, contexto)
+CR -> CDS : sendAudio(filePath, contexto)
+CDS -> API : HTTP POST (multipart)\n→ archivo de audio
+note right of API
+  Speech-to-Text
+  → Procesa texto
+  → Genera respuesta
+end note
+API --> CDS : Respuesta del bot
+CDS --> CVM : ChatMessage (botResponse)
+
+CVM -> CVM : _messages.insert(0, botResponse)\n_isLoading = false
+
+alt Audio habilitado
+    CVM -> TTS : speak(botResponse.text)
+end
+
+CVM --> CS : UI actualizada
+deactivate CVM
+
+== Toggle Audio ==
+
+U -> CS : Pulsa ícono de volumen
+CS -> CVM : toggleAudio()
+CVM -> CVM : _isAudioEnabled = !_isAudioEnabled
+
+@enduml

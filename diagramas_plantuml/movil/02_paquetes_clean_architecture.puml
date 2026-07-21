@@ -1,0 +1,218 @@
+@startuml Paquetes_Clean_Architecture
+skinparam dpi 300
+left to right direction
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+title Diagrama de Paquetes — Clean Architecture (Flutter App)
+caption Organización de capas y dependencias en lib/
+
+skinparam backgroundColor #FAFAFA
+skinparam package {
+    BackgroundColor<<presentation>> #BBDEFB
+    BackgroundColor<<domain>> #C8E6C9
+    BackgroundColor<<data>> #FFE0B2
+    BackgroundColor<<core>> #E1BEE7
+}
+
+package "lib/" {
+
+    package "core/" <<core>> {
+        package "constants/" {
+            [app_constants.dart] as AC
+            [firestore_paths.dart] as FP
+        }
+        package "services/" {
+            [notification_service.dart] as NS
+            [biometric_service.dart] as BS
+        }
+        package "l10n/" {
+            [app_localizations.dart] as L10N
+            [es.arb / en.arb] as ARB
+        }
+        package "errors/" {
+            [error_handler.dart] as EH
+        }
+        package "utils/" {
+            [utilidades varias] as UTIL
+        }
+    }
+
+    package "domain/" <<domain>> {
+        package "entities/" {
+            [usuario.dart] as E_USR
+            [hosteria.dart] as E_HOST
+            [habitacion.dart] as E_HAB
+            [reserva.dart] as E_RES
+            [notificacion.dart] as E_NOT
+            [resena.dart] as E_RESN
+            [chat_message.dart] as E_CHAT
+        }
+        package "repositories/ (interfaces)" {
+            [auth_repository.dart] as R_AUTH
+            [hosteria_repository.dart] as R_HOST
+            [habitacion_repository.dart] as R_HAB
+            [reserva_repository.dart] as R_RES
+            [notificacion_repository.dart] as R_NOT
+            [resena_repository.dart] as R_RESN
+            [chatbot_repository.dart] as R_CHAT
+            [geocoding_repository.dart] as R_GEO
+        }
+        package "usecases/" {
+            package "auth/" {
+                [login_usecase] as UC_LOGIN
+                [register_usecase] as UC_REG
+                [google_signin_usecase] as UC_GOOGLE
+                [logout_usecase] as UC_LOGOUT
+                [verificar_email_usecase] as UC_VEMAIL
+                [recuperar_password_usecase] as UC_RECPW
+                [actualizar_perfil_usecase] as UC_PROF
+                [vincular_password_usecase] as UC_VINCPW
+                [eliminar_cuenta_usecase] as UC_DEL
+            }
+            package "hosteria/" {
+                [get_hosterias_usecase] as UC_GETH
+                [get_hosteria_detail_usecase] as UC_GETHD
+            }
+            package "habitacion/" {
+                [get_habitaciones_usecase] as UC_GETHAB
+                [check_disponibilidad_usecase] as UC_DISP
+                [get_todas_las_habitaciones_usecase] as UC_ALLHAB
+            }
+            package "reserva/" {
+                [crear_reserva_usecase] as UC_CRES
+                [get_historial_reservas_usecase] as UC_HIST
+                [get_todas_las_reservas_usecase] as UC_ALLRES
+                [actualizar_estado_reserva_usecase] as UC_ACRES
+                [cancelar_reserva_usecase] as UC_CANC
+            }
+            package "otros/" {
+                [enviar_mensaje_usecase] as UC_MSG
+                [enviar_audio_usecase] as UC_AUD
+                [get_direccion_usecase] as UC_DIR
+                [agregar_resena_usecase] as UC_ARES
+                [get_resenas_por_hosteria_usecase] as UC_GRES
+            }
+        }
+    }
+
+    package "data/" <<data>> {
+        package "models/" {
+            [usuario_model.dart] as M_USR
+            [hosteria_model.dart] as M_HOST
+            [habitacion_model.dart] as M_HAB
+            [reserva_model.dart] as M_RES
+            [notificacion_model.dart] as M_NOT
+        }
+        package "datasources/" {
+            package "firebase/" {
+                [auth_datasource.dart] as DS_AUTH
+                [hosteria_datasource.dart] as DS_HOST
+                [habitacion_datasource.dart] as DS_HAB
+                [reserva_datasource.dart] as DS_RES
+                [notificacion_datasource.dart] as DS_NOT
+                [resena_datasource.dart] as DS_RESN
+                [storage_datasource.dart] as DS_STOR
+            }
+            package "remote/" {
+                [chatbot_datasource.dart] as DS_CHAT
+                [geocoding_datasource.dart] as DS_GEO
+            }
+            package "api/" {
+                [weather_api.dart] as DS_WEATH
+            }
+        }
+        package "repositories/ (implementations)" {
+            [auth_repository_impl.dart] as RI_AUTH
+            [hosteria_repository_impl.dart] as RI_HOST
+            [habitacion_repository_impl.dart] as RI_HAB
+            [reserva_repository_impl.dart] as RI_RES
+            [notificacion_repository_impl.dart] as RI_NOT
+            [resena_repository_impl.dart] as RI_RESN
+            [chatbot_repository_impl.dart] as RI_CHAT
+            [geocoding_repository_impl.dart] as RI_GEO
+        }
+    }
+
+    package "presentation/" <<presentation>> {
+        package "views/" {
+            [auth/ (Login, Register, Forgot, Verificacion)] as V_AUTH
+            [home/ (HomeScreen)] as V_HOME
+            [hosteria/ (List, Detail)] as V_HOST
+            [reserva/ (Crear, Checkout, Confirm, Historial)] as V_RES
+            [chatbot/ (Chat, Suggestions)] as V_CHAT
+            [mapa/ (MapaScreen)] as V_MAPA
+            [perfil/ (Perfil, Editar)] as V_PERF
+            [notificaciones/ (NotificacionesScreen)] as V_NOTIF
+            [transaccion/ (HistorialTransacciones)] as V_TRANS
+        }
+        package "viewmodels/" {
+            [auth_viewmodel.dart] as VM_AUTH
+            [hosteria_viewmodel.dart] as VM_HOST
+            [habitacion_viewmodel.dart] as VM_HAB
+            [reserva_viewmodel.dart] as VM_RES
+            [carrito_reserva_viewmodel.dart] as VM_CART
+            [chatbot_viewmodel.dart] as VM_CHAT
+            [geocoding_viewmodel.dart] as VM_GEO
+            [notificacion_viewmodel.dart] as VM_NOT
+            [resena_viewmodel.dart] as VM_RESN
+            [locale_viewmodel.dart] as VM_LOC
+            [weather_viewmodel.dart] as VM_WEATH
+        }
+        package "widgets/" {
+            [hosteria_card.dart] as W_HCARD
+            [habitacion_card.dart] as W_HABCARD
+            [gradient_button.dart] as W_BTN
+            [custom_text_field.dart] as W_TF
+            [loading_overlay.dart] as W_LOAD
+            [language_selector.dart] as W_LANG
+            [audio_visualizer.dart] as W_AUDIO
+        }
+        package "routes/" {
+            [app_routes.dart] as ROUTES
+        }
+    }
+
+    [main.dart] as MAIN
+    [injection_container.dart] as DI
+}
+
+' === Dependencias entre capas ===
+' Presentation → Domain (SOLO a través de ViewModels → UseCases)
+VM_AUTH ..> UC_LOGIN
+VM_AUTH ..> UC_REG
+VM_RES ..> UC_CRES
+VM_HOST ..> UC_GETH
+
+' Domain → Data (Repository Interface implementada por Impl)
+R_AUTH <|.. RI_AUTH : "implements"
+R_HOST <|.. RI_HOST : "implements"
+R_RES <|.. RI_RES : "implements"
+
+' Data Impl → DataSources
+RI_AUTH --> DS_AUTH
+RI_HOST --> DS_HOST
+RI_RES --> DS_RES
+
+' DI Container conecta todo
+MAIN --> DI
+DI --> DS_AUTH
+DI --> RI_AUTH
+DI --> UC_LOGIN
+DI --> VM_AUTH
+
+note bottom of "domain/"
+  **Regla de Dependencia:**
+  Esta capa NO depende de Flutter,
+  Firebase ni ninguna librería externa.
+  Solo contiene lógica de negocio pura.
+end note
+
+note bottom of "data/"
+  **Patrón Repository:**
+  Implementa las interfaces del Domain.
+  Convierte Models ↔ Entities.
+  Maneja errores de Firebase.
+end note
+
+@enduml

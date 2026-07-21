@@ -1,0 +1,191 @@
+@startuml Clases_DataSources
+skinparam dpi 300
+title Diagrama de Clases — DataSources y Models (data/)
+caption Capa de acceso a datos: Firebase, APIs REST y Models de serialización
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #FFE0B2
+    BorderColor #E65100
+    HeaderBackgroundColor #FFCC80
+}
+
+package "data/datasources/firebase/" #FFF3E0 {
+    class AuthDataSource {
+        - _firestore: FirebaseFirestore
+        - _auth: FirebaseAuth
+        - _storageDS: StorageDataSource
+        --
+        + signInWithEmailAndPassword(email, password)
+        + createUserWithEmailAndPassword(email, password)
+        + signInWithGoogle()
+        + signOut()
+        + getCurrentUser()
+        + updateProfile(uid, data, fotoBytes?)
+        + sendEmailVerification()
+        + checkEmailVerified()
+        + sendPasswordResetEmail(email)
+        + linkPasswordCredential(password)
+        + isGoogleOnlyUser()
+        + deleteAccount()
+    }
+    
+    class HosteriaDataSource {
+        - _firestore: FirebaseFirestore
+        --
+        + fetchAll(): Future<List<HosteriaModel>>
+        + fetchById(id): Future<HosteriaModel>
+    }
+    
+    class HabitacionDataSource {
+        - _firestore: FirebaseFirestore
+        --
+        + fetchByHosteria(hosteriaId): Future<List<HabitacionModel>>
+        + fetchAll(): Future<List<HabitacionModel>>
+    }
+    
+    class ReservaDataSource {
+        - _firestore: FirebaseFirestore
+        --
+        + create(reserva): Future<ReservaModel>
+        + fetchByUsuario(usuarioId): Future<List<ReservaModel>>
+        + fetchByHabitacion(habitacionId): Future<List<ReservaModel>>
+        + fetchAll(): Future<List<ReservaModel>>
+        + fetchById(id): Future<ReservaModel>
+        + updateEstado(id, estado): Future<void>
+    }
+    
+    class NotificacionDataSource {
+        - _firestore: FirebaseFirestore
+        --
+        + streamByUsuario(usuarioId): Stream<List<NotificacionModel>>
+        + marcarLeida(id): Future<void>
+        + marcarTodasLeidas(usuarioId): Future<void>
+        + borrarTodas(usuarioId): Future<void>
+    }
+    
+    class ResenaDataSource {
+        - _firestore: FirebaseFirestore
+        --
+        + add(resena): Future<void>
+        + streamByHosteria(hosteriaId): Stream<List<ResenaModel>>
+    }
+    
+    class StorageDataSource {
+        - _storage: FirebaseStorage
+        --
+        + uploadImage(path, bytes): Future<String>
+        + deleteImage(url): Future<void>
+    }
+}
+
+package "data/datasources/remote/" #E8EAF6 {
+    class ChatbotDataSource {
+        - _httpClient: Client
+        --
+        + sendMessage(text, contexto): Future<ChatMessage>
+        + sendAudio(filePath, contexto): Future<ChatMessage>
+    }
+    
+    class GeocodingDataSource {
+        - _httpClient: Client
+        --
+        + reverseGeocode(lat, lng): Future<String>
+    }
+}
+
+package "data/datasources/api/" #F3E5F5 {
+    class WeatherApi {
+        + fetchWeather(lat, lng): Future<Map>
+    }
+}
+
+package "data/models/" #FFECB3 {
+    class UsuarioModel {
+        + id: String
+        + nombre: String
+        + email: String
+        + cedula: String?
+        + fechaNacimiento: DateTime?
+        + telefono: String?
+        + ubicacion: String?
+        + fotoUrl: String?
+        + fechaRegistro: DateTime
+        + idioma: String
+        --
+        + {static} fromJson(Map): UsuarioModel
+        + {static} fromFirestore(DocumentSnapshot): UsuarioModel
+        + toJson(): Map<String, dynamic>
+        + toEntity(): Usuario
+    }
+    
+    class HosteriaModel {
+        + id: String
+        + nombre: String
+        + descripcion: String
+        + latitud: double
+        + longitud: double
+        + rating: double
+        + imagenes: List<String>
+        + servicios: List<String>
+        --
+        + {static} fromJson(Map): HosteriaModel
+        + {static} fromFirestore(DocumentSnapshot): HosteriaModel
+        + toJson(): Map<String, dynamic>
+        + toEntity(): Hosteria
+    }
+    
+    class HabitacionModel {
+        + id: String
+        + hosteriaId: String
+        + tipo: String
+        + capacidad: int
+        + precioPorNoche: double
+        + amenidades: List<String>
+        --
+        + {static} fromJson(Map): HabitacionModel
+        + toJson(): Map<String, dynamic>
+        + toEntity(): Habitacion
+    }
+    
+    class ReservaModel {
+        + id: String
+        + usuarioId: String
+        + hosteriaId: String
+        + habitacionId: String
+        + fechaCheckIn: DateTime
+        + fechaCheckOut: DateTime
+        + estado: String
+        + precioTotal: double
+        --
+        + {static} fromJson(Map): ReservaModel
+        + toJson(): Map<String, dynamic>
+        + toEntity(): Reserva
+    }
+}
+
+note bottom of UsuarioModel
+  **Serialización:**
+  Firestore (JSON) → fromJson() → Model → toEntity() → Entity
+  Entity → Model → toJson() → Firestore (JSON)
+  
+  Todos los DataSources usan
+  FirebaseFirestore.instanceFor(
+    app: Firebase.app(),
+    databaseId: 'hostsigchos'
+  )
+end note
+
+' === Relaciones DataSource → Model ===
+AuthDataSource --> UsuarioModel : "produce"
+HosteriaDataSource --> HosteriaModel : "produce"
+HabitacionDataSource --> HabitacionModel : "produce"
+ReservaDataSource --> ReservaModel : "produce"
+AuthDataSource --> StorageDataSource : "usa"
+
+@enduml
+

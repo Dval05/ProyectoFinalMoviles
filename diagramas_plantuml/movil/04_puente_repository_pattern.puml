@@ -1,0 +1,151 @@
+@startuml @
+skinparam dpi 300
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50 Patron_Bridge_Repository
+title Patrón Bridge / Repository — HostSigchos
+caption Separación Interfaz Abstracta (Domain) ↔ Implementación Concreta (Data)
+
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+package "domain/repositories/ (Abstracción)" #C8E6C9 {
+
+    abstract class AuthRepository <<interface>> {
+    }
+
+    abstract class ReservaRepository <<interface>> {
+    }
+
+        abstract class HosteriaRepository <<interface>> {
+    }
+
+    abstract class HabitacionRepository <<interface>> {
+    }
+
+        abstract class NotificacionRepository <<interface>> {
+    }
+
+    abstract class ResenaRepository <<interface>> {
+    }
+
+        abstract class ChatbotRepository <<interface>> {
+    }
+
+    abstract class GeocodingRepository <<interface>> {
+    }
+
+    AuthRepository -[hidden]down-> HosteriaRepository
+    HosteriaRepository -[hidden]down-> NotificacionRepository
+    NotificacionRepository -[hidden]down-> ChatbotRepository
+
+    ReservaRepository -[hidden]down-> HabitacionRepository
+    HabitacionRepository -[hidden]down-> ResenaRepository
+    ResenaRepository -[hidden]down-> GeocodingRepository
+
+    AuthRepository -[hidden]right-> ReservaRepository
+}
+
+package "data/repositories/ (Implementación Concreta)" #FFE0B2 {
+
+    class AuthRepositoryImpl {
+    }
+
+    class ReservaRepositoryImpl {
+    }
+
+        class HosteriaRepositoryImpl {
+    }
+
+    class HabitacionRepositoryImpl {
+    }
+
+        class NotificacionRepositoryImpl {
+    }
+
+    class ResenaRepositoryImpl {
+    }
+
+        class ChatbotRepositoryImpl {
+    }
+
+    class GeocodingRepositoryImpl {
+    }
+
+    AuthRepositoryImpl -[hidden]down-> HosteriaRepositoryImpl
+    HosteriaRepositoryImpl -[hidden]down-> NotificacionRepositoryImpl
+    NotificacionRepositoryImpl -[hidden]down-> ChatbotRepositoryImpl
+
+    ReservaRepositoryImpl -[hidden]down-> HabitacionRepositoryImpl
+    HabitacionRepositoryImpl -[hidden]down-> ResenaRepositoryImpl
+    ResenaRepositoryImpl -[hidden]down-> GeocodingRepositoryImpl
+
+    AuthRepositoryImpl -[hidden]right-> ReservaRepositoryImpl
+}
+
+package "data/datasources/ (Fuente de Datos Real)" #E1BEE7 {
+    class AuthDataSource {
+    }
+    class ReservaDataSource {
+    }
+        class HosteriaDataSource {
+    }
+    class HabitacionDataSource {
+    }
+        class ChatbotDataSource {
+    }
+    class GeocodingDataSource {
+    }
+
+    AuthDataSource -[hidden]down-> HosteriaDataSource
+    HosteriaDataSource -[hidden]down-> ChatbotDataSource
+
+    ReservaDataSource -[hidden]down-> HabitacionDataSource
+    HabitacionDataSource -[hidden]down-> GeocodingDataSource
+
+    AuthDataSource -[hidden]right-> ReservaDataSource
+}
+
+' ===== BRIDGE: Interface ← Impl =====
+AuthRepository <|.. AuthRepositoryImpl : <<implements>>
+ReservaRepository <|.. ReservaRepositoryImpl : <<implements>>
+HosteriaRepository <|.. HosteriaRepositoryImpl : <<implements>>
+HabitacionRepository <|.. HabitacionRepositoryImpl : <<implements>>
+NotificacionRepository <|.. NotificacionRepositoryImpl : <<implements>>
+ResenaRepository <|.. ResenaRepositoryImpl : <<implements>>
+ChatbotRepository <|.. ChatbotRepositoryImpl : <<implements>>
+GeocodingRepository <|.. GeocodingRepositoryImpl : <<implements>>
+
+' ===== Impl → DataSource =====
+AuthRepositoryImpl --> AuthDataSource : "usa"
+ReservaRepositoryImpl --> ReservaDataSource : "usa"
+HosteriaRepositoryImpl --> HosteriaDataSource : "usa"
+HabitacionRepositoryImpl --> HabitacionDataSource : "usa"
+ChatbotRepositoryImpl --> ChatbotDataSource : "usa"
+GeocodingRepositoryImpl --> GeocodingDataSource : "usa"
+
+note bottom of AuthRepository
+  **Patrón Bridge/Repository:**
+  Domain define QUÉ se puede hacer.
+  Data define CÓMO se hace.
+  
+  Esto permite cambiar Firebase por
+  otra tecnología sin tocar el Domain.
+end note
+
+note right of AuthRepositoryImpl
+  **Inyección de Dependencias:**
+  GetIt inyecta el DataSource
+  en el constructor del Impl.
+  
+  El UseCase recibe la INTERFAZ,
+  no la implementación.
+end note
+
+@enduml
+
+
+

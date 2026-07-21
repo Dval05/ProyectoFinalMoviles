@@ -1,0 +1,66 @@
+@startuml Secuencia_Google_SignIn
+skinparam dpi 300
+title Diagrama de Secuencia — Login con Google Sign-In
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "LoginScreen" as LS
+participant "AuthViewModel" as AVM
+participant "GoogleSignInUseCase" as GUC
+participant "AuthRepository" as AR
+participant "AuthDataSource" as ADS
+participant "Google SDK" as GSDK
+participant "Firebase Auth" as FA
+participant "Firestore" as FS
+
+U -> LS : Pulsa "Iniciar con Google"
+
+LS -> AVM : loginConGoogle()
+activate AVM
+AVM -> AVM : _setLoading(true)
+
+AVM -> GUC : call()
+GUC -> AR : loginConGoogle()
+AR -> ADS : signInWithGoogle()
+activate ADS
+
+ADS -> GSDK : GoogleSignIn().signIn()
+GSDK --> ADS : GoogleSignInAccount
+
+ADS -> GSDK : account.authentication
+GSDK --> ADS : idToken + accessToken
+
+ADS -> FA : signInWithCredential(\nGoogleAuthProvider.credential(\n  idToken, accessToken))
+FA --> ADS : UserCredential (uid)
+
+ADS -> FS : doc('usuarios/{uid}').get()
+activate FS
+alt Nuevo usuario (no existe en Firestore)
+    FS --> ADS : null
+    ADS -> FS : doc('usuarios/{uid}').set({\n  nombre: displayName,\n  email: email,\n  fotoUrl: photoURL,\n  fechaRegistro: serverTimestamp\n})
+    FS --> ADS : Documento creado
+else Ya existe
+    FS --> ADS : DocumentSnapshot (datos existentes)
+end
+deactivate FS
+
+ADS --> AVM : Entity Usuario
+deactivate ADS
+
+== Verificar si es usuario SOLO Google ==
+
+AVM -> AVM : _checkIfGoogleOnly()
+AVM -> AR : esUsuarioSoloGoogle()
+AR --> AVM : true/false
+AVM -> AVM : _isUsuarioSoloGoogle = resultado
+
+AVM -> AVM : _setLoading(false)
+AVM --> LS : return true
+
+LS -> LS : Navigator → '/home'
+
+@enduml

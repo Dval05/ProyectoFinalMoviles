@@ -1,0 +1,74 @@
+@startuml Secuencia_Resenas
+skinparam dpi 300
+title Diagrama de Secuencia — Reseñas en Tiempo Real
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "HosteriaDetailScreen" as HDS
+participant "ResenaViewModel" as REVM
+participant "GetResenasPorHosteriaUC" as GRUC
+participant "AgregarResenaUseCase" as ARUC
+participant "ResenaRepository" as RR
+participant "ResenaDataSource" as RDS
+participant "Firestore" as FS
+
+== Cargar reseñas (Stream en tiempo real) ==
+
+U -> HDS : Abre detalle de hostería
+HDS -> REVM : listenToResenas(hosteriaId)
+activate REVM
+
+REVM -> GRUC : call(hosteriaId)
+GRUC -> RR : getResenasPorHosteria(hosteriaId)
+RR -> RDS : streamByHosteria(hosteriaId)
+RDS -> FS : collection('resenas')\n.where('hosteriaId' == id)\n.orderBy('fecha', desc)\n.snapshots()
+
+FS --> RDS : Stream<QuerySnapshot>
+RDS --> REVM : Stream<List<Resena>>
+
+REVM -> REVM : _subscription = stream.listen()\n_resenas = data\nnotifyListeners()
+REVM --> HDS : UI renderiza lista de reseñas
+deactivate REVM
+
+== Agregar nueva reseña ==
+
+U -> HDS : Escribe comentario
+U -> HDS : Selecciona rating (1-5 estrellas)
+U -> HDS : Pulsa "Enviar Reseña"
+
+HDS -> REVM : agregarResena(Resena)
+activate REVM
+REVM -> REVM : _setLoading(true)
+
+REVM -> ARUC : call(resena)
+ARUC -> RR : agregarResena(resena)
+RR -> RDS : add(resena)
+RDS -> FS : collection('resenas').add({\n  hosteriaId,\n  usuarioId,\n  nombreUsuario,\n  comentario,\n  rating,\n  fecha: serverTimestamp()\n})
+
+note right of FS
+  **Firestore Rules validan:**
+  - isOwner(usuarioId)
+  - rating >= 1 && rating <= 5
+  - fecha == request.time
+end note
+
+FS --> RDS : DocumentReference
+RDS --> RR : void
+RR --> ARUC : void
+ARUC --> REVM : void
+
+REVM -> REVM : _setLoading(false)
+REVM --> HDS : return true
+deactivate REVM
+
+note over FS, REVM
+  La nueva reseña aparece automáticamente
+  en la UI vía el Stream (onSnapshot)
+  sin necesidad de recargar manualmente.
+end note
+
+@enduml

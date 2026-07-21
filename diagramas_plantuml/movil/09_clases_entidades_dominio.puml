@@ -1,0 +1,157 @@
+@startuml Clases_Entidades_Dominio
+skinparam dpi 300
+title Diagrama de Clases — Entidades del Dominio (domain/entities/)
+caption Clases puras de negocio sin dependencias externas
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #C8E6C9
+    BorderColor #2E7D32
+    HeaderBackgroundColor #A5D6A7
+}
+
+class Usuario {
+    + id : String {readonly}
+    + nombre : String {readonly}
+    + email : String {readonly}
+    + cedula : String? {readonly}
+    + fechaNacimiento : DateTime? {readonly}
+    + telefono : String? {readonly}
+    + ubicacion : String? {readonly}
+    + fotoUrl : String? {readonly}
+    + fechaRegistro : DateTime {readonly}
+    + idioma : String = "es" {readonly}
+    --
+    + copyWith(...) : Usuario
+}
+
+class Hosteria {
+    + id : String {readonly}
+    + nombre : String {readonly}
+    + descripcion : String {readonly}
+    + direccion : String {readonly}
+    + latitud : double {readonly}
+    + longitud : double {readonly}
+    + telefono : String {readonly}
+    + email : String? {readonly}
+    + sitioWeb : String? {readonly}
+    + rating : double = 0.0 {readonly}
+    + totalResenas : int = 0 {readonly}
+    + imagenes : List<String> {readonly}
+    + servicios : List<String> {readonly}
+    + activa : bool = true {readonly}
+    + precioPorNoche : double = 50.0 {readonly}
+    --
+    + copyWith(...) : Hosteria
+}
+
+class Habitacion {
+    + id : String {readonly}
+    + hosteriaId : String {readonly}
+    + tipo : String {readonly}
+    + descripcion : String {readonly}
+    + capacidad : int {readonly}
+    + precioPorNoche : double {readonly}
+    + imagenes : List<String> {readonly}
+    + amenidades : List<String> {readonly}
+    + disponible : bool = true {readonly}
+    + cantidadTotal : int = 10 {readonly}
+    --
+    + copyWith(...) : Habitacion
+}
+
+class Reserva {
+    + id : String {readonly}
+    + usuarioId : String {readonly}
+    + hosteriaId : String {readonly}
+    + habitacionId : String {readonly}
+    + fechaCheckIn : DateTime {readonly}
+    + fechaCheckOut : DateTime {readonly}
+    + numHuespedes : int {readonly}
+    + numHabitaciones : int = 1 {readonly}
+    + precioTotal : double {readonly}
+    + estado : String = "pendiente" {readonly}
+    + fechaCreacion : DateTime {readonly}
+    + notas : String? {readonly}
+    + nombreHosteria : String? {readonly}
+    + tipoHabitacion : String? {readonly}
+    + esParaOtraPersona : bool = false {readonly}
+    + nombreOtraPersona : String? {readonly}
+    --
+    + noches : int {computed}
+    + esCancelable : bool {computed}
+    + estaActiva : bool {computed}
+    + copyWith(...) : Reserva
+}
+note bottom of Reserva
+  **Estados posibles:**
+  pendiente → en_revision → confirmada → completada
+  pendiente → cancelada
+  en_revision → cancelada
+  confirmada → cancelada
+  
+  **Reglas de negocio:**
+  - Máximo 8 huéspedes
+  - Máximo 30 noches
+  - Check-In: 14:00, Check-Out: 12:00
+  - Moneda: USD ($)
+end note
+
+class NotificacionApp {
+    + id : String {readonly}
+    + usuarioId : String {readonly}
+    + titulo : String {readonly}
+    + mensaje : String {readonly}
+    + fecha : DateTime {readonly}
+    + leida : bool {readonly}
+    + tipo : String {readonly}
+    --
+    + copyWith(...) : NotificacionApp
+}
+note right of NotificacionApp
+  **Tipos:**
+  'reserva' | 'oferta' | 'sistema'
+end note
+
+class Resena {
+    + id : String {readonly}
+    + hosteriaId : String {readonly}
+    + usuarioId : String {readonly}
+    + nombreUsuario : String {readonly}
+    + comentario : String {readonly}
+    + rating : double {readonly}
+    + fecha : DateTime {readonly}
+    --
+    + copyWith(...) : Resena
+}
+note right of Resena
+  **Validaciones (Firestore Rules):**
+  - rating >= 1.0 && rating <= 5.0
+  - fecha == request.time (server)
+end note
+
+class ChatMessage {
+    + text : String {readonly}
+    + isUser : bool {readonly}
+    + timestamp : DateTime {readonly}
+    + action : String? {readonly}
+    + actionData : Map<String,dynamic>? {readonly}
+}
+
+' === Relaciones ===
+Usuario "1" -down- "*" Reserva : "realiza >"
+Usuario "1" -down- "*" NotificacionApp : "recibe >"
+Usuario "1" -down- "*" Resena : "escribe >"
+
+Hosteria "1" -down- "*" Habitacion : "tiene >"
+Hosteria "1" -down- "*" Reserva : "recibe >"
+Hosteria "1" -down- "*" Resena : "tiene >"
+
+Habitacion "1" -down- "*" Reserva : "es reservada >"
+
+@enduml
+

@@ -1,0 +1,112 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función para validar si un usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Función para verificar si el usuario que hace la petición es el dueño del recurso
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Colección: Usuarios
+    match /usuarios/{userId} {
+      // Un usuario solo puede modificar su propio perfil, pero los propietarios necesitan leerlo para ver reservas
+      allow read: if isAuthenticated();
+      allow update, delete: if isOwner(userId);
+      // Cualquiera puede crear un perfil si está autenticado (Registro)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Colección: Propietarios
+    match /propietarios/{propietarioId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(propietarioId);
+    }
+
+    // Colección: Administradores
+    match /administradores/{adminEmail} {
+      allow read: if isAuthenticated();
+      // Solo el Super Admin (por correo) puede crear o eliminar administradores
+      allow write: if isAuthenticated() && request.auth.token.email == 'andrade.dval@gmail.com';
+    }
+
+    // Colección: Hosterias (Catálogo)
+    match /hosterias/{hosteriaId} {
+      // El catálogo es público para lectura (incluso sin login para vitrina)
+      allow read: if true;
+      // Solo administradores pueden escribir (Asumiendo que no hay backend admin aún, lo bloqueamos)
+      allow write: if false; 
+    }
+
+    // Colección: Habitaciones
+    match /habitaciones/{habitacionId} {
+      // Disponibles para lectura pública
+      allow read: if true;
+      
+      // Permitimos actualización de propietarios y transacciones atómicas
+      allow update: if isAuthenticated();
+                    
+      // Bloqueamos creación/borrado (solo panel admin)
+      allow create, delete: if false;
+    }
+    
+    // Colección: Promociones
+    match /promociones/{promoId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Colección: Reservas
+    match /reservas/{reservaId} {
+      // Se permite lectura a usuarios autenticados para poder verificar disponibilidad de fechas
+      // En un entorno de producción estricto, esto se haría mediante una Cloud Function para proteger la privacidad.
+      allow read: if isAuthenticated();
+      
+      // Reglas estrictas para crear reservas (Rate Limiting Lógico y Validación)
+      allow create: if isOwner(request.resource.data.usuarioId)
+                    // Validación de esquema: el precio no puede ser negativo y huespedes > 0
+                    && request.resource.data.precioTotal >= 0
+                    && request.resource.data.numHuespedes > 0
+                    // Estado inicial obligatorio (en el modelo actual dice 'pendiente' o 'Pendiente', usemos ambos)
+                    && (request.resource.data.estado == 'Pendiente' || request.resource.data.estado == 'pendiente');
+                    
+      // Los usuarios pueden actualizar el estado de sus reservas a 'Cancelada' o 'en_revision' (cuando van a WhatsApp)
+      // Los propietarios (quienes existen en la coleccion propietarios) pueden actualizar el estado a 'confirmada' o 'cancelada'
+      allow update: if (isOwner(resource.data.usuarioId)
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado'])
+                        && (request.resource.data.estado == 'Cancelada' || request.resource.data.estado == 'cancelada' || request.resource.data.estado == 'en_revision' || request.resource.data.estado == 'En_revision' || request.resource.data.estado == 'Pendiente' || request.resource.data.estado == 'pendiente'))
+                    || (exists(/databases/$(database)/documents/propietarios/$(request.auth.uid))
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado']));
+                    
+      // No se pueden borrar las reservas (quedan en historial)
+      allow delete: if false;
+    }
+
+    // Colección: Reseñas
+    match /resenas/{resenaId} {
+      allow read: if true;
+      
+      allow create: if isOwner(request.resource.data.usuarioId)
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5
+                    && request.resource.data.fecha == request.time;
+                    
+      allow update, delete: if isOwner(resource.data.usuarioId);
+    }
+    
+    // Colección: Notificaciones
+    match /notificaciones/{notifId} {
+      allow read: if isOwner(resource.data.usuarioId);
+      // Las notificaciones suelen ser creadas por Cloud Functions o el sistema
+      allow create: if isOwner(request.resource.data.usuarioId);
+      allow update: if isOwner(resource.data.usuarioId) 
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['leida']);
+      allow delete: if isOwner(resource.data.usuarioId);
+    }
+  }
+}

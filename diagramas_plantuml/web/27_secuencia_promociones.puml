@@ -1,0 +1,83 @@
+@startuml Secuencia_Promociones
+skinparam dpi 300
+title Diagrama de Secuencia — Gestión de Promociones (Panel Web)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Propietario" as P
+participant "PromotionsManager" as PM
+participant "AppContext" as CTX
+participant "Firestore" as FS
+
+== Crear nueva promoción ==
+
+P -> PM : Llena formulario:\n- Nombre de la promoción\n- Descripción\n- % de descuento\n- Fecha inicio / fin\n- Habitaciones aplicables
+
+P -> PM : Pulsa "Crear Promoción"
+
+PM -> CTX : addPromotion(promo)
+activate CTX
+
+note right of CTX : Paso 1: Crear documento
+
+CTX -> FS : collection('promociones').add({\n  ...promo,\n  hosteriaId: hosteria.id,\n  createdAt: new Date().toISOString()\n})
+FS --> CTX : Documento de promoción creado
+
+note right of CTX : Paso 2: Aplicar descuento a habitaciones
+
+loop Para cada habitación en habitacionesAplicables
+    CTX -> FS : doc('habitaciones/{roomId}').get()
+    FS --> CTX : { precioPorNoche: originalPrice }
+    
+    CTX -> CTX : newPrice = originalPrice -\n(originalPrice × discount / 100)
+    
+    CTX -> FS : updateDoc('habitaciones/{roomId}', {\n  precioOriginal: originalPrice,\n  precioPorNoche: newPrice\n})
+    FS --> CTX : Actualizado
+    
+    note right of FS
+      La app móvil verá el precio
+      con descuento inmediatamente
+      al consultar habitaciones
+    end note
+end
+
+CTX --> PM : Promoción creada con éxito
+deactivate CTX
+
+== Eliminar promoción (restaurar precios) ==
+
+P -> PM : Selecciona promoción
+P -> PM : Pulsa "Eliminar"
+
+PM -> CTX : deletePromotion(promoId)
+activate CTX
+
+note right of CTX : Paso 1: Leer promoción para saber qué habitaciones restaurar
+
+CTX -> FS : doc('promociones/{promoId}').get()
+FS --> CTX : { habitacionesAplicables: [...] }
+
+note right of CTX : Paso 2: Restaurar precios originales
+
+loop Para cada habitación afectada
+    CTX -> FS : doc('habitaciones/{roomId}').get()
+    FS --> CTX : { precioOriginal: x }
+    
+    alt precioOriginal existe
+        CTX -> FS : updateDoc('habitaciones/{roomId}', {\n  precioPorNoche: precioOriginal,\n  precioOriginal: deleteField()\n})
+        FS --> CTX : Precio restaurado
+    end
+end
+
+note right of CTX : Paso 3: Eliminar documento de promoción
+
+CTX -> FS : deleteDoc('promociones/{promoId}')
+FS --> CTX : Eliminado
+
+CTX --> PM : Promoción eliminada
+deactivate CTX
+
+@enduml

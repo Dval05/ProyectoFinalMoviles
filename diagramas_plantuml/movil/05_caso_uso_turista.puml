@@ -1,0 +1,174 @@
+@startuml Caso_Uso_Turista
+skinparam dpi 300
+title Diagrama de Casos de Uso — Actor: Turista (Usuario Final)
+caption Funcionalidades disponibles para el usuario de la app móvil
+
+skinparam backgroundColor #FAFAFA
+skinparam usecase {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+skinparam actor {
+    BackgroundColor #C8E6C9
+    BorderColor #2E7D32
+}
+
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 40
+
+actor "Turista\n(Usuario Final)" as T #C8E6C9
+
+rectangle "Sistema HostSigchos — App Móvil" {
+
+    package "Autenticación" {
+        usecase "Registrarse con\nEmail y Contraseña" as UC_REG
+        usecase "Iniciar Sesión\ncon Email" as UC_LOGIN
+        usecase "Iniciar Sesión\ncon Google" as UC_GLOGIN
+        usecase "Iniciar Sesión\ncon Biometría" as UC_BIO
+        usecase "Verificar Email" as UC_VEMAIL
+        usecase "Recuperar\nContraseña" as UC_RECPW
+        usecase "Cerrar Sesión" as UC_LOGOUT
+        usecase "Eliminar Cuenta" as UC_DELETE
+        usecase "Vincular Contraseña\na cuenta Google" as UC_VINCPW
+    }
+
+    package "Exploración de Hosterías" {
+        usecase "Ver catálogo\nde hosterías" as UC_CATALOG
+        usecase "Buscar hosterías\npor texto" as UC_SEARCH
+        usecase "Filtrar por\nprecio y fechas" as UC_FILTER
+        usecase "Ordenar hosterías\n(precio, rating, nombre)" as UC_SORT
+        usecase "Ver detalle\nde hostería" as UC_DETAIL
+        usecase "Ver hosterías\ndestacadas (Top 3)" as UC_TOP
+        usecase "Ver hosterías\ncercanas (GPS)" as UC_NEAR
+    }
+
+    package "Habitaciones" {
+        usecase "Ver habitaciones\nde una hostería" as UC_ROOMS
+        usecase "Verificar disponibilidad\npor fechas" as UC_AVAIL
+        usecase "Ver amenidades\ny precios" as UC_AMEN
+    }
+
+    package "Reservas" {
+        usecase "Crear reserva\nde habitación" as UC_RESERVE
+        usecase "Configurar datos\nde reserva" as UC_CONFIG
+        usecase "Reservar para\notra persona" as UC_OTHER
+        usecase "Agregar al carrito\nde reservas" as UC_CART
+        usecase "Revisar checkout\ny confirmar" as UC_CHECK
+        usecase "Ver historial\nde reservas" as UC_HIST
+        usecase "Cancelar una\nreserva activa" as UC_CANCEL
+        usecase "Ver historial\nde transacciones" as UC_TRANS
+    }
+
+    package "Mapa y Geolocalización" {
+        usecase "Ver mapa interactivo\ncon hosterías" as UC_MAP
+        usecase "Ver ubicación\nactual (GPS)" as UC_GPS
+        usecase "Obtener dirección\npor coordenadas" as UC_GEOCODE
+    }
+
+    package "Chatbot IA" {
+        usecase "Enviar mensaje\nde texto al chatbot" as UC_CHATTEXT
+        usecase "Enviar mensaje\nde audio al chatbot" as UC_CHATAUDIO
+        usecase "Activar/Desactivar\naudio del bot" as UC_TOGGLEAUD
+        usecase "Ver sugerencias\ndel chatbot" as UC_SUGGEST
+    }
+
+    package "Reseñas" {
+        usecase "Ver reseñas\nde una hostería" as UC_VIEWREV
+        usecase "Agregar reseña\n(comentario + rating)" as UC_ADDREV
+    }
+
+    package "Notificaciones" {
+        usecase "Ver lista de\nnotificaciones" as UC_NOTIF
+        usecase "Marcar como leída" as UC_READ
+        usecase "Marcar todas\ncomo leídas" as UC_READALL
+        usecase "Borrar todas\nlas notificaciones" as UC_DELNOTIF
+    }
+
+    package "Perfil" {
+        usecase "Ver perfil\npersonal" as UC_PROFILE
+        usecase "Editar perfil\n(nombre, foto, datos)" as UC_EDITPROF
+        usecase "Cambiar idioma\n(ES / EN)" as UC_LANG
+    }
+
+    package "Otros" {
+        usecase "Consultar clima\nde Sigchos" as UC_WEATHER
+    }
+}
+
+' === Conexiones del Turista ===
+T --> UC_REG
+T --> UC_LOGIN
+T --> UC_GLOGIN
+T --> UC_BIO
+T --> UC_VEMAIL
+T --> UC_RECPW
+T --> UC_LOGOUT
+T --> UC_DELETE
+T --> UC_VINCPW
+
+T --> UC_CATALOG
+T --> UC_SEARCH
+T --> UC_FILTER
+T --> UC_SORT
+T --> UC_DETAIL
+T --> UC_TOP
+T --> UC_NEAR
+
+T --> UC_ROOMS
+T --> UC_AVAIL
+
+T --> UC_RESERVE
+T --> UC_CART
+T --> UC_CHECK
+T --> UC_HIST
+T --> UC_CANCEL
+T --> UC_TRANS
+
+T --> UC_MAP
+T --> UC_GPS
+
+T --> UC_CHATTEXT
+T --> UC_CHATAUDIO
+
+T --> UC_VIEWREV
+T --> UC_ADDREV
+
+T --> UC_NOTIF
+T --> UC_READ
+
+T --> UC_PROFILE
+T --> UC_EDITPROF
+T --> UC_LANG
+
+T --> UC_WEATHER
+
+' === Relaciones include/extend ===
+UC_RESERVE ..> UC_AVAIL : <<include>>
+UC_RESERVE ..> UC_CONFIG : <<include>>
+UC_CONFIG ..> UC_OTHER : <<extend>>
+UC_RESERVE ..> UC_CART : <<include>>
+UC_CART ..> UC_CHECK : <<include>>
+
+UC_LOGIN ..> UC_BIO : <<extend>>
+UC_GLOGIN ..> UC_VINCPW : <<extend>>
+UC_REG ..> UC_VEMAIL : <<include>>
+
+UC_CATALOG ..> UC_SEARCH : <<extend>>
+UC_CATALOG ..> UC_FILTER : <<extend>>
+UC_CATALOG ..> UC_SORT : <<extend>>
+
+UC_DETAIL ..> UC_ROOMS : <<include>>
+UC_ROOMS ..> UC_AMEN : <<include>>
+
+UC_MAP ..> UC_GPS : <<include>>
+UC_MAP ..> UC_GEOCODE : <<extend>>
+
+UC_NOTIF ..> UC_READ : <<extend>>
+UC_NOTIF ..> UC_READALL : <<extend>>
+UC_NOTIF ..> UC_DELNOTIF : <<extend>>
+
+UC_CHATTEXT ..> UC_SUGGEST : <<extend>>
+UC_CHATAUDIO ..> UC_TOGGLEAUD : <<extend>>
+
+@enduml

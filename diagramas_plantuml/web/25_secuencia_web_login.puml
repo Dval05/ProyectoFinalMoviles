@@ -1,0 +1,67 @@
+@startuml Secuencia_Web_Login
+skinparam dpi 300
+title Diagrama de Secuencia — Login del Panel Web (Propietario/Admin)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Propietario/Admin" as P
+participant "LoginPage" as LP
+participant "AppContext" as CTX
+participant "Firebase Auth" as FA
+participant "Firestore" as FS
+
+P -> LP : Ingresa email + contraseña
+P -> LP : Pulsa "Ingresar"
+
+LP -> CTX : login(email, password)
+activate CTX
+
+CTX -> FA : signInWithEmailAndPassword(email, password)
+activate FA
+FA --> CTX : UserCredential
+deactivate FA
+
+alt Email es Super Admin (andrade.dval@gmail.com)
+    CTX --> LP : { success: true, role: 'admin' }
+    LP -> LP : Navigate → '/admin'
+else Verificar en colección 'administradores'
+    CTX -> FS : doc('administradores', email).get()
+    activate FS
+    alt Documento existe
+        FS --> CTX : adminDoc exists
+        CTX --> LP : { success: true, role: 'admin' }
+        LP -> LP : Navigate → '/admin'
+    else No es admin → verificar 'propietarios'
+        FS --> CTX : no existe
+        CTX -> FS : doc('propietarios', uid).get()
+        alt Existe como propietario
+            FS --> CTX : userData (nombre, email...)
+            CTX -> CTX : setUser({ uid, ...userData })
+            
+            note right of CTX
+              Buscar hostería del propietario
+              por nombre del propietario
+            end note
+            
+            CTX -> FS : query('hosterias')\n.where('nombre' == userData.nombre)
+            FS --> CTX : hosteriaData
+            CTX -> CTX : setHosteria({ id, ...hosteriaData })
+            
+            CTX --> LP : { success: true, role: 'propietario' }
+            LP -> LP : Navigate → '/dashboard'
+        else No es propietario ni admin
+            FS --> CTX : no existe
+            deactivate FS
+            CTX -> FA : signOut()
+            CTX --> LP : { success: false,\nerror: 'Acceso denegado' }
+            LP -> LP : Muestra error
+        end
+    end
+end
+
+deactivate CTX
+
+@enduml

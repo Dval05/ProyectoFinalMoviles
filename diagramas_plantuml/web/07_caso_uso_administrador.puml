@@ -1,0 +1,98 @@
+@startuml Caso_Uso_Administrador
+skinparam dpi 300
+title Diagrama de Casos de Uso — Actor: Administrador del Sistema
+caption Funcionalidades del panel web para el administrador (SuperAdmin)
+
+skinparam backgroundColor #FAFAFA
+skinparam usecase {
+    BackgroundColor #FFCDD2
+    BorderColor #B71C1C
+}
+
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 40
+
+actor "Administrador\ndel Sistema" as A #FFCDD2
+
+rectangle "Sistema HostSigchos — Panel Web (Admin)" {
+
+    package "Autenticación Admin" {
+        usecase "Iniciar Sesión\ncomo Admin" as UC_LOGIN
+        usecase "Cerrar Sesión" as UC_LOGOUT
+    }
+
+    package "Dashboard Administrativo" {
+        usecase "Ver estadísticas\nglobales del sistema" as UC_STATS
+        usecase "Ver total de\nhosterías registradas" as UC_TOTALHOST
+        usecase "Ver total de\nusuarios registrados" as UC_TOTALUSERS
+        usecase "Ver total de\nreservas del sistema" as UC_TOTALRES
+    }
+
+    package "Gestión Global de Hosterías" {
+        usecase "Ver TODAS las\nhosterías del sistema" as UC_ALLHOST
+        usecase "Monitorear datos\nde cada hostería" as UC_MONITOR
+    }
+
+    package "Gestión Global de Reservas" {
+        usecase "Ver TODAS las reservas\ndel sistema" as UC_ALLRES
+        usecase "Filtrar reservas\npor estado/hostería" as UC_FILTRES
+    }
+
+    package "Gestión Global de Usuarios" {
+        usecase "Ver TODOS los usuarios\nregistrados en la app" as UC_ALLUSERS
+        usecase "Monitorear actividad\nde usuarios" as UC_MONUSER
+    }
+
+    package "Gestión de Administradores" {
+        usecase "Ver lista de\nadministradores" as UC_VIEWADM
+        usecase "Agregar nuevo\nadministrador" as UC_ADDADM
+        usecase "Eliminar\nadministrador" as UC_DELADM
+    }
+
+    package "Estadísticas Avanzadas" {
+        usecase "Ver gráficas de\nreservas por mes" as UC_CHARTRES
+        usecase "Ver distribución\nde ingresos" as UC_CHARTING
+        usecase "Ver ranking\nde hosterías" as UC_RANKING
+    }
+}
+
+' === Conexiones ===
+A --> UC_LOGIN
+A --> UC_LOGOUT
+A --> UC_STATS
+A --> UC_ALLHOST
+A --> UC_ALLRES
+A --> UC_FILTRES
+A --> UC_ALLUSERS
+A --> UC_VIEWADM
+A --> UC_ADDADM
+A --> UC_DELADM
+A --> UC_CHARTRES
+
+' === Relaciones ===
+UC_STATS ..> UC_TOTALHOST : <<include>>
+UC_STATS ..> UC_TOTALUSERS : <<include>>
+UC_STATS ..> UC_TOTALRES : <<include>>
+
+UC_ALLHOST ..> UC_MONITOR : <<include>>
+UC_ALLUSERS ..> UC_MONUSER : <<include>>
+
+UC_STATS ..> UC_CHARTRES : <<extend>>
+UC_STATS ..> UC_CHARTING : <<extend>>
+UC_STATS ..> UC_RANKING : <<extend>>
+
+note right of UC_ADDADM
+  Solo el Super Admin
+  (andrade.dval@gmail.com)
+  puede gestionar administradores.
+  Protegido por Firestore Rules.
+end note
+
+note bottom of UC_ALLRES
+  El admin tiene listeners en
+  TODAS las colecciones en
+  tiempo real vía onSnapshot().
+end note
+
+@enduml

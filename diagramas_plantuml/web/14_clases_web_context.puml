@@ -1,0 +1,134 @@
+@startuml Clases_Web_Context
+skinparam dpi 300
+title Diagrama de Clases — Panel Web React (AppContext)
+caption Estructura del estado global del panel web y sus funciones
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #C8E6C9
+    BorderColor #2E7D32
+    HeaderBackgroundColor #A5D6A7
+}
+
+class AppContext <<React Context>> {
+    .. Estado de Autenticación ..
+    + user: Object | null
+    + role: "propietario" | "admin" | null
+    + isSuperAdmin: boolean
+    + loadingAuth: boolean
+    .. Estado del Propietario ..
+    + hosteria: Object | null
+    + rooms: Array
+    + reservations: Array
+    + promotions: Array
+    .. Estado del Admin ..
+    + allHosterias: Array
+    + allReservations: Array
+    + allUsers: Array
+    + allRooms: Array
+    ==
+    .. Funciones de Auth ..
+    + login(email, password): Promise<{success, role, error?}>
+    + logout(): Promise<void>
+    .. Funciones de Habitaciones ..
+    + toggleRoomStatus(roomId, isAvailable, closedUntil?): Promise<void>
+    + editRoom(roomId, roomData): Promise<void>
+    .. Funciones de Reservas ..
+    + updateReservationStatus(reservationId, newStatus): Promise<void>
+    .. Funciones de Promociones ..
+    + addPromotion(promo): Promise<void>
+    + deletePromotion(promoId): Promise<void>
+    .. Funciones de Configuración ..
+    + updateHosteriaSettings(newData): Promise<void>
+}
+
+class "ProtectedRoute" as PR <<Component>> {
+    + children: ReactNode
+    --
+    Redirige a /login si !user
+}
+
+class "AdminRoute" as AR <<Component>> {
+    + children: ReactNode
+    --
+    Redirige a /login si
+    !user || role !== 'admin'
+}
+
+package "Páginas del Propietario" {
+    class DashboardInicio <<Page>> {
+        Resumen con KPIs
+    }
+    class RoomsManager <<Page>> {
+        Gestión de habitaciones
+    }
+    class ReservationsManager <<Page>> {
+        Gestión de reservas
+    }
+    class PromotionsManager <<Page>> {
+        Gestión de promociones
+    }
+    class ClientsManager <<Page>> {
+        Lista de clientes
+    }
+    class SettingsManager <<Page>> {
+        Configuración de hostería
+    }
+}
+
+package "Páginas del Admin" {
+    class SystemAdminDashboard <<Page>> {
+        Dashboard global
+    }
+    class AdminHosterias <<Page>> {
+        Todas las hosterías
+    }
+    class AdminReservations <<Page>> {
+        Todas las reservas
+    }
+    class AdminUsers <<Page>> {
+        Todos los usuarios
+    }
+    class AdminStats <<Page>> {
+        Estadísticas globales
+    }
+    class ManageAdmins <<Page>> {
+        Gestión de admins
+    }
+}
+
+AppContext <-- DashboardInicio : useAppContext()
+AppContext <-- RoomsManager : useAppContext()
+AppContext <-- ReservationsManager : useAppContext()
+AppContext <-- PromotionsManager : useAppContext()
+AppContext <-- ClientsManager : useAppContext()
+AppContext <-- SettingsManager : useAppContext()
+
+AppContext <-- SystemAdminDashboard : useAppContext()
+AppContext <-- AdminHosterias : useAppContext()
+AppContext <-- AdminReservations : useAppContext()
+AppContext <-- AdminUsers : useAppContext()
+AppContext <-- AdminStats : useAppContext()
+AppContext <-- ManageAdmins : useAppContext()
+
+PR --> AppContext : "verifica user"
+AR --> AppContext : "verifica role"
+
+note right of AppContext
+  **Listeners en Tiempo Real (onSnapshot):**
+  
+  Si role == 'propietario':
+  → Escucha habitaciones, reservas
+    y promociones de SU hostería
+  
+  Si role == 'admin':
+  → Escucha TODAS las hosterías,
+    reservas, usuarios y habitaciones
+end note
+
+@enduml
+

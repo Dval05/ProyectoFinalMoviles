@@ -1,0 +1,62 @@
+@startuml Secuencia_Web_Reservas
+skinparam dpi 300
+title Diagrama de Secuencia — Gestión de Reservas (Propietario Web)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Propietario" as P
+participant "ReservationsManager" as RM
+participant "AppContext" as CTX
+participant "Firestore" as FS
+participant "App Móvil\n(listener)" as MOVIL
+
+== Carga en tiempo real ==
+
+CTX -> FS : onSnapshot(\n  query('reservas')\n  .where('hosteriaId' == hosteria.id)\n)
+activate FS
+
+FS --> CTX : Snapshot con reservas
+CTX -> CTX : Para cada reserva:\nresolver nombre del cliente
+
+loop Para cada reserva sin nombre resuelto
+    CTX -> FS : doc('usuarios', reserva.usuarioId).get()
+    FS --> CTX : { nombre } del usuario
+    CTX -> CTX : resolvedClientName = nombre
+end
+
+CTX --> RM : reservations[] actualizadas
+deactivate FS
+
+P -> RM : Ve tabla con todas las reservas\nde su hostería
+
+== Confirmar una reserva ==
+
+P -> RM : Selecciona reserva 'pendiente'\ny cambia a 'confirmada'
+
+RM -> CTX : updateReservationStatus(id, 'confirmada')
+activate CTX
+
+CTX -> FS : updateDoc('reservas/{id}',\n{ estado: 'confirmada' })
+FS --> CTX : Actualizado
+deactivate CTX
+
+note over FS, MOVIL
+  El cambio de estado en Firestore
+  es detectado por el ReservaViewModel
+  de la app móvil cuando carga historial.
+  
+  Además, se genera una notificación
+  automática: "¡Tu reserva ha sido confirmada!"
+end note
+
+== Cancelar una reserva ==
+
+P -> RM : Cambia estado a 'cancelada'
+RM -> CTX : updateReservationStatus(id, 'cancelada')
+CTX -> FS : updateDoc('reservas/{id}',\n{ estado: 'cancelada' })
+FS --> CTX : Actualizado
+
+@enduml

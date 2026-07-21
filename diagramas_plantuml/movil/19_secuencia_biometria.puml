@@ -1,0 +1,64 @@
+@startuml Secuencia_Biometria
+skinparam dpi 300
+title Diagrama de Secuencia — Login con Biometría (Huella / Face ID)
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+
+actor "Usuario" as U
+participant "LoginScreen" as LS
+participant "AuthViewModel" as AVM
+participant "BiometricService" as BIO
+participant "LoginUseCase" as LUC
+participant "Firebase Auth" as FA
+
+U -> LS : Pulsa ícono de huella/Face ID
+
+LS -> AVM : loginConBiometria()
+activate AVM
+AVM -> AVM : _setLoading(true)
+
+AVM -> BIO : authenticate()
+activate BIO
+BIO -> BIO : LocalAuthentication.authenticate(\n  localizedReason: '...',\n  biometricOnly: true)
+
+alt Autenticación biométrica exitosa
+    BIO --> AVM : true
+    
+    AVM -> BIO : getCredentials()
+    BIO -> BIO : FlutterSecureStorage.read()\n→ email + password
+    
+    alt Credenciales encontradas
+        BIO --> AVM : {email, password}
+        
+        AVM -> LUC : call(email, password)
+        LUC -> FA : signInWithEmailAndPassword()
+        FA --> LUC : UserCredential
+        LUC --> AVM : Entity Usuario
+        
+        AVM -> AVM : _usuarioActual = usuario
+        AVM -> AVM : _setLoading(false)
+        AVM --> LS : return true
+        
+        LS -> LS : Navigator → '/home'
+        
+    else No hay credenciales guardadas
+        BIO --> AVM : null
+        AVM -> AVM : _errorMessage = 'No hay credenciales\nguardadas. Inicia sesión normalmente.'
+        AVM -> AVM : _setLoading(false)
+        AVM --> LS : return false
+    end
+    
+else Autenticación biométrica fallida / cancelada
+    BIO --> AVM : false
+    deactivate BIO
+    AVM -> AVM : _setLoading(false)
+    AVM --> LS : return false
+    LS -> LS : Permanece en LoginScreen
+end
+
+deactivate AVM
+
+@enduml

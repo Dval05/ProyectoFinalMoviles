@@ -1,0 +1,151 @@
+@startuml Clases_Repositories
+skinparam dpi 300
+title Diagrama de Clases — Repositories (Interfaces + Implementaciones)
+caption Patrón Repository: Domain define la interfaz, Data la implementa
+
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam backgroundColor #FAFAFA
+skinparam class {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+}
+
+' ===== INTERFACES (DOMAIN) =====
+package "domain/repositories/" #C8E6C9 {
+
+    abstract class AuthRepository <<interface>> {
+        + {abstract} loginConEmail(email: String, password: String): Future<Usuario>
+        + {abstract} registrarse(nombre, email, password, cedula, ...): Future<Usuario>
+        + {abstract} loginConGoogle(): Future<Usuario>
+        + {abstract} cerrarSesion(): Future<void>
+        + {abstract} getUsuarioActual(): Future<Usuario?>
+        + {abstract} authStateChanges: Stream<Usuario?>
+        + {abstract} actualizarPerfil(uid, nombre, ...): Future<Usuario>
+        + {abstract} vincularPasswordAGoogle(password): Future<void>
+        + {abstract} enviarVerificacionEmail(): Future<void>
+        + {abstract} verificarEmailConfirmado(): Future<bool>
+        + {abstract} enviarCorreoRecuperacionPassword(email): Future<void>
+        + {abstract} esUsuarioSoloGoogle(): Future<bool>
+        + {abstract} eliminarCuenta(): Future<void>
+    }
+
+    abstract class HosteriaRepository <<interface>> {
+        + {abstract} getHosterias(): Future<List<Hosteria>>
+        + {abstract} getHosteriaById(id: String): Future<Hosteria>
+    }
+
+    abstract class HabitacionRepository <<interface>> {
+        + {abstract} getHabitacionesPorHosteria(hosteriaId): Future<List<Habitacion>>
+        + {abstract} getTodasLasHabitaciones(): Future<List<Habitacion>>
+        + {abstract} getReservasPorHabitacion(habitacionId): Future<List<Reserva>>
+    }
+
+    abstract class ReservaRepository <<interface>> {
+        + {abstract} crearReserva(reserva: Reserva): Future<Reserva>
+        + {abstract} getTodasLasReservas(): Future<List<Reserva>>
+        + {abstract} getReservasPorUsuario(usuarioId): Future<List<Reserva>>
+        + {abstract} getReservasPorHabitacion(habitacionId): Future<List<Reserva>>
+        + {abstract} getReservaById(id): Future<Reserva>
+        + {abstract} cancelarReserva(reservaId): Future<void>
+        + {abstract} actualizarEstado(reservaId, nuevoEstado): Future<void>
+    }
+
+    abstract class NotificacionRepository <<interface>> {
+        + {abstract} getNotificacionesStream(usuarioId): Stream<List<NotificacionApp>>
+        + {abstract} marcarLeida(id): Future<void>
+        + {abstract} marcarTodasComoLeidas(usuarioId): Future<void>
+        + {abstract} borrarTodas(usuarioId): Future<void>
+    }
+
+    abstract class ResenaRepository <<interface>> {
+        + {abstract} agregarResena(resena: Resena): Future<void>
+        + {abstract} getResenasPorHosteria(hosteriaId): Stream<List<Resena>>
+    }
+
+    abstract class ChatbotRepository <<interface>> {
+        + {abstract} enviarMensaje(text, contexto): Future<ChatMessage>
+        + {abstract} enviarAudio(filePath, contexto): Future<ChatMessage>
+    }
+
+    abstract class GeocodingRepository <<interface>> {
+        + {abstract} getDireccion(lat, lng): Future<String>
+    }
+}
+
+' ===== IMPLEMENTACIONES (DATA) =====
+package "data/repositories/" #FFE0B2 {
+
+    class AuthRepositoryImpl {
+        - _authDataSource: AuthDataSource
+        --
+        + loginConEmail(email, password): Future<Usuario>
+        + registrarse(...): Future<Usuario>
+        + loginConGoogle(): Future<Usuario>
+        + cerrarSesion(): Future<void>
+        + getUsuarioActual(): Future<Usuario?>
+        + actualizarPerfil(...): Future<Usuario>
+        + vincularPasswordAGoogle(password): Future<void>
+        + enviarVerificacionEmail(): Future<void>
+        + verificarEmailConfirmado(): Future<bool>
+        + enviarCorreoRecuperacionPassword(email): Future<void>
+        + esUsuarioSoloGoogle(): Future<bool>
+        + eliminarCuenta(): Future<void>
+    }
+
+    class HosteriaRepositoryImpl {
+        - _hosteriaDataSource: HosteriaDataSource
+        --
+        + getHosterias(): Future<List<Hosteria>>
+        + getHosteriaById(id): Future<Hosteria>
+    }
+
+    class HabitacionRepositoryImpl {
+        - _habitacionDataSource: HabitacionDataSource
+        --
+        + getHabitacionesPorHosteria(hosteriaId): Future<List<Habitacion>>
+        + getTodasLasHabitaciones(): Future<List<Habitacion>>
+        + getReservasPorHabitacion(habitacionId): Future<List<Reserva>>
+    }
+
+    class ReservaRepositoryImpl {
+        - _reservaDataSource: ReservaDataSource
+        --
+        + crearReserva(reserva): Future<Reserva>
+        + getTodasLasReservas(): Future<List<Reserva>>
+        + getReservasPorUsuario(usuarioId): Future<List<Reserva>>
+        + cancelarReserva(reservaId): Future<void>
+        + actualizarEstado(reservaId, nuevoEstado): Future<void>
+    }
+
+    class NotificacionRepositoryImpl {
+        - _datasource: NotificacionDataSource
+    }
+
+    class ResenaRepositoryImpl {
+        - _datasource: ResenaDataSource
+    }
+
+    class ChatbotRepositoryImpl {
+        - _datasource: ChatbotDataSource
+    }
+
+    class GeocodingRepositoryImpl {
+        - _datasource: GeocodingDataSource
+    }
+}
+
+' ===== RELACIONES IMPLEMENTS =====
+AuthRepository <|.. AuthRepositoryImpl : implements
+HosteriaRepository <|.. HosteriaRepositoryImpl : implements
+HabitacionRepository <|.. HabitacionRepositoryImpl : implements
+ReservaRepository <|.. ReservaRepositoryImpl : implements
+NotificacionRepository <|.. NotificacionRepositoryImpl : implements
+ResenaRepository <|.. ResenaRepositoryImpl : implements
+ChatbotRepository <|.. ChatbotRepositoryImpl : implements
+GeocodingRepository <|.. GeocodingRepositoryImpl : implements
+
+@enduml
+

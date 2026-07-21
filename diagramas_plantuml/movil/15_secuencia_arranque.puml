@@ -1,0 +1,98 @@
+@startuml Secuencia_Arranque
+skinparam dpi 300
+title Diagrama de Secuencia — Arranque e Inicialización de la App
+caption Desde main() hasta la primera pantalla visible
+
+skinparam maxMessageSize 150
+skinparam nodesep 50
+skinparam participantPadding 30
+skinparam backgroundColor #FAFAFA
+skinparam sequence {
+    ArrowColor #1565C0
+    LifeLineBorderColor #1565C0
+    ParticipantBackgroundColor #E3F2FD
+}
+
+participant "SO" as SO
+participant "main.dart" as Main
+participant "Firebase SDK" as Firebase
+participant "injection_container\n(GetIt)" as DI
+participant "NotificationService" as NS
+participant "MultiProvider" as MP
+participant "SplashScreen" as Splash
+participant "AuthViewModel" as AVM
+participant "Firebase Auth" as FA
+
+SO -> Main : Ejecuta main()
+activate Main
+
+Main -> Main : WidgetsFlutterBinding\n.ensureInitialized()
+
+Main -> Firebase : Firebase.initializeApp()\n[timeout: 8 segundos]
+activate Firebase
+Firebase --> Main : Firebase inicializado
+deactivate Firebase
+
+Main -> DI : setupLocator()
+activate DI
+note right of DI
+  Registra en orden:
+  1. Services (NotificationService)
+  2. DataSources (Auth, Hosteria, ...)
+  3. Repositories (AuthImpl, ...)
+  4. UseCases (Login, Register, ...)
+  5. ViewModels (AuthVM, HosteriaVM, ...)
+end note
+DI --> Main : GetIt configurado
+deactivate DI
+
+Main -> NS : inicializar()\n[timeout: 3 segundos]
+activate NS
+NS --> Main : Servicio de notificaciones activo
+deactivate NS
+
+Main -> MP : runApp(MultiProvider)
+activate MP
+note right of MP
+  Inyecta 11 ChangeNotifierProviders:
+  - LocaleViewModel
+  - WeatherViewModel
+  - AuthViewModel
+  - HosteriaViewModel
+  - HabitacionViewModel
+  - ReservaViewModel
+  - CarritoReservaViewModel
+  - GeocodingViewModel
+  - ChatbotViewModel
+  - NotificacionViewModel
+  - ResenaViewModel
+end note
+
+MP -> Splash : Renderiza SplashScreen\n(ruta inicial: '/')
+activate Splash
+
+Splash -> AVM : checkCurrentSession()
+activate AVM
+
+AVM -> FA : getUsuarioActual()
+activate FA
+
+alt Sesión activa encontrada
+    FA --> AVM : Usuario autenticado
+    AVM --> Splash : usuarioActual != null
+    Splash -> Splash : Navigator.pushReplacementNamed('/home')
+    note right : Navega a MainScreen\n(con BottomNavigationBar)
+else Sin sesión activa
+    FA --> AVM : null
+    AVM --> Splash : usuarioActual == null
+    Splash -> Splash : Navigator.pushReplacementNamed('/landing')
+    note right : Navega a LandingScreen\n(pantalla de bienvenida)
+end
+
+deactivate FA
+deactivate AVM
+deactivate Splash
+deactivate MP
+deactivate Main
+
+@enduml
