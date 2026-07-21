@@ -1,0 +1,14 @@
+{
+  "name": "appium-flutter-tests",
+  "version": "1.0.0",
+  "description": "Appium tests for HostSigchos Flutter app",
+  "main": "sample_test.js",
+  "scripts": {
+    "test": "node sample_test.js"
+  },
+  "dependencies": {
+    "appium-flutter-driver": "^2.3.0",
+    "dotenv": "^17.4.2",
+    "webdriverio": "^8.30.0"
+  }
+}

@@ -1,12 +1,10 @@
 # Miscellaneous
-.env
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
@@ -18,21 +16,20 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
 /build/
 /coverage/
+*.packages
+.packages
 
 # Symbolication related
 app.*.symbols
@@ -40,19 +37,34 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Web related
+.dart_tool/
+build/
+node_modules/
+appium_tests/node_modules/
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables
 .env
+.env.*
 
 # Firebase secrets
 android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
 
 # Release signing secrets
 android/key.properties
 android/app/*.jks
 android/app/*.keystore
+
+# Mac/iOS
+**/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/*.xcworkspace/xcuserdata/
 
 # Local Claude Code instructions, not for the repo
 /CLAUDE.md

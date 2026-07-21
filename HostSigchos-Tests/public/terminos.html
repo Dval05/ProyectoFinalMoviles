@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones - HostSigchos</title>
+    <style>
+        :root {
+            --primary-green: #2B5E41;
+            --light-green: #3A7D56;
+            --accent-gold: #D4AF37;
+            --background: #F4F7F5;
+            --surface: rgba(255, 255, 255, 0.85);
+            --text-dark: #1F2937;
+            --text-gray: #4B5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            line-height: 1.7; 
+            color: var(--text-dark); 
+            background: linear-gradient(135deg, #F4F7F5 0%, #E8F0EA 100%);
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Header */
+        .header-wrapper {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            padding-bottom: 60px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 30px rgba(43, 94, 65, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative circles in header */
+        .header-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .header {
+            padding: 50px 20px 20px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin-top: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+        }
+
+        /* Glassmorphism Container */
+        .container { 
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            max-width: 800px; 
+            margin: -60px auto 40px auto; 
+            padding: 45px 40px; 
+            border-radius: 28px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            position: relative;
+            z-index: 2;
+        }
+
+        h2 { 
+            color: var(--primary-green); 
+            margin-top: 40px; 
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 24px;
+            background: var(--accent-gold);
+            border-radius: 4px;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        p { 
+            margin-bottom: 15px; 
+            color: var(--text-gray); 
+            font-size: 16px;
+        }
+
+        ul {
+            background: rgba(43, 94, 65, 0.03);
+            border: 1px solid rgba(43, 94, 65, 0.1);
+            border-radius: 16px;
+            padding: 20px 20px 20px 40px;
+            color: var(--text-gray);
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        .shield-icon {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .shield-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--primary-green);
+            opacity: 0.8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-gray);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .contact-email {
+            display: inline-block;
+            background: rgba(43, 94, 65, 0.1);
+            color: var(--primary-green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .warning-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 25px;
+        }
+
+        .highlight-box {
+            background: rgba(43, 94, 65, 0.05);
+            border-left: 4px solid var(--primary-green);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 25px 0;
+            font-style: italic;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: -50px 15px 30px 15px;
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+            .header h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 19px;
+            }
+            p, ul {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-wrapper">
+        <div class="header">
+            <h1>Términos y Condiciones</h1>
+            <p>Última actualización: 2 de Julio de 2026</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>1. Aceptación de los Términos</h2>
+        <p>Al acceder y utilizar la aplicación HostSigchos, usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, por favor, absténgase de utilizar nuestro servicio para garantizar su conformidad legal.</p>
+
+        <h2>2. Uso de la Aplicación</h2>
+        <p>La aplicación HostSigchos permite a los usuarios buscar, visualizar y reservar hosterías de primer nivel en la zona de Sigchos. Usted se compromete a proporcionar información verdadera, precisa y completa al momento de registrarse y realizar reservas, asegurando una experiencia óptima.</p>
+
+        <div class="highlight-box">
+            "Nos esforzamos por brindarle una experiencia fluida. Su honestidad en la provisión de datos nos ayuda a garantizar un servicio excepcional."
+        </div>
+
+        <h2>3. Reservas y Pagos</h2>
+        <p>Al realizar una reserva a través de nuestra aplicación, usted se compromete a pagar el precio total indicado. Dado que buscamos un trato directo y personalizado, los pagos se gestionarán fuera de la plataforma (ej. transferencias o depósitos directos al administrador) según lo acordado mediante los canales oficiales de WhatsApp de cada hostería.</p>
+
+        <h2>4. Cancelaciones</h2>
+        <p>Las políticas de cancelación varían según cada hostería debido a sus operaciones independientes. Es responsabilidad del usuario leer las condiciones específicas directamente con el administrador antes de confirmar una reserva o transferencia.</p>
+
+        <h2>5. Modificaciones</h2>
+        <p>Nos reservamos el derecho de modificar estos Términos en cualquier momento para adaptarnos a nuevas normativas o mejoras del servicio. El uso continuado de la aplicación después de la publicación de los cambios constituirá su aceptación incondicional de dichos cambios.</p>
+
+        <h2>6. Contacto y Soporte</h2>
+        <p>Si tiene alguna pregunta, sugerencia o requiere asistencia técnica sobre estos Términos, nuestro equipo estará encantado de atenderle:</p>
+        <div style="text-align: center;">
+            <span class="contact-email">andrade.dval@gmail.com</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 HostSigchos. Todos los derechos reservados.<br>
+        Diseñado con excelencia en Ecuador.
+    </div>
+</body>
+</html>

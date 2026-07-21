@@ -1,45 +1,36 @@
-# 🌲 HostSigchos
+# Aplicación Móvil HostSigchos (Flutter) 📱
 
-HostSigchos es el Sistema de Reservas de Hosterías para la región de Sigchos. Esta aplicación móvil permite a los usuarios descubrir hosterías, verificar disponibilidad de habitaciones, reservar, comunicarse con un chatbot inteligente y visualizar ubicaciones usando mapas libres.
+Esta carpeta contiene el ecosistema móvil completo para el turista. Ha sido desarrollada bajo estrictos estándares de la industria, asegurando su escalabilidad, mantenimiento y cobertura de pruebas.
 
-## ✨ Funcionalidades Principales
+## 🏗️ Clean Architecture y MVVM
 
-- 🔐 **Autenticación**: Inicio de sesión seguro mediante correo electrónico y contraseña (Firebase Auth).
-- 🏨 **Exploración y Búsqueda**: Catálogo de hosterías con filtros avanzados y detalles completos.
-- 🗺️ **Mapas (OpenStreetMap)**: Visualización y geolocalización de hosterías sin depender de APIs de pago.
-- 🤖 **Asistente Virtual (Chatbot)**: Integración con IA a través de la API de Groq para resolver dudas.
-- 📅 **Gestión de Reservas**: Selección de fechas, cálculo de tarifas y almacenamiento en Firestore.
-- 🌍 **Internacionalización (i18n)**: Soporte completo para Inglés (en) y Español (es) adaptándose dinámicamente.
-- ⚙️ **Perfil y Configuraciones**: Gestión de cuenta, acceso a políticas de privacidad, términos de servicio y soporte técnico (vía WhatsApp/Email cargados de forma segura).
+El proyecto está diseñado bajo el modelo **Clean Architecture**. Si abres la carpeta `lib/`, encontrarás que no todo está mezclado. En lugar de eso, el código fluye en capas que no dependen de la UI. 
+* 📖 [Leer sobre la estructura de la carpeta `lib/`](./lib/README.md)
 
-## 📋 Documentación de Proyecto
+## 🧪 Pruebas y Control de Calidad (Testing)
 
-Para mantener el código profesional, limpio y escalable, la documentación se ha dividido en los siguientes módulos:
+Se ha implementado una estrategia profunda para garantizar cero errores en producción, especialmente para prevenir el temido *Overbooking* (Sobreventa) de habitaciones y para asegurar que la autenticación sea infalible.
+* 📖 [Leer cómo ejecutar y comprender los Tests (`test/`)](./test/README.md)
 
-- 🛡️ **[Seguridad y Ofuscamiento](SECURITY.md)**: Explicación de cómo las API Keys están aseguradas (Envied), la configuración de red y la ofuscación ProGuard/R8 para prevenir ingeniería inversa.
-- 🏗️ **[Arquitectura y Clean Code](ARCHITECTURE.md)**: Explicación sobre la Inyección de Dependencias (DI) con `get_it`, el patrón Singleton y la separación de responsabilidades usando principios SOLID.
+## 🛠️ Tecnologías Clave Utilizadas
+- **Gestor de Estado:** Provider (inyección de dependencias con GetIt).
+- **Backend:** Firebase (Auth, Cloud Firestore para base de datos NoSQL documental, Storage para imágenes).
+- **IA Generativa:** SDK de Gemini (Chatbot turístico interactivo).
+- **Mapas:** `flutter_map` con servidor de geocoding.
+- **Hardware Integrado:** Local Auth (Autenticación biométrica con huella/rostro), TTS (Texto a voz), Sensores de ubicación y brújula.
 
-## 🚀 Despliegue y Compilación Segura
+## 📝 Configuración y Ejecución Inicial (Paso a Paso)
 
-Debido a los mecanismos de seguridad implementados, si deseas compilar la aplicación para Producción (Release) con todo ofuscado, usa el siguiente comando:
-
-```bash
-# Compilar un AppBundle para la Play Store con ofuscamiento completo
-flutter build appbundle --release --obfuscate --split-debug-info=./debug-info
-
-# O para un APK instalable directamente:
-flutter build apk --release --obfuscate --split-debug-info=./debug-info
-```
-
-> **Nota:** El flag `--obfuscate` asegura que el código Dart sea convertido a binario ilegible, mientras que R8/ProGuard se encarga del código nativo de Android.
-
-## 🛠️ Tecnologías Principales
-
-- **Flutter / Dart**
-- **Firebase** (Auth, Firestore)
-- **Groq API** (Chatbot de Inteligencia Artificial)
-- **OpenStreetMap (OSM)** (Mapas Libres)
-- **Provider** (Manejo de Estado)
-- **GetIt** (Inyección de Dependencias)
-- **Envied** (Ofuscación de Keys)
-- **Flutter Localizations** (i18n)
+1. **Variables de entorno:** Crea un archivo llamado `.env` en la raíz de esta carpeta y agrega las llaves API necesarias de Google/Firebase y Gemini.
+2. **Descargar dependencias:**
+   ```bash
+   flutter pub get
+   ```
+3. **Generación de código:** (Importante si editas modelos o dependencias)
+   ```bash
+   flutter packages pub run build_runner build --delete-conflicting-outputs
+   ```
+4. **Ejecutar en el emulador o celular real:**
+   ```bash
+   flutter run
+   ```

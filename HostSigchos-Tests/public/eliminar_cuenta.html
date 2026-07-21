@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminación de Cuenta - HostSigchos</title>
+    <style>
+        :root {
+            --primary-green: #2B5E41;
+            --light-green: #3A7D56;
+            --accent-gold: #D4AF37;
+            --background: #F4F7F5;
+            --surface: rgba(255, 255, 255, 0.85);
+            --text-dark: #1F2937;
+            --text-gray: #4B5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            line-height: 1.7; 
+            color: var(--text-dark); 
+            background: linear-gradient(135deg, #F4F7F5 0%, #E8F0EA 100%);
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Header */
+        .header-wrapper {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            padding-bottom: 60px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 30px rgba(43, 94, 65, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative circles in header */
+        .header-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .header {
+            padding: 50px 20px 20px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin-top: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+        }
+
+        /* Glassmorphism Container */
+        .container { 
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            max-width: 800px; 
+            margin: -60px auto 40px auto; 
+            padding: 45px 40px; 
+            border-radius: 28px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            position: relative;
+            z-index: 2;
+        }
+
+        h2 { 
+            color: var(--primary-green); 
+            margin-top: 40px; 
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 24px;
+            background: var(--accent-gold);
+            border-radius: 4px;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        p { 
+            margin-bottom: 15px; 
+            color: var(--text-gray); 
+            font-size: 16px;
+        }
+
+        ul {
+            background: rgba(43, 94, 65, 0.03);
+            border: 1px solid rgba(43, 94, 65, 0.1);
+            border-radius: 16px;
+            padding: 20px 20px 20px 40px;
+            color: var(--text-gray);
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        .shield-icon {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .shield-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--primary-green);
+            opacity: 0.8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-gray);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .contact-email {
+            display: inline-block;
+            background: rgba(43, 94, 65, 0.1);
+            color: var(--primary-green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .warning-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 25px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: -50px 15px 30px 15px;
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+            .header h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 19px;
+            }
+            p, ul {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-wrapper">
+        <div class="header">
+            <h1>Solicitud de Eliminación de Cuenta</h1>
+            <p>Procedimiento y políticas de retención de datos</p>
+        </div>
+    </div>
+    
+    <div class="container">
+
+        <div class="shield-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <!-- Icono de usuario con un tachado/escudo -->
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+            </svg>
+        </div>
+
+        <div class="warning-box">
+            <p style="margin: 0; color: #856404;"><strong>Importante:</strong> La eliminación de tu cuenta es una acción irreversible. Perderás el acceso a la aplicación y no podrás recuperar tu perfil.</p>
+        </div>
+
+        <h2>1. Proceso de Eliminación</h2>
+        <p>En HostSigchos respetamos tu derecho a la privacidad y el control sobre tus datos personales. Para solicitar la eliminación definitiva de tu cuenta y los datos asociados a ella, debes seguir estos pasos:</p>
+        <ul>
+            <li>Envíanos un correo electrónico a la dirección de soporte que indicamos al final de esta página.</li>
+            <li>El asunto del correo debe ser exactamente: <strong>"Solicitud de Eliminación de Cuenta"</strong>.</li>
+            <li>El correo debe enviarse desde la misma dirección de correo electrónico que utilizaste para registrarte en la aplicación de HostSigchos.</li>
+        </ul>
+
+        <h2>2. Tratamiento de tus Datos Personales</h2>
+        <p>Una vez recibida y verificada tu solicitud, procederemos con un proceso de <strong>borrado lógico y ofuscación</strong>. Esto garantiza la protección de tu identidad mientras mantenemos la integridad técnica del sistema:</p>
+        <ul>
+            <li>Tu acceso (credenciales de inicio de sesión) a la aplicación será revocado y destruido permanentemente de nuestro sistema de autenticación (Firebase Auth).</li>
+            <li>Tus datos personales identificables (nombre, correo electrónico, teléfono, cédula y fotografía de perfil) serán borrados o sobrescritos de nuestra base de datos.</li>
+            <li>No recibirás futuras comunicaciones, boletines, notificaciones ni correos promocionales por nuestra parte.</li>
+        </ul>
+
+        <h2>3. Retención de Datos por Seguridad (Borrado Lógico)</h2>
+        <p>Para cumplir con normativas legales, fiscales y de prevención de fraudes de las hosterías asociadas, mantendremos de forma completamente anónima el siguiente historial:</p>
+        <ul>
+            <li>Los registros de transacciones y reservas pasadas que hayas realizado quedarán almacenados bajo un identificador anónimo (ej. "Usuario Eliminado").</li>
+            <li>Esta información retenida no podrá volver a vincularse a ti de ninguna manera.</li>
+        </ul>
+
+        <h2>4. Tiempos de Respuesta</h2>
+        <p>Nos comprometemos a procesar tu solicitud de eliminación de cuenta en un plazo máximo de <strong>7 a 14 días hábiles</strong> desde la recepción del correo electrónico confirmando tu identidad.</p>
+
+        <h2>5. Solicitar la Eliminación Ahora</h2>
+        <p>Para iniciar el proceso inmediatamente, por favor contáctanos a nuestro equipo de soporte:</p>
+        <div style="text-align: center;">
+            <span class="contact-email">andrade.dval@gmail.com</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 HostSigchos. Todos los derechos reservados.<br>
+        Su privacidad es nuestra prioridad.
+    </div>
+</body>
+</html>
