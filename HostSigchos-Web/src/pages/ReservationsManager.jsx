@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -48,9 +49,9 @@ const ReservationsManager = () => {
         </div>
       </header>
 
-      {selectedResInfo && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
-          <div className="card" style={{ width: '100%', maxWidth: '500px', padding: '32px', backgroundColor: '#ffffff', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid #e0e0e0' }}>
+      {selectedResInfo && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '32px', backgroundColor: '#ffffff', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid #e0e0e0', maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 style={{ marginBottom: '20px', fontSize: '1.6rem', fontWeight: 'bold', color: '#1a1a1a', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>Detalles de Reserva #{selectedResInfo.id.substring(0,8).toUpperCase()}</h2>
             <div style={{ display: 'grid', gap: '14px', fontSize: '1.05rem', color: '#333333' }}>
               <p><strong>Cliente:</strong> {selectedResInfo.resolvedClientName}</p>
@@ -72,7 +73,8 @@ const ReservationsManager = () => {
               <button className="btn btn-primary" onClick={() => setSelectedResInfo(null)}>Cerrar</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <div className="card" style={{ marginBottom: '24px', padding: '16px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
