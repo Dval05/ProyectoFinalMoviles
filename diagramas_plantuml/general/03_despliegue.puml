@@ -28,14 +28,6 @@ node "Dispositivo Android" as android <<device>> #A5D6A7 {
     flutter_android --> tts
 }
 
-node "Dispositivo iOS" as ios <<device>> #90CAF9 {
-    artifact "HostSigchos.ipa" as ipa
-    component [Flutter Runtime] as flutter_ios
-    component [Firebase SDK iOS] as fb_ios
-    
-    ipa --> flutter_ios
-    flutter_ios --> fb_ios
-}
 
 node "Navegador Web\n(Chrome, Firefox, Safari)" as browser <<device>> #CE93D8 {
     artifact "React SPA\n(Vite Build)" as spa
@@ -44,7 +36,7 @@ node "Navegador Web\n(Chrome, Firefox, Safari)" as browser <<device>> #CE93D8 {
     spa --> fb_web
 }
 
-cloud "Vercel CDN" as vercel <<cloud>> #212121 {
+cloud "Vercel CDN" as vercel <<cloud>> #f4ddddff {
     artifact "dist/\n(HTML + JS + CSS)" as dist
     component [Edge Network\nGlobal] as edge
     
@@ -86,8 +78,7 @@ flutter_android --> chatbot_api : "HTTPS REST"
 flutter_android --> weather_api : "HTTPS REST"
 flutter_android --> osm : "HTTPS\n(Tile Requests)"
 
-fb_ios --> auth : "HTTPS"
-fb_ios --> firestore : "HTTPS"
+
 
 fb_web --> auth : "HTTPS"
 fb_web --> firestore : "HTTPS\n(onSnapshot\nRealtime)"

@@ -4,11 +4,12 @@
   "description": "Appium tests for HostSigchos Flutter app",
   "main": "sample_test.js",
   "scripts": {
-    "test": "node sample_test.js"
+    "test": "node sample_test.js",
+    "test:e2e": "node complete_e2e_test.js"
   },
   "dependencies": {
     "appium-flutter-driver": "^2.3.0",
     "dotenv": "^17.4.2",
-    "webdriverio": "^8.30.0"
+    "webdriverio": "^9.30.0"
   }
 }

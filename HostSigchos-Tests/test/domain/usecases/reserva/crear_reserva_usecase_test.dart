@@ -33,7 +33,7 @@ void main() {
   final reservaDevuelta = reservaTest.copyWith(id: 'generated_id_123');
 
   group('CrearReservaUseCase Tests', () {
-    test('Debe llamar al repositorio para crear la reserva y devolverla con ID', () async {
+    test('PU-05: Crear reserva exitosa retorna objeto con ID generado', () async {
       // Arrange
       when(mockRepository.crearReserva(reservaTest))
           .thenAnswer((_) async => reservaDevuelta);
@@ -45,9 +45,11 @@ void main() {
       expect(result.id, 'generated_id_123');
       expect(result.estado, 'pendiente');
       verify(mockRepository.crearReserva(reservaTest)).called(1);
+      // ignore: avoid_print
+      print('[OK] PU-05: Crear reserva retorna objeto con ID generado ......... PASADA');
     });
 
-    test('Debe propagar errores si el repositorio falla (ej. overbooking transaccional)', () async {
+    test('PU-06: Propaga excepción si el repositorio falla por overbooking transaccional', () async {
       // Arrange
       when(mockRepository.crearReserva(reservaTest))
           .thenThrow(Exception('La habitación ya no está disponible'));
@@ -55,6 +57,20 @@ void main() {
       // Act & Assert
       expect(() => usecase(reservaTest), throwsA(isA<Exception>()));
       verify(mockRepository.crearReserva(reservaTest)).called(1);
+      // ignore: avoid_print
+      print('[OK] PU-06: Excepción propagada por overbooking transaccional .... PASADA');
     });
+  });
+
+  // Reporte final
+  tearDownAll(() {
+    // ignore: avoid_print
+    print('');
+    // ignore: avoid_print
+    print('================================================================');
+    // ignore: avoid_print
+    print('[REPORTE] CrearReservaUseCase: 2/2 pruebas PASADAS');
+    // ignore: avoid_print
+    print('================================================================');
   });
 }

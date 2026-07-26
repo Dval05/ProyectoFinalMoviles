@@ -3,32 +3,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--bg-color) 0%, #e8f0eb 100%);
+  background: linear-gradient(135deg, #f4f7f6 0%, #e2ece6 100%);
   position: relative;
+  overflow: hidden;
 }
 
 .login-page::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(27,81,51,0.03)" stroke-width="2"/></svg>');
-  background-size: 100px 100px;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url('data:image/svg+xml;utf8,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1.5" fill="rgba(27,81,51,0.15)"/></svg>');
+  background-size: 60px 60px;
   pointer-events: none;
+  animation: bgScroll 120s linear infinite;
+}
+
+@keyframes bgScroll {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .login-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
   position: relative;
   z-index: 10;
 }
 
 .login-card {
-  padding: 40px;
-  border-radius: var(--radius-xl);
+  padding: 48px 40px;
 }
 
 .back-link {
@@ -36,13 +42,14 @@
   align-items: center;
   gap: 8px;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 24px;
-  transition: color 0.2s;
+  font-size: 0.9rem;
 }
 
 .back-link:hover {
   color: var(--primary-color);
+  transform: translateX(-4px);
 }
 
 .login-header {
@@ -50,14 +57,21 @@
   margin-bottom: 32px;
 }
 
+.login-logo {
+  height: 64px;
+  margin-bottom: 16px;
+  object-fit: contain;
+}
+
 .login-header h2 {
-  font-size: 1.8rem;
-  color: var(--text-primary);
+  font-size: 1.75rem;
+  color: var(--primary-dark);
   margin-bottom: 8px;
 }
 
 .login-header p {
   color: var(--text-secondary);
+  font-size: 0.95rem;
 }
 
 .input-with-icon {
@@ -69,7 +83,13 @@
 .input-icon {
   position: absolute;
   left: 16px;
-  color: var(--text-secondary);
+  color: #94a3b8;
+  transition: color 0.3s ease;
+}
+
+.input-field:focus + .input-icon,
+.input-with-icon:focus-within .input-icon {
+  color: var(--primary-color);
 }
 
 .input-with-icon .input-field {
@@ -88,33 +108,26 @@
   padding: 0;
   cursor: pointer;
   font-family: inherit;
-  font-size: 0.9rem;
-  color: var(--primary-color);
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--primary-light);
+  font-weight: 600;
+  transition: color 0.2s;
 }
 
 .forgot-password:hover {
-  text-decoration: underline;
+  color: var(--primary-dark);
 }
 
 .login-btn {
   width: 100%;
   padding: 14px;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
 }
 
 .login-footer {
   margin-top: 32px;
   text-align: center;
   color: var(--text-secondary);
-}
-
-.register-link {
-  color: var(--primary-color);
-  font-weight: 600;
-  margin-left: 4px;
-}
-
-.register-link:hover {
-  text-decoration: underline;
+  font-size: 0.9rem;
 }

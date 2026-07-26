@@ -279,7 +279,23 @@ export const AppProvider = ({ children }) => {
     };
   }, [role]);
 
-  // Rooms Functions
+  // Room Functions
+  const createRoom = async (roomData) => {
+    if (!hosteria) return;
+    try {
+      const roomRef = collection(db, 'habitaciones');
+      await addDoc(roomRef, {
+        ...roomData,
+        hosteriaId: hosteria.id,
+        disponible: true
+      });
+      console.log('Room created successfully');
+    } catch (error) {
+      console.error('Error creating room: ', error);
+      throw error;
+    }
+  };
+
   const toggleRoomStatus = async (roomId, isAvailable, closedUntil = null) => {
     try {
       const roomRef = doc(db, 'habitaciones', roomId);
@@ -392,6 +408,7 @@ export const AppProvider = ({ children }) => {
     login,
     logout,
     rooms,
+    createRoom,
     toggleRoomStatus,
     editRoom,
     reservations,

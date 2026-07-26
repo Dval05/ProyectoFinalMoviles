@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import logoUrl from '../assets/logo.png';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -51,8 +52,9 @@ const LoginPage = () => {
           </Link>
           
           <div className="login-header">
-            <h2>Portal Propietario</h2>
-            <p>Ingresa para administrar tu hostería</p>
+            <img src={logoUrl} alt="HostSigchos Logo" className="login-logo" />
+            <h2>Portal de Gestión</h2>
+            <p>Ingresa para administrar el sistema</p>
           </div>
 
           {error && (

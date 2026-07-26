@@ -3,9 +3,19 @@ import { BedDouble, Image as ImageIcon, Edit2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const RoomsManager = () => {
-  const { rooms, toggleRoomStatus, editRoom } = useAppContext();
+  const { rooms, createRoom, toggleRoomStatus, editRoom } = useAppContext();
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [closeDate, setCloseDate] = useState('');
+  
+  const [isCreating, setIsCreating] = useState(false);
+  const [createFormData, setCreateFormData] = useState({
+    tipo: '',
+    descripcion: '',
+    precioPorNoche: 0,
+    capacidad: 1,
+    cantidadTotal: 1,
+    imagenUrl: ''
+  });
   
   const [editingRoom, setEditingRoom] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -83,13 +93,32 @@ const RoomsManager = () => {
     }
   };
 
+  const handleCreateSubmit = async (e) => {
+    e.preventDefault();
+    await createRoom({
+      tipo: createFormData.tipo,
+      descripcion: createFormData.descripcion,
+      precioPorNoche: Number(createFormData.precioPorNoche),
+      capacidad: Number(createFormData.capacidad),
+      cantidadTotal: Number(createFormData.cantidadTotal),
+      imagenes: createFormData.imagenUrl ? [createFormData.imagenUrl] : []
+    });
+    setIsCreating(false);
+    setCreateFormData({
+      tipo: '', descripcion: '', precioPorNoche: 0, capacidad: 1, cantidadTotal: 1, imagenUrl: ''
+    });
+  };
+
   return (
     <div className="animate-fade-in">
-      <header className="dashboard-topbar">
+      <header className="dashboard-topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 className="page-title">Gestión de Habitaciones</h1>
           <p className="page-subtitle">Habilita o deshabilita habitaciones para reservas.</p>
         </div>
+        <button className="btn btn-primary" onClick={() => setIsCreating(true)}>
+          + Nueva Habitación
+        </button>
       </header>
 
       <div className="card" style={{ marginBottom: '24px', padding: '16px', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
@@ -210,6 +239,94 @@ const RoomsManager = () => {
               <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setEditingRoom(null)}>Cancelar</button>
                 <button type="submit" className="btn btn-primary">Guardar Cambios</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isCreating && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '500px', padding: '32px', backgroundColor: '#ffffff', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid #e0e0e0', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ marginBottom: '20px', fontSize: '1.6rem', fontWeight: 'bold', color: '#1a1a1a', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>
+              Crear Nueva Habitación
+            </h2>
+            <form onSubmit={handleCreateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="input-group">
+                <label htmlFor="create-tipo" className="input-label">Tipo / Nombre</label>
+                <input 
+                  id="create-tipo"
+                  type="text" 
+                  className="input-field" 
+                  value={createFormData.tipo} 
+                  onChange={(e) => setCreateFormData({...createFormData, tipo: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="input-group">
+                <label htmlFor="create-desc" className="input-label">Descripción</label>
+                <textarea 
+                  id="create-desc"
+                  className="input-field" 
+                  rows="3"
+                  value={createFormData.descripcion} 
+                  onChange={(e) => setCreateFormData({...createFormData, descripcion: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="input-group">
+                <label htmlFor="create-img" className="input-label">URL de Imagen (Opcional)</label>
+                <input 
+                  id="create-img"
+                  type="url" 
+                  className="input-field" 
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  value={createFormData.imagenUrl} 
+                  onChange={(e) => setCreateFormData({...createFormData, imagenUrl: e.target.value})}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="input-group">
+                  <label htmlFor="create-precio" className="input-label">Precio por Noche ($)</label>
+                  <input 
+                    id="create-precio"
+                    type="number" 
+                    min="0"
+                    step="0.01"
+                    className="input-field" 
+                    value={createFormData.precioPorNoche} 
+                    onChange={(e) => setCreateFormData({...createFormData, precioPorNoche: e.target.value})}
+                    required 
+                  />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="create-cap" className="input-label">Capacidad (pers.)</label>
+                  <input 
+                    id="create-cap"
+                    type="number" 
+                    min="1"
+                    className="input-field" 
+                    value={createFormData.capacidad} 
+                    onChange={(e) => setCreateFormData({...createFormData, capacidad: e.target.value})}
+                    required 
+                  />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="create-total" className="input-label">Total Habitaciones</label>
+                  <input 
+                    id="create-total"
+                    type="number" 
+                    min="1"
+                    className="input-field" 
+                    value={createFormData.cantidadTotal} 
+                    onChange={(e) => setCreateFormData({...createFormData, cantidadTotal: e.target.value})}
+                    required 
+                  />
+                </div>
+              </div>
+              <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setIsCreating(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">Crear Habitación</button>
               </div>
             </form>
           </div>

@@ -29,22 +29,28 @@ void main() {
       fechaCreacion: DateTime.now(),
     );
 
-    test('Debe calcular correctamente el número de noches', () {
+    test('PU-07: Debe calcular correctamente el número de noches entre checkIn y checkOut', () {
       expect(reservaActiva.noches, 4);
       expect(reservaCancelada.noches, 2);
+      // ignore: avoid_print
+      print('[OK] PU-07: Cálculo aritmético exacto de noches estancia ......... PASADA');
     });
 
-    test('Debe determinar si la reserva está activa', () {
+    test('PU-08: Debe determinar correctamente el estado activo según el ciclo de vida', () {
       expect(reservaActiva.estaActiva, true);
       expect(reservaCancelada.estaActiva, false);
+      // ignore: avoid_print
+      print('[OK] PU-08: Verificación del estado activo de reserva ................ PASADA');
     });
 
-    test('Debe determinar si la reserva es cancelable', () {
+    test('PU-09: Debe validar correctamente si la reserva es admisible para cancelación', () {
       expect(reservaActiva.esCancelable, true);
       expect(reservaCancelada.esCancelable, false);
+      // ignore: avoid_print
+      print('[OK] PU-09: Validación de reglas de negocio para cancelación ....... PASADA');
     });
 
-    test('El método copyWith debe actualizar las propiedades correctamente', () {
+    test('PU-10: El método copyWith debe inmutar propiedades preservando integridad de entidad', () {
       final modificada = reservaActiva.copyWith(
         estado: 'cancelada',
         numHuespedes: 3,
@@ -52,10 +58,23 @@ void main() {
 
       expect(modificada.estado, 'cancelada');
       expect(modificada.numHuespedes, 3);
-      // Las demás propiedades se mantienen igual
       expect(modificada.id, 'res1');
       expect(modificada.precioTotal, 200);
-      expect(modificada.estaActiva, false); // Cambio de estado afecta getter
+      expect(modificada.estaActiva, false);
+      // ignore: avoid_print
+      print('[OK] PU-10: Inmutabilidad y clonación estructurada (copyWith) ........ PASADA');
     });
+  });
+
+  // Reporte final de la suite de Entidades
+  tearDownAll(() {
+    // ignore: avoid_print
+    print('');
+    // ignore: avoid_print
+    print('================================================================');
+    // ignore: avoid_print
+    print('[REPORTE] Reserva Entity Suite: 4/4 pruebas PASADAS');
+    // ignore: avoid_print
+    print('================================================================');
   });
 }

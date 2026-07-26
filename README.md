@@ -8,11 +8,11 @@ Este repositorio actúa como el monorepo ("Monorepository") del proyecto, conten
 
 A continuación, se detalla la función de cada directorio principal:
 
-### 📱 1. `HostSigchos-Tests/` (Aplicación Móvil Principal)
+### 📱 1. `HostSigchos/` (Aplicación Móvil Principal)
 Esta es la carpeta más crítica del ecosistema móvil. Contiene el código fuente de la aplicación móvil desarrollada en **Flutter** utilizando los principios de **Clean Architecture** y el patrón **MVVM**.
 * **Propósito:** Brindar al turista una aplicación intuitiva para explorar hosterías, hablar con un asistente IA (Gemini), visualizar mapas integrados y crear reservaciones.
 * **Nota:** Esta carpeta incluye la suite **completa** de pruebas (Unitarias, de Interfaz y End-to-End con Appium), por lo que es la versión certificada para producción.
-* 📖 [Leer la documentación detallada del aplicativo móvil](./HostSigchos-Tests/README.md)
+* 📖 [Leer la documentación detallada del aplicativo móvil](./HostSigchos/README.md)
 
 ### 💻 2. `HostSigchos-Web/` (Panel Administrativo Web)
 Contiene el código fuente de la plataforma administrativa desarrollada en **React.js**.

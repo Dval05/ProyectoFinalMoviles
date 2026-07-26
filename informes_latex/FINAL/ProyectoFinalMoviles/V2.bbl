@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{satanasaowapak2021qr}
+P.~Satanasaowapak {\em et~al.}, ``Cloud-based tourism and hotel reservation
+  system,'' in {\em International Conference on Information Technology
+  (InCIT)}, 2021.
+
+\bibitem{cleanArchitecture}
+R.~C. Martin, {\em Clean Architecture: A Craftsman's Guide to Software
+  Structure and Design}.
+\newblock Prentice Hall, 2017.
+
+\bibitem{providerFlutter}
+R.~Rousselet, ``Provider package for flutter state management.''
+  \url{https://pub.dev/packages/provider}, 2023.
+
+\bibitem{firebaseDocs}
+Google, ``Documentación oficial de firebase.''
+  \url{https://firebase.google.com/docs}, 2024.
+
+\end{thebibliography}

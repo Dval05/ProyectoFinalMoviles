@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Home, LogOut, ShieldAlert, Building, Calendar, Users, BarChart2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import logoUrl from '../assets/logo.png';
 import './Dashboard.css';
 
 const AdminLayout = () => {
@@ -17,8 +18,9 @@ const AdminLayout = () => {
     <div className="dashboard-layout animate-fade-in">
       {/* Sidebar */}
       <aside className="sidebar">
-        <div className="sidebar-header">
-          <h2>HostSigchos</h2>
+        <div className="sidebar-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <img src={logoUrl} alt="HostSigchos Logo" style={{ height: '48px', objectFit: 'contain' }} />
+          <h2 style={{ fontSize: '1.4rem', margin: 0 }}>HostSigchos</h2>
           <p className="role-badge" style={{ backgroundColor: '#e74c3c', color: '#fff' }}>Admin Global</p>
         </div>
         <nav className="sidebar-nav">

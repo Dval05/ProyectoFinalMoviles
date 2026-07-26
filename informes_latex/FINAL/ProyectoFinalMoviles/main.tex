@@ -1,0 +1,273 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{anyfontsize}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage[table]{xcolor}
+\usepackage{amsmath,amssymb,textcomp,textpos,mathtools}
+\usepackage{setspace}
+\usepackage{subcaption,caption}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage{booktabs,array,tabularx}
+\usepackage{xurl}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{tcolorbox}
+\usepackage{multicol}
+\tcbuselibrary{listings,skins,breakable}
+
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{verdeC}{RGB}{65,199,23}
+\definecolor{verdeO}{RGB}{28,168,31}
+
+\tcbset{colback=codebg,colframe=codeframe,arc=6pt,boxrule=0.8pt,breakable,left=6pt,right=6pt,top=6pt,bottom=6pt}
+
+\lstset{language=Java,basicstyle=\ttfamily\small,keywordstyle=\color{blue},commentstyle=\color{green!50!black},stringstyle=\color{red},showstringspaces=false,tabsize=2,breaklines=true,xleftmargin=15pt,framexleftmargin=15pt,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1}
+
+\setlength{\headheight}{14.5pt}
+
+\begin{document}
+
+% ═══════════════ PORTADA ═══════════════
+\begin{titlepage}
+\thispagestyle{empty}
+\newgeometry{left=2cm, right=1cm, top=2cm, bottom=2cm}
+\begin{tikzpicture}[overlay, fill opacity=0.7]
+    \fill[verdeC] (15,-27) rectangle (18,4);
+      \rotatebox{-90}{\fill[verdeO] (0,-9) rectangle (2,20);}
+\end{tikzpicture}
+\begin{spacing}{1.5}
+{\huge \bfseries UNIVERSIDAD DE LAS FUERZAS ARMADAS}\\[10pt]
+\centering
+\end{spacing}
+\vspace{1cm}
+\begin{minipage}{2cm}
+\hspace{0.5cm}\rotatebox{90}{\huge INGENIERIA EN SOFTWARE}
+\end{minipage}\hfill
+\begin{minipage}{9cm}
+    \includegraphics[scale=0.5]{ImagenesLab1/1.png}
+\end{minipage}\hfill
+\begin{minipage}{3cm}
+\hspace{1cm}
+\vspace{1.cm}
+\begin{spacing}{4}
+ {\color{white}\fontsize{60}{70}\selectfont\bfseries 2\\0\\2\\6}
+\end{spacing}
+\end{minipage}
+
+\vspace{4cm}
+\begin{flushleft}
+{\LARGE
+\textbf{Estudiantes:}\\
+\hspace{1cm} Andrade Danna, Lainez Ricardo, \\
+\hspace{1cm} Santi Jeancarlo, Tufiño Erick\\[10pt]
+\textbf{Asignatura:} Desarrollo de Aplicaciones Móviles\\
+\textbf{Tema:} Informe Final -- Sistema de Reservas HostSigchos\\
+\textbf{NRC:} 30738\\
+\textbf{Docente:} Doris Karina Chicaiza Angamarca\\
+\textbf{Fecha:} \today\\}
+\end{flushleft}
+\end{titlepage}
+\restoregeometry
+\newpage
+
+\vspace{-2cm}
+\begin{minipage}[t]{0.6\textwidth}
+  \raggedright
+  \textbf{\LARGE Informe Final: HostSigchos }
+\end{minipage}
+\begin{minipage}[ht]{0.2\textwidth}
+  \raggedleft
+   \includegraphics[width=0.7\textwidth]{ImagenesLab1/selloCarrera.jpeg}
+\end{minipage}\vspace{-1cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Informe Final -- HostSigchos}}
+\fancyhead[R]{\small\textit{Andrade, Lainez, Santi, Tufiño}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\tableofcontents
+\newpage
+
+% ═══════════════ 1. INTRODUCCIÓN ═══════════════
+\section{Introducción}
+El cantón Sigchos, ubicado en la provincia de Cotopaxi, posee un inmenso atractivo turístico gracias a su proximidad con el cráter del Quilotoa y sus paisajes andinos. Sin embargo, su infraestructura de servicios hoteleros carece de una digitalización adecuada, lo que limita su capacidad para atraer turistas modernos que esperan procesos ágiles y automatizados. 
+
+``HostSigchos'' nace como una solución integral que cierra esta brecha tecnológica. Está compuesto por una aplicación móvil multiplataforma desarrollada en Flutter para los turistas, y un panel de administración web desarrollado en React JS para los propietarios de las hosterías. El ecosistema completo está orquestado mediante los servicios en la nube de Firebase, ofreciendo bases de datos en tiempo real, autenticación segura y almacenamiento de recursos multimedia. De este modo, HostSigchos no solo moderniza el proceso de reserva de hospedaje, sino que potencia el turismo organizado en la región.
+
+% ═══════════════ 2. PLANTEAMIENTO DEL PROBLEMA ═══════════════
+\section{Planteamiento del problema}
+Actualmente, la gestión de reservaciones en la gran mayoría de las hosterías del cantón Sigchos se realiza a través de métodos convencionales y empíricos. Las reservaciones se toman mediante llamadas telefónicas, mensajes de WhatsApp o agendas físicas. Esto genera una serie de problemáticas graves:
+
+\begin{itemize}[label=\small\color{verdeO}$\blacksquare$]
+    \item \textbf{Sobreventa (Overbooking):} La falta de sincronización en tiempo real causa que múltiples clientes puedan reservar la misma habitación para las mismas fechas.
+    \item \textbf{Gestión ineficiente de tarifas y promociones:} Los propietarios no pueden actualizar dinámicamente sus precios en temporadas altas o bajas de forma centralizada.
+    \item \textbf{Falta de visibilidad digital:} Los turistas externos no tienen un catálogo centralizado donde comparar opciones, leer reseñas de otros huéspedes o verificar los servicios disponibles con geolocalización.
+    \item \textbf{Fricción en la confirmación:} El proceso manual requiere que el cliente espere la confirmación humana y luego envíe comprobantes de transferencia que muchas veces se traspapelan.
+\end{itemize}
+
+% ═══════════════ 3. OBJETIVOS ═══════════════
+\section{Objetivos}
+
+\subsection{Objetivo General}
+Desarrollar, implementar y desplegar un sistema integral de gestión de reservas turísticas (Aplicación Móvil + Panel Web) para el cantón Sigchos, que automatice el control de disponibilidad de habitaciones, integre autenticación biométrica y en la nube, y sincronice datos en tiempo real mediante arquitectura Clean Architecture y servicios de Firebase.
+
+\subsection{Objetivos Específicos}
+\begin{itemize}[label=\small\color{verdeO}$\blacksquare$]
+    \item Aplicar el patrón **Clean Architecture** en la construcción de la aplicación móvil (Flutter) separando estrictamente la capa de presentación (UI/MVVM), lógica de dominio (Use Cases) y el acceso a datos (DataSources/Repositories).
+    \item Implementar mecanismos de seguridad avanzados, como la autenticación OAuth con Google, inicio de sesión mediante Email/Contraseña y verificación de credenciales biométricas (Huella Digital / Face ID).
+    \item Desarrollar un motor de verificación de disponibilidad que prevenga la superposición de reservas comprobando rangos de fechas de check-in y check-out en milisegundos.
+    \item Diseñar un panel web de administración en React JS para que los propietarios gestionen sus establecimientos, aprueben reservas y creen promociones globales que se reflejen de inmediato en la aplicación móvil.
+\end{itemize}
+
+% ═══════════════ 4. ALCANCE ═══════════════
+\section{Alcance}
+El ecosistema HostSigchos aborda tres perfiles de actores principales, limitando su alcance funcional a las necesidades específicas de cada uno:
+
+\begin{enumerate}
+    \item \textbf{Turistas (App Móvil Flutter):} Tienen acceso al catálogo de hosterías, geolocalización de las mismas en mapas interactivos de OpenStreetMap (evitando costos de API de Google Maps), consulta climática en tiempo real, chat interactivo con IA para recomendaciones turísticas, reseñas colaborativas y el flujo completo de carrito y reserva de habitaciones.
+    \item \textbf{Propietarios (Dashboard Web React):} Acceso a estadísticas y KPIs de su hostería específica, gestión del inventario de habitaciones (habilitar, deshabilitar, precios), módulo de aprobación/rechazo de reservas, y gestión de promociones con impacto inmediato en el cliente móvil.
+    \item \textbf{Administradores Globales (Dashboard Web React):} Visibilidad de la salud general del sistema, auditoría de todas las reservas y control general de los perfiles de hosterías registradas en la plataforma.
+\end{enumerate}
+
+% ═══════════════ 5. ARQUITECTURA DEL SISTEMA ═══════════════
+\section{Arquitectura del Sistema}
+El sistema se construyó bajo el paradigma de \textbf{Clean Architecture}, garantizando escalabilidad, mantenibilidad y testing aislado.
+
+\subsection{Capas Arquitectónicas}
+\begin{itemize}[label=\small\color{verdeO}$\blacksquare$]
+    \item \textbf{Domain (Reglas de Negocio):} Es la capa más interna. Contiene las Entidades puras (como \texttt{Usuario}, \texttt{Reserva}, \texttt{Habitacion}) y los Casos de Uso (ej. \texttt{CheckDisponibilidadUseCase}, \texttt{LoginUseCase}). Además, define las interfaces de los \texttt{Repositories} (Patrón Bridge).
+    \item \textbf{Data (Acceso a Datos):} Implementa las interfaces del Domain. Aquí residen los \texttt{Models} (para parsear JSON de Firestore a Objetos de Dart), y los \texttt{DataSources} (que interactúan directamente con Firebase Auth, Firestore y APIs externas).
+    \item \textbf{Presentation (UI y Estado):} Implementa el patrón MVVM (Model-View-ViewModel) utilizando la librería \texttt{Provider}. Los \texttt{ViewModels} exponen flujos reactivos hacia la interfaz construida con Widgets de Flutter.
+\end{itemize}
+
+\subsection{Inyección de Dependencias}
+Toda la jerarquía de creación de clases se centraliza en \texttt{injection\_container.dart} utilizando el Service Locator \texttt{GetIt}, lo que facilita inyectar versiones de prueba o ``Mocks'' de los repositorios al realizar Testing.
+
+\vspace{0.5cm}
+\begin{center}
+    % ========================================================
+    % ⬇️ AQUI PUEDES AGREGAR LOS DIAGRAMAS PLANTUML DE ARQUITECTURA ⬇️
+    % \includegraphics[width=0.9\textwidth]{../diagramas_plantuml/general/01_arquitectura_componentes.png}
+    % ========================================================
+    \textit{[Espacio para: Diagrama General de Arquitectura (01\_arquitectura\_componentes.png)]}
+\end{center}
+
+\vspace{0.5cm}
+\begin{center}
+    % ========================================================
+    % ⬇️ AQUI PUEDES AGREGAR EL DIAGRAMA DE PAQUETES DE CLEAN ARCHITECTURE ⬇️
+    % \includegraphics[width=0.9\textwidth]{../diagramas_plantuml/movil/02_paquetes_clean_architecture.png}
+    % ========================================================
+    \textit{[Espacio para: Diagrama de Clean Architecture (02\_paquetes\_clean\_architecture.png)]}
+\end{center}
+
+% ═══════════════ 6. DIAGRAMA DE CARPETAS ═══════════════
+\section{Diagrama de carpetas}
+La aplicación móvil (Flutter) presenta la siguiente estructura de directorios, respetando los principios de Clean Architecture y la separación de responsabilidades:
+
+\begin{tcolorbox}[title=Estructura modular en lib/]
+\begin{verbatim}
+lib/
+|-- core/
+|   |-- errors/           # Clases de Excepciones y Failures personalizadas
+|   |-- network/          # Verificador de conexión a Internet
+|   +-- services/         # Servicios base: Notificaciones, Biometría, GPS
+|-- data/
+|   |-- datasources/      # Capa de consumo: api/, firebase/, remote/
+|   |-- models/           # Clases con métodos fromJson() y toJson()
+|   +-- repositories/     # Implementación de los contratos (RepositoryImpl)
+|-- domain/
+|   |-- entities/         # Objetos puros (Independientes de JSON o Firebase)
+|   |-- repositories/     # Interfaces Abstractas (Patrón Bridge)
+|   +-- usecases/         # Lógica de negocio (CrearReservaUseCase, etc.)
+|-- presentation/
+|   |-- routes/           # Generación de rutas e interceptación
+|   |-- viewmodels/       # Providers ChangeNotifier (AuthVM, ReservaVM...)
+|   |-- views/            # Pantallas complejas organizadas por funcionalidad
+|   +-- widgets/          # Componentes visuales genéricos y reusables
+|-- themes/               # Configuración de colores (Dark/Light mode)
+|-- utils/                # Constantes de cadena, validadores de formato
+|-- injection_container.dart # Configuración de GetIt
++-- main.dart             # Punto de entrada, inicialización de Firebase
+\end{verbatim}
+\end{tcolorbox}
+
+% ═══════════════ 7. MODELO DE DATOS ═══════════════
+\section{Modelo de datos}
+El sistema se apoya en \textbf{Cloud Firestore}, una base de datos NoSQL. Aunque es NoSQL, HostSigchos requiere un modelado relacional riguroso mediante el uso de llaves foráneas (\texttt{hosteriaId}, \texttt{usuarioId}) para simular las uniones (JOINs) a nivel de la capa de acceso a datos de la aplicación.
+
+Colecciones principales:
+\begin{itemize}[label=\small\color{verdeO}$\blacksquare$]
+    \item \textbf{usuarios:} Almacena datos del turista, credenciales y avatar.
+    \item \textbf{hosterias:} Contiene geolocalización, rating general e infraestructura.
+    \item \textbf{habitaciones:} Vinculada a una hostería, define la \texttt{cantidadTotal} y el precio dinámico influenciado por promociones.
+    \item \textbf{reservas:} Centro neurálgico del modelo. Contiene fechas exactas (Check-in/out), cálculos de precios y el estado del ciclo de vida (\texttt{pendiente}, \texttt{en\_revision}, \texttt{confirmada}, \texttt{cancelada}).
+    \item \textbf{notificaciones \& resenas:} Colecciones auxiliares que se sincronizan en tiempo real mediante WebSockets (\texttt{onSnapshot}).
+\end{itemize}
+
+\vspace{0.5cm}
+\begin{center}
+    % ========================================================
+    % ⬇️ AQUI PUEDES AGREGAR EL DIAGRAMA ENTIDAD-RELACIÓN ⬇️
+    % \includegraphics[width=1\textwidth]{../diagramas_plantuml/general/33_modelo_datos_er.png}
+    % ========================================================
+    \textit{[Espacio para: Diagrama ER Firestore (33\_modelo\_datos\_er.png)]}
+\end{center}
+
+% ═══════════════ 8. CAPTURAS DE LA APLICACIÓN ═══════════════
+\section{Capturas de la aplicación}
+La interfaz se diseñó respetando pautas de Atomic Design, generando componentes visuales como `HosteriaCard`, `RoomItem` y modales genéricos.
+
+\begin{figure}[H]
+    \centering
+    % ========================================================
+    % ⬇️ AQUI PUEDES AGREGAR TUS CAPTURAS (SCREENSHOTS) ⬇️
+    % \includegraphics[width=0.3\textwidth]{ruta/screenshot_login.png}
+    % \includegraphics[width=0.3\textwidth]{ruta/screenshot_home.png}
+    % \includegraphics[width=0.3\textwidth]{ruta/screenshot_reserva.png}
+    % ========================================================
+    \textit{[Inserta aquí 3-4 capturas de pantalla de la App Flutter en ejecución]}
+    \caption{Pantallas: Landing, Login Biométrico, Catálogo de Hosterías y Proceso de Carrito de Reservas.}
+\end{figure}
+
+% ═══════════════ 9. EVIDENCIA DE PRUEBAS ═══════════════
+\section{Evidencia de pruebas}
+El sistema superó múltiples fases de validación, entre ellas:
+\begin{enumerate}
+    \item \textbf{Unit Tests y Lógica de Solapamiento:} Pruebas aisladas sobre el `CheckDisponibilidadUseCase` para verificar que el algoritmo no apruebe reservas con fechas conflictivas, usando variables mockeadas de Firebase.
+    \item \textbf{Control de Rate Limiting y Tiempos de Red:} Mediante la estrangulación de la red en los *Extended Controls* del Emulador de Android, se validó que el sistema maneje excepciones asíncronas y muestre *Snackbars* informativos al turista en caso de interrupción del servicio.
+    \item \textbf{Tiempo Real (Listeners):} Se probó que al confirmar una reserva en el Dashboard Web (React), la App Móvil Flutter detecte el cambio de estado en el \texttt{ReservaViewModel} y levante la notificación push de confirmación automáticamente en un promedio de 0.5 segundos.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    % ========================================================
+    % ⬇️ AQUI PUEDES AGREGAR EVIDENCIA (LOGS, EMULADOR, CONSOLA FIREBASE) ⬇️
+    % \includegraphics[width=0.8\textwidth]{ruta/screenshot_pruebas.png}
+    % ========================================================
+    \textit{[Inserta capturas de la consola de Firebase, de los extended controls del emulador, o scripts de prueba ejecutándose]}
+    \caption{Evidencias de monitoreo en la consola de Firebase y terminal.}
+\end{figure}
+
+% ═══════════════ 10. CONCLUSIONES ═══════════════
+\section{Conclusiones}
+\begin{itemize}[label=\small\color{verdeO}$\blacksquare$]
+    \item La implementación rigurosa de \textbf{Clean Architecture} permitió un desarrollo altamente modularizado, aislando a la interfaz de usuario de las integraciones con Firestore. Cualquier cambio futuro a otra base de datos de terceros, no requeriría tocar en lo absoluto la UI.
+    \item El uso del \textbf{Patrón Repository} y el Inversor de Dependencias (\texttt{GetIt}) se evidenció crucial para la mantenibilidad. Simplificó enormemente el testing al permitir inyectar \textit{Mocks} en lugar de las conexiones reales al backend.
+    \item Se solucionó la problemática de \textbf{sobreventa (overbooking)} gracias al diseño de algoritmos de verificación de solapamiento de fechas y la inmediatez de la tecnología de sockets web (\texttt{onSnapshot}) provista nativamente por Firebase.
+    \item El **chatbot de Inteligencia Artificial** incorporado al ecosistema turístico logró dotar a la herramienta de un asistente 24/7 de forma rápida, reduciendo la fricción al momento en que el turista planea sus itinerarios de viaje en el cantón.
+\end{itemize}
+
+\end{document}

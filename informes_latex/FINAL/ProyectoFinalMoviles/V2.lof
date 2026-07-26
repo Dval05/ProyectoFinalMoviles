@@ -1,0 +1,63 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Logotipo oficial de la aplicación móvil HostSigchos.}}{2}{figure.caption.5}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Flujo de datos bidireccional desde la capa de Presentación hasta el Origen de Datos mediado por los Casos de Uso.}}{9}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Diagrama de Despliegue mostrando la topología física y los protocolos de comunicación.}}{10}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Estructura documental y referencias simuladas (Foreign Keys) en Cloud Firestore.}}{13}{figure.caption.8}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Diagrama de Componentes de la Arquitectura.}}{14}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Diagrama de Clases de las Entidades de Dominio.}}{15}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Diagrama de Casos de Uso general del sistema HostSigchos.}}{16}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Diagrama UML del flujo de reservas y validación.}}{17}{figure.caption.12}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Diagrama de Estados para el ciclo de vida transaccional.}}{18}{figure.caption.13}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Diagrama ER lógico de las colecciones de Firestore.}}{19}{figure.caption.14}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Landing Page promocional del ecosistema HostSigchos.}}{21}{figure.caption.15}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Visualización de las Políticas de Privacidad.}}{22}{figure.caption.16}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Documento legal de Términos y Condiciones.}}{23}{figure.caption.17}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Pantalla de inicio de sesión clásica y SSO (Google).}}{24}{figure.caption.18}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Pantalla de registro con validaciones de formulario en tiempo real.}}{25}{figure.caption.19}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Módulo de recuperación de contraseña vía correo electrónico.}}{26}{figure.caption.20}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Autenticación biométrica habilitada por el hardware nativo.}}{27}{figure.caption.21}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Dashboard principal de exploración en formato Lista.}}{28}{figure.caption.22}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Dashboard principal de exploración alternado al formato Cuadrícula.}}{29}{figure.caption.23}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Vista detallada de los servicios generales de una hostería.}}{30}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Módulo comunitario de calificación y reseñas.}}{31}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Catálogo detallado de habitaciones y precios por noche.}}{32}{figure.caption.26}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Pantalla de visualización de mapas integrando los marcadores de hosterías y geolocalización.}}{33}{figure.caption.27}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Asistente turístico integrado, respondiendo con texto y voz.}}{34}{figure.caption.28}%
+\contentsline {figure}{\numberline {4.15}{\ignorespaces Módulo centralizado de gestión y solicitud de nueva reserva.}}{35}{figure.caption.29}%
+\contentsline {figure}{\numberline {4.16}{\ignorespaces Selector de rango de fechas para validación de disponibilidad.}}{37}{figure.caption.30}%
+\contentsline {figure}{\numberline {4.17}{\ignorespaces Proceso de \textit {Checkout} detallando costos antes del guardado final.}}{38}{figure.caption.31}%
+\contentsline {figure}{\numberline {4.18}{\ignorespaces Interfaz de configuración y edición del perfil del turista.}}{39}{figure.caption.32}%
+\contentsline {figure}{\numberline {4.19}{\ignorespaces Flujo de seguridad para la eliminación definitiva de la cuenta.}}{40}{figure.caption.33}%
+\contentsline {figure}{\numberline {4.20}{\ignorespaces Centro de Ayuda y Soporte técnico al cliente.}}{41}{figure.caption.34}%
+\contentsline {figure}{\numberline {4.21}{\ignorespaces Bandeja de entrada de Notificaciones Push sobre el estado de las reservas.}}{42}{figure.caption.35}%
+\contentsline {figure}{\numberline {4.22}{\ignorespaces Tablero de control web para gestión y actualización de estado de reservas.}}{43}{figure.caption.36}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Captura de pantalla de la terminal validando el manejo del Rate Limit.}}{50}{figure.caption.38}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Evidencia gráfica del pico de tráfico en Firebase (Prueba de estrés PASADA).}}{50}{figure.caption.39}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Reporte de consola certificando la suite de ChatMessage Entity.}}{52}{figure.caption.40}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Reporte de consola certificando la suite de Habitacion Entity.}}{52}{figure.caption.41}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Reporte de consola certificando la suite de Hosteria Entity.}}{52}{figure.caption.42}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Reporte de consola certificando la suite de NotificacionApp Entity.}}{52}{figure.caption.43}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Reporte de consola certificando la suite de Resena Entity.}}{53}{figure.caption.44}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Reporte de consola certificando la suite de Reserva Entity.}}{53}{figure.caption.45}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Reporte de consola certificando la suite de Usuario Entity.}}{53}{figure.caption.46}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Reporte de consola validando el caso de uso CrearReservaUseCase.}}{53}{figure.caption.47}%
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Reporte de consola validando el caso de uso VerificarDisponibilidadUseCase.}}{54}{figure.caption.48}%
+\contentsline {figure}{\numberline {5.12}{\ignorespaces Reporte de ejecución de la suite de pruebas GradientButton Widget.}}{54}{figure.caption.49}%
+\contentsline {figure}{\numberline {5.13}{\ignorespaces Reporte de ejecución de la suite de pruebas LoadingOverlay Widget.}}{55}{figure.caption.50}%
+\contentsline {figure}{\numberline {5.14}{\ignorespaces Reporte de ejecución de la suite de pruebas CustomTextField Widget.}}{55}{figure.caption.51}%
+\contentsline {figure}{\numberline {5.15}{\ignorespaces Reporte de integración MultiProvider de la pantalla HomeScreen.}}{55}{figure.caption.52}%
+\contentsline {figure}{\numberline {5.16}{\ignorespaces Reporte de integración con ViewModels de la pantalla LoginScreen.}}{55}{figure.caption.53}%
+\contentsline {figure}{\numberline {5.17}{\ignorespaces Reporte oficial de la terminal certificando los 15 flujos de interacción E2E superados exitosamente.}}{58}{figure.caption.54}%
+\contentsline {figure}{\numberline {5.18}{\ignorespaces Captura de pantalla de la terminal certificando la ejecución exitosa de las pruebas funcionales.}}{59}{figure.caption.55}%
+\contentsline {figure}{\numberline {5.19}{\ignorespaces Captura de pantalla evidenciando el bloqueo (HTTP 429) y protección del sistema contra desbordamientos.}}{59}{figure.caption.56}%
+\contentsline {figure}{\numberline {5.20}{\ignorespaces Métricas de rendimiento en consola validando el renderizado de gráficos a 60 FPS ininterrumpidos.}}{59}{figure.caption.57}%
+\contentsline {figure}{\numberline {5.21}{\ignorespaces Captura de pantalla de la terminal ejecutando las pruebas con Appium y Node.js.}}{61}{figure.caption.58}%
+\contentsline {figure}{\numberline {5.22}{\ignorespaces Ejecución exitosa de la suite de pruebas completas (Unitarias, Widget e Integración E2E).}}{62}{figure.caption.59}%
+\contentsline {figure}{\numberline {5.23}{\ignorespaces Monitoreo de estabilidad de red y transacciones exitosas en la base de datos.}}{62}{figure.caption.60}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

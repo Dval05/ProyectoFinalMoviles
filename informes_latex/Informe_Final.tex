@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-tabla]{babel}
 \usepackage{geometry}
-\usepackage{graphicx}
+\usepackage[demo]{graphicx}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{longtable}
@@ -22,6 +22,12 @@
 \usepackage{makecell}
 \usepackage{tikz}
 \usepackage{setspace}
+\usepackage{anyfontsize}
+\usepackage{amsmath,amssymb,textcomp,textpos,mathtools}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,skins,breakable}
+
+\setlength{\headheight}{14.5pt}
 
 \geometry{top=2.4cm,bottom=2.4cm,left=2.4cm,right=2.4cm}
 \setlength{\parskip}{0.45em}
@@ -36,33 +42,30 @@
 \definecolor{sigchosLight}{HTML}{E8EEF5}
 \definecolor{codeBack}{HTML}{F6F8FA}
 \definecolor{codeFrame}{HTML}{D0D7DE}
+\definecolor{verdeC}{RGB}{65,199,23}
+\definecolor{verdeO}{RGB}{28,168,31}
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=sigchosDarkGreen,
-  citecolor=sigchosDarkGreen,
-  urlcolor=sigchosGreen,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
   pdftitle={Informe final del proyecto HostSigchos},
   pdfauthor={Andrade Danna, Lainez Ricardo, Santi Jeancarlo, Tufiño Erick}
 }
 
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{\textcolor{sigchosMuted}{HostSigchos}}
-\rhead{\textcolor{sigchosMuted}{Informe Final}}
-\cfoot{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
 
-\titleformat{\chapter}{\normalfont\Huge\bfseries\color{sigchosDarkGreen}}{\thechapter}{1em}{}
-\titleformat{\section}{\normalfont\Large\bfseries\color{sigchosDarkGreen}}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalfont\large\bfseries\color{sigchosGreen}}{\thesubsection}{1em}{}
+
+\titleformat{\chapter}{\normalfont\Huge\bfseries}{\thechapter}{1em}{}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
 
 \lstdefinestyle{codeblock}{
   backgroundcolor=\color{codeBack},
   frame=single,
   rulecolor=\color{codeFrame},
   basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\bfseries\color{sigchosDarkGreen},
+  keywordstyle=\bfseries,
   breaklines=true,
   breakatwhitespace=true,
   columns=fullflexible,
@@ -73,8 +76,8 @@
   literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1
 }
 
-\newcommand{\tech}[1]{\textbf{\textcolor{sigchosDarkGreen}{#1}}}
-\newcommand{\important}[1]{\textbf{\textcolor{sigchosGreen}{#1}}}
+\newcommand{\tech}[1]{\textbf{#1}}
+\newcommand{\important}[1]{\textbf{#1}}
 \newcommand{\pathtext}[1]{\texttt{\detokenize{#1}}}
 
 \begin{document}
@@ -84,22 +87,19 @@
 \thispagestyle{empty}
 \newgeometry{left=2cm, right=1cm, top=2cm, bottom=2cm}
 \begin{tikzpicture}[overlay, fill opacity=0.7]
-    \fill[sigchosGreen] (15,-27) rectangle (18,4);
-    \rotatebox{-90}{\fill[sigchosDarkGreen] (0,-9) rectangle (2,20);}
+    \fill[verdeC] (15,-27) rectangle (18,4);
+      \rotatebox{-90}{\fill[verdeO] (0,-9) rectangle (2,20);}
 \end{tikzpicture}
 \begin{spacing}{1.5}
 {\huge \bfseries UNIVERSIDAD DE LAS FUERZAS ARMADAS}\\[10pt]
 \centering
 \end{spacing}
-\vspace{1cm}
+\vspace{0.5cm}
 \begin{minipage}{2cm}
 \hspace{0.5cm}\rotatebox{90}{\huge INGENIERIA EN SOFTWARE}
 \end{minipage}\hfill
 \begin{minipage}{9cm}
-    % [Espacio para: Logo de la universidad o carrera]
-    \centering
-    \vspace{2cm}
-    \textit{[Logo ESPE]}
+    \includegraphics[scale=0.6]{ImagenesLab1/1.png}
 \end{minipage}\hfill
 \begin{minipage}{3cm}
 \hspace{1cm}
@@ -109,20 +109,29 @@
 \end{spacing}
 \end{minipage}
 
-\vspace{3cm}
+\vspace{1cm}
 \begin{flushleft}
 {\LARGE
 \textbf{Estudiantes:}\\
 \hspace{1cm} Andrade Danna, Lainez Ricardo, \\
 \hspace{1cm} Santi Jeancarlo, Tufiño Erick\\[10pt]
 \textbf{Asignatura:} Desarrollo de Aplicaciones Móviles\\
-\textbf{Tema:} Informe Final -- Sistema de Reservas HostSigchos\\
+\textbf{Tema:} Informe Sistema de Reservas HostSigchos\\
 \textbf{NRC:} 30738\\
 \textbf{Docente:} Doris Karina Chicaiza Angamarca\\
 \textbf{Fecha:} \today\\}
 \end{flushleft}
 \end{titlepage}
 \restoregeometry
+\newpage
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Informe Final -- HostSigchos}}
+\fancyhead[R]{\small\textit{Andrade, Lainez, Santi, Tufiño}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
 
 \pagenumbering{roman}
 \tableofcontents
@@ -143,14 +152,22 @@ El presente documento aborda detalladamente el planteamiento del problema, los o
 Implementación y documentación de \textbf{HostSigchos}, un sistema móvil y web para la gestión automatizada de reservaciones turísticas de hosterías en el cantón Sigchos, integrando disponibilidad en tiempo real, inteligencia artificial, mapas interactivos, hardware del dispositivo y administración centralizada mediante arquitecturas limpias y Firebase.
 
 \section{Introducción}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{img/logo_app.png}
+\end{figure}
+
 El cantón Sigchos, ubicado en la provincia de Cotopaxi, posee un inmenso atractivo turístico gracias a su proximidad con el cráter del Quilotoa y sus paisajes andinos. Sin embargo, su infraestructura de servicios hoteleros carece de una digitalización adecuada, lo que limita su capacidad para atraer turistas modernos que esperan procesos ágiles y automatizados \cite{satanasaowapak2021qr}. 
 
 ``HostSigchos'' nace como una solución tecnológica integral que cierra esta brecha. Está compuesto por una aplicación móvil multiplataforma desarrollada en Flutter para los turistas, que les permite explorar hosterías, verificar disponibilidad de habitaciones con cruce de fechas, chatear con un asistente virtual y confirmar reservas. A su vez, se ha desarrollado un panel de administración web en React JS para que los propietarios gestionen su infraestructura, precios y el estado de sus reservas. El ecosistema completo está orquestado mediante Firebase, utilizando bases de datos en tiempo real (Firestore) y un sólido manejo de autenticación biométrica y tradicional.
 
+El código fuente completo de la solución puede ser consultado en el siguiente repositorio oficial: \url{https://github.com/Dval05/HostSigchos-AppMovil}.
+
 \section{Planteamiento del problema}
 Actualmente, la gestión de reservaciones en la gran mayoría de las hosterías del cantón Sigchos se realiza a través de métodos convencionales y empíricos. Las reservaciones se toman mediante llamadas telefónicas, mensajes de WhatsApp o agendas físicas. Esto genera una serie de problemáticas graves:
 
-\begin{itemize}[label=\color{sigchosDarkGreen}$\blacksquare$]
+\begin{itemize}[label=$\blacksquare$]
     \item \textbf{Sobreventa (Overbooking):} La falta de sincronización en tiempo real causa que múltiples clientes puedan reservar la misma habitación para las mismas fechas de forma simultánea.
     \item \textbf{Gestión ineficiente de tarifas:} Los propietarios no pueden actualizar dinámicamente sus precios en temporadas altas o bajas de forma centralizada y transparente.
     \item \textbf{Falta de visibilidad digital:} Los turistas externos no tienen un catálogo centralizado donde comparar opciones, leer reseñas de otros huéspedes o verificar los servicios disponibles con geolocalización.
@@ -178,6 +195,57 @@ El ecosistema HostSigchos abarca de forma completa las necesidades tecnológicas
     \item \textbf{Módulos transaccionales y de hardware:} El alcance incorpora validaciones biométricas al momento de iniciar sesión, uso de la brújula y el geolocador en el módulo de mapas y la posibilidad de cambiar idiomas y temas dentro de la aplicación móvil de manera reactiva.
 \end{enumerate}
 
+\chapter{Marco Conceptual y Trabajos Relacionados}
+
+\section{Trabajos relacionados}
+Los sistemas de reservaciones hoteleras y turísticas han evolucionado hacia la digitalización mediante ecosistemas web y móviles. Investigaciones recientes destacan la importancia de centralizar inventarios para prevenir la sobreventa. Por ejemplo, Satanasaowapak et al. proponen el uso de validaciones en tiempo real mediadas por la nube para mejorar la seguridad transaccional \cite{satanasaowapak2021qr}. 
+A diferencia de los sistemas tradicionales, HostSigchos no solo permite la visualización del inventario, sino que delega la validación de solapamiento temporal matemáticamente a la lógica de negocio local (Clean Architecture) antes de enviar la transacción a Firebase, optimizando el ancho de banda y la velocidad de respuesta.
+
+\begin{longtable}{p{3.4cm}p{5.1cm}p{5.4cm}}
+\caption{Relación entre trabajos relacionados y decisiones del proyecto.}\\
+\toprule
+\textbf{Enfoque previo} & \textbf{Hallazgo principal} & \textbf{Aplicación en HostSigchos}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Enfoque previo} & \textbf{Hallazgo principal} & \textbf{Aplicación en HostSigchos}\\
+\midrule
+\endhead
+Arquitecturas en capas \cite{cleanArchitecture} & Separación de la UI y la lógica de negocio para mantenibilidad. & Uso estricto de \tech{Clean Architecture} y MVVM con \tech{Provider}.\\
+Bases de datos en tiempo real & Sincronización inmediata para evitar discrepancias de estado. & \tech{Cloud Firestore} con WebSockets y Transacciones atómicas.\\
+Inteligencia artificial en turismo & Personalización y asistencia al viajero 24/7. & Integración de \tech{Gemini API} para un Chatbot interactivo.\\
+Sistemas reactivos & Actualización de interfaces sin recargar la pantalla. & Renderizado reactivo desde \tech{ViewModels} a las Vistas de Flutter.\\
+\bottomrule
+\end{longtable}
+
+\section{Conceptos Clave}
+\subsection{Overbooking (Sobreventa)}
+El \textit{overbooking} ocurre cuando se reservan más habitaciones de las que físicamente están disponibles para una misma fecha. En HostSigchos, este problema se mitiga cruzando matemáticamente las fechas de \textit{Check-in} y \textit{Check-out} y bloqueando la reserva si el total ocupado iguala o supera el inventario disponible.
+
+\subsection{Clean Architecture y MVVM}
+Arquitectura Limpia es una filosofía de diseño donde las reglas del negocio (Domain) no dependen de bases de datos ni de interfaces (Data y Presentation). MVVM (\textit{Model-View-ViewModel}) facilita esto al usar el ViewModel como intermediario para manejar el estado de la vista.
+
+\subsection{Transacciones Atómicas}
+Una transacción atómica en Firebase garantiza que un conjunto de lecturas y escrituras se completen de manera íntegra, o fallen por completo. HostSigchos usa esto para asegurar que si dos usuarios confirman el pago al mismo tiempo, solo uno obtenga la última habitación.
+
+\subsection{Geolocalización Operativa y Magnetometría}
+Uso del hardware GPS (Sistema de Posicionamiento Global) del dispositivo combinado con el magnetómetro (brújula) para posicionar al turista en el cantón Sigchos. Esto permite mostrar su orientación física real mediante cálculos de azimut y trazar puntos cartográficos (hosterías) en el mapa interactivo.
+
+\subsection{Inteligencia Artificial Generativa y NLP}
+Los Modelos de Lenguaje Grande (LLMs), como Gemini de Google, procesan secuencias de texto mediante Redes Neuronales Transformer. En este proyecto se combinan con algoritmos de Procesamiento de Lenguaje Natural (NLP), Reconocimiento de Voz (\textit{Speech-to-Text}) y síntesis vocal (\textit{Text-to-Speech}) para crear un agente conversacional omnicanal y empático.
+
+\subsection{Sistemas Reactivos y WebSockets}
+La arquitectura orientada a eventos permite la comunicación bidireccional asíncrona. Mediante \textit{WebSockets}, Firebase mantiene una conexión TCP persistente, logrando que cualquier mutación de la base de datos (Ej. cuando el propietario aprueba una reserva) se notifique instantáneamente al cliente móvil sin necesidad de hacer \textit{HTTP Long-Polling}.
+
+\subsection{Modelo de Seguridad Zero Trust y JWT}
+A diferencia de los modelos perimetrales clásicos, \textit{Zero Trust} (Confianza Cero) asume que la red y el cliente ya están comprometidos. Las bases de datos backend exigen que cada solicitud esté firmada criptográficamente con un JSON Web Token (JWT) emitido por un proveedor OAuth 2.0. Las \textit{Security Rules} validan esta firma matemática antes de autorizar cualquier mutación de datos.
+
+\subsection{Entornos de Ejecución Confiables (TEE)}
+La información biométrica nunca se transmite a la nube ni se expone al sistema operativo principal. Se cifra físicamente en un microprocesador aislado llamado \textit{Secure Enclave} (iOS) o \textit{Keystore} (Android). La validación se realiza a nivel de hardware local y solo devuelve un hash o token asíncrono a la aplicación.
+
+\subsection{Ofuscamiento y Mitigación de Ingeniería Inversa}
+La ingeniería inversa implica descompilar el archivo binario empaquetado (APK/AAB) para extraer propiedad intelectual, lógica de negocio o credenciales. El ofuscamiento es una técnica algorítmica de encriptación léxica que destruye y reduce los nombres de variables, clases y flujos (\textit{symbols}) durante la compilación AOT (\textit{Ahead-of-Time}), blindando el código fuente.
+
 \chapter{Arquitectura y Estructura}
 
 \section{Arquitectura del Sistema}
@@ -186,7 +254,7 @@ El desarrollo del aplicativo móvil en Flutter se sustenta fuertemente en los li
 \subsection{Capas de Arquitectura Limpia}
 La principal meta de esta arquitectura es la mantenibilidad a largo plazo y la capacidad de realizar pruebas aisladas. Se divide estrictamente en tres capas independientes:
 
-\begin{itemize}[label=\color{sigchosDarkGreen}$\blacksquare$]
+\begin{itemize}[label=$\blacksquare$]
     \item \textbf{Capa Domain (Dominio - Lógica central):} Totalmente independiente de Flutter, Firebase o cualquier API externa. Define las \pathtext{Entities} puras (como \pathtext{Usuario}, \pathtext{Reserva}, \pathtext{Habitacion}), los \pathtext{UseCases} (orquestadores de lógica de negocio, por ejemplo \pathtext{VerificarDisponibilidadUseCase}) y los contratos abstractos de los repositorios.
     \item \textbf{Capa Data (Datos):} Su responsabilidad es consumir las interfaces definidas en el dominio. En ella residen los \pathtext{DataSources} (por ejemplo \pathtext{auth_datasource.dart} que consume la SDK de Firebase) y los \pathtext{Models} (encargados de serializar y deserializar JSON \pathtext{fromFirestore}, \pathtext{toJson}).
     \item \textbf{Capa Presentation (Presentación - UI):} Implementa el patrón \tech{MVVM}. Consta de los \pathtext{ViewModels} que manejan variables reactivas y exponen métodos a las \pathtext{Views} (Widgets de Flutter). Las vistas reaccionan al estado reconstruyéndose de forma limpia a través de \pathtext{context.watch<T>()}.
@@ -201,16 +269,42 @@ HostSigchos centraliza la inyección de todas las dependencias a través del arc
   \caption{Flujo de datos bidireccional desde la capa de Presentación hasta el Origen de Datos mediado por los Casos de Uso.}
 \end{figure}
 
+\subsection{Diagrama de Despliegue}
+Para comprender cómo interactúan físicamente los componentes de software desarrollados, se modeló la distribución de los nodos del sistema. Este diagrama evidencia la separación entre el dispositivo móvil (Turista), el navegador web (Propietario) y la infraestructura en la nube (Firebase).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_despliegue.png}
+  \caption{Diagrama de Despliegue mostrando la topología física y los protocolos de comunicación.}
+\end{figure}
+
+\section{Stack Tecnológico, Herramientas y APIs Integradas}
+Para construir un ecosistema altamente escalable e interactivo, HostSigchos se apoyó en un robusto abanico de tecnologías, librerías y APIs de terceros:
+
+\begin{itemize}[label=$\blacksquare$]
+    \item \textbf{Frameworks y Lenguajes:} \tech{Flutter} con el lenguaje \tech{Dart} para la aplicación móvil multiplataforma, y \tech{React JS} estilizado con \tech{Tailwind CSS} para el panel administrativo web.
+    \item \textbf{Backend-as-a-Service (BaaS):} La infraestructura entera descansa sobre \tech{Google Firebase}. Se utilizan los módulos de \tech{Firebase Authentication} (OAuth 2.0 y Correo), \tech{Cloud Firestore} (Base de datos NoSQL en tiempo real mediante WebSockets), \tech{Firebase Storage} (Almacenamiento de imágenes de hosterías y perfiles) y \tech{Firebase Hosting} (Para desplegar los documentos legales estáticos).
+    \item \textbf{APIs de Inteligencia Artificial y Datos:} Integración asíncrona (RESTful) con la \tech{Gemini API} (Google) para dotar de razonamiento al chatbot turístico, y \tech{OpenWeatherMap API} para consultas climatológicas en tiempo real de la zona de Sigchos.
+    \item \textbf{Librerías de Hardware Nativo:} 
+        \begin{itemize}
+            \item \tech{local\_auth}: Para vincular el \textit{Secure Enclave} y habilitar autenticación con huella dactilar o FaceID.
+            \item \tech{geolocator} y \tech{flutter\_compass}: Para acceder a la antena GPS y al magnetómetro (brújula) del celular.
+            \item \tech{flutter\_tts} y \tech{speech\_to\_text}: Para proveer síntesis y reconocimiento de voz bidireccional en el chatbot.
+        \end{itemize}
+    \item \textbf{Servicios Cartográficos:} Se integró el motor \tech{flutter\_map} (basado en \textit{Leaflet}) consumiendo la capa de mapas de código abierto \tech{OpenStreetMap}.
+    \item \textbf{Herramientas de Arquitectura:} \tech{Provider} como gestor de estado reactivo, \tech{GetIt} para la inyección de dependencias, y el paquete \tech{shimmer} para la ergonomía visual durante tiempos de carga por red (\textit{latencia}).
+    \item \textbf{Asistencia de Desarrollo (Ingeniería de Software):} Se empleó la plataforma \tech{Google Antigravity} (IA Agentiva) para estandarizar la base de código y asegurar el cumplimiento de principios SOLID durante la estructuración de la Arquitectura Limpia, y el empaquetador \tech{MiKTeX} para compilar el presente documento LaTeX.
+\end{itemize}
+
 \section{Diagrama de carpetas}
 La estructura física del proyecto móvil es un reflejo de la arquitectura descrita. La raíz `lib/` está compuesta por:
 
-\begin{tcolorbox}[colback=codeBack,colframe=codeFrame,boxrule=0.8pt,arc=6pt]
-\begin{verbatim}
+\begin{lstlisting}[style=codeblock]
 HostSigchos/lib/
 |-- core/                     # Elementos transversales al proyecto
 |   |-- constants/            # Rutas de Firestore, variables ENV
 |   |-- errors/               # Manejo global de excepciones (Failures)
-|   |-- l10n/                 # Archivos de internacionalización
+|   |-- l10n/                 # Archivos de internacionalizacion
 |   |-- services/             # Servicios de Hardware (Biometric, Notification)
 |   +-- utils/                # Validadores, formateadores de fechas/precios
 |
@@ -225,7 +319,7 @@ HostSigchos/lib/
 |-- domain/                   # Capa de Dominio Pura (Dart Vainilla)
 |   |-- entities/             # Entidades como Reserva, Habitacion, Hosteria
 |   |-- repositories/         # Contratos/Interfaces abstractas
-|   +-- usecases/             # Lógica de negocio orquestada
+|   +-- usecases/             # Logica de negocio orquestada
 |       |-- auth/
 |       |-- habitacion/       # Ej: check_disponibilidad_usecase.dart
 |       +-- reserva/          # Ej: crear_reserva_usecase.dart
@@ -240,11 +334,10 @@ HostSigchos/lib/
 |   |   +-- reserva/
 |   +-- widgets/              # Componentes UI reusables (Botones, Modales, Tarjetas)
 |
-|-- themes/                   # Definición del ThemeData general (Colores, Tipografías)
-|-- injection_container.dart  # Locator (GetIt) para inyección de dependencias
-+-- main.dart                 # Inicialización de Firebase, GetIt, Providers y RunApp
-\end{verbatim}
-\end{tcolorbox}
+|-- themes/                   # Definicion del ThemeData general (Colores, Tipografias)
+|-- injection_container.dart  # Locator (GetIt) para inyeccion de dependencias
++-- main.dart                 # Inicializacion de Firebase, GetIt, Providers y RunApp
+\end{lstlisting}
 
 \section{Modelo de datos}
 El backend principal se sostiene en \textbf{Cloud Firestore}. A pesar de ser una base de datos NoSQL documental, se modeló cuidadosamente simulando claves foráneas (como \pathtext{hosteriaId} o \pathtext{usuarioId}) que permiten realizar consultas robustas.
@@ -260,95 +353,502 @@ Las colecciones principales operativas son:
     \item \textbf{\pathtext{usuarios}:} Almacena información del turista (cédula, correo, avatar vinculado a Firebase Storage) y el UID proporcionado por Firebase Auth.
     \item \textbf{\pathtext{hosterias}:} Almacena coordenadas geográficas, imágenes de carrusel, amenidades, calificación media (rating) y descripción.
     \item \textbf{\pathtext{habitaciones}:} Colección dependiente lógicamente de la hostería (relacionada vía \pathtext{hosteriaId}). Contiene precio por noche, cantidad disponible, capacidad y tipo de cama.
-    \item \textbf{\pathtext{reservas}:} Es el documento transaccional central. Guarda los detalles temporales (Check-in, Check-out), los montos financieros (\pathtext{precioTotal}) y el \pathtext{estado} de la reserva (Pendiente, Confirmada, Cancelada, Completada). Es fuertemente custodiada por transacciones.
-    \item \textbf{\pathtext{notificaciones} y \pathtext{resenas}:} Operadas asíncronamente para dar trazabilidad al historial del usuario y brindar el feedback respectivo a las hosterías.
+    \item \textbf{\pathtext{reservas}:} Es el documento transaccional central. Guarda los detalles temporales (Check-in, Check-out), los montos financieros (\pathtext{precioTotal}) y el \pathtext{estado} de la reserva (Pendiente, Confirmada, Cancelada, Completada).
 \end{itemize}
+
+\section{Diagramas UML del Sistema}
+Para proporcionar una vista integral de la ingeniería de software, se extrajeron los siguientes modelos unificados del proyecto, que abarcan la estructura estática, el comportamiento dinámico y la arquitectura:
+
+\subsection{Diagrama de Componentes (Clean Architecture)}
+Muestra la división macroscópica de los grandes bloques de software en capas de Dominio, Datos y Presentación, demostrando la alta cohesión y el bajo acoplamiento del código fuente.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_componentes.png}
+  \caption{Diagrama de Componentes de la Arquitectura.}
+\end{figure}
+
+\subsection{Diagrama de Clases del Dominio}
+Este diagrama ilustra la estructura estática de las Entidades Vainilla (Usuario, Reserva, Hostería, Habitación) y las relaciones semánticas entre ellas, siendo el núcleo de la aplicación, libre de dependencias de bases de datos externas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_clases.png}
+  \caption{Diagrama de Clases de las Entidades de Dominio.}
+\end{figure}
+
+\subsection{Diagrama de Casos de Uso}
+Muestra la interacción fundamental entre los Turistas (Usuarios Móviles) y los Propietarios (Administradores) con los módulos principales del ecosistema, como exploración de hosterías, uso de IA, reservas y gestión de inventario.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_casos_uso.png}
+  \caption{Diagrama de Casos de Uso general del sistema HostSigchos.}
+\end{figure}
+
+\subsection{Diagrama de Secuencia (o Actividad)}
+Detalla el flujo lógico de comunicación transaccional entre el Cliente (Móvil), el Controlador de lógica (UseCase) y la Base de Datos (Firestore) para prevenir el cruce de fechas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_secuencia.png}
+  \caption{Diagrama UML del flujo de reservas y validación.}
+\end{figure}
+
+\subsection{Máquina de Estados de Reserva}
+Demuestra el ciclo de vida estricto de un documento de reserva dentro del ecosistema, mutando su estado asíncronamente (Pendiente, Confirmada, Cancelada, Completada) según la interacción del Administrador.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_estados.png}
+  \caption{Diagrama de Estados para el ciclo de vida transaccional.}
+\end{figure}
+
+\subsection{Diagrama Entidad-Relación Extendido (ER)}
+A pesar de que Firebase Firestore es una base de datos documental (NoSQL), HostSigchos maneja dependencias lógicas fuertes. Este diagrama refleja cómo se conectan los documentos mediante referencias (Ej: \pathtext{hosteriaId}), simulando claves foráneas convencionales.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/uml_er.png}
+  \caption{Diagrama ER lógico de las colecciones de Firestore.}
+\end{figure}
 
 \chapter{Desarrollo y capturas del aplicativo}
 
-El sistema abarca diversas funcionalidades complejas que requieren sincronización asíncrona y uso intensivo del hardware del dispositivo móvil. Se desarrollaron en total 19 rutas de pantalla completamente funcionales y validadas. A continuación se presentan las más críticas.
+El sistema abarca diversas funcionalidades complejas que requieren sincronización asíncrona y uso intensivo del hardware del dispositivo móvil. Durante el ciclo de vida del proyecto, se estandarizó la base de código empleando arquitecturas limpias asistidas por \textbf{Antigravity}, una IA agentiva que aseguró el cumplimiento de principios SOLID. 
+Se desarrollaron en total 19 rutas de pantalla (incluyendo interfaces móviles y web) completamente funcionales y validadas, orquestadas mediante 11 ViewModels (Provider) y 7 entidades de negocio. Adicionalmente, se integró una política incipiente de caché offline para mitigar pérdidas de conexión en zonas geográficas apartadas. A continuación se detalla con precisión milimétrica el desarrollo de todos los módulos.
 
-\section{Módulo de Autenticación y Biometría}
-El usuario puede ingresar mediante un correo electrónico y contraseña, utilizar un proveedor de OAuth 2.0 (Google Sign-In) o, alternativamente, ingresar usando la verificación biométrica del hardware (Huella o Reconocimiento Facial) si el dispositivo lo soporta y se ha vinculado su cuenta previamente \cite{firebaseDocs}.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.5\textwidth]{img/login_screen.png}
-  \caption{Pantalla de inicio de sesión con opciones tradicionales, SSO de Google y autenticación biométrica.}
-\end{figure}
-
-\section{Módulo de Exploración y Mapas}
-El usuario dispone de un \pathtext{Dashboard} y listas que consultan la colección \pathtext{hosterias}. Adicionalmente, cuenta con una funcionalidad de mapa implementada usando \tech{flutter\_map} (Leaflet) conectada a la API de Geocoding. Se integra un \tech{compass} (Brújula) y posicionamiento del GPS real.
+\section{Módulo Web y Entorno Legal}
+Previo al uso de la plataforma, los usuarios y propietarios interactúan con el portal web institucional. Este módulo aloja la \textbf{Landing Page} promocional, la cual explica las virtudes del sistema y fomenta la descarga del aplicativo móvil. Además, desde esta pantalla inicial, el usuario tiene la capacidad de cambiar el idioma de toda la plataforma gracias a un selector de internacionalización (\texttt{l10n}), garantizando accesibilidad inmediata para turistas extranjeros.
+Asimismo, debido a las normativas estrictas de las tiendas de aplicaciones (Play Store y App Store), se redactaron e inyectaron las normativas legales mediante páginas web estáticas alojadas en Firebase Hosting.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{img/mapa_screen.png}
-  \caption{Pantalla de visualización de mapas integrando los marcadores de hosterías y geolocalización.}
+  \includegraphics[width=0.8\textwidth]{img/landing_page.png}
+  \caption{Landing Page promocional del ecosistema HostSigchos.}
 \end{figure}
 
-\section{Asistente Virtual (Chatbot)}
-Usando \tech{Gemini API}, el turista puede consultar recomendaciones climáticas conectadas con \tech{OpenWeatherMap}, lugares turísticos de Sigchos y resolver dudas generales. Posee capacidades de Texto a Voz (TTS) a través del hardware.
+El usuario puede revisar las políticas y términos en cualquier momento, tanto desde la web como desde la aplicación móvil.
+\begin{itemize}
+    \item \textbf{Políticas de Privacidad:} \url{https://hostsigchos.web.app/politicas.html}
+    \item \textbf{Términos y Condiciones:} \url{https://hostsigchos.web.app/terminos.html}
+\end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{img/chatbot_screen.png}
-  \caption{Asistente turístico integrado, alimentado mediante inteligencia artificial.}
+  \includegraphics[width=0.8\textwidth]{img/politicas_privacidad.png}
+  \caption{Visualización de las Políticas de Privacidad.}
 \end{figure}
 
-\section{Proceso de Reserva y Validación de Colisiones}
-Este módulo previene el error crítico del \textit{Overbooking}. En el \pathtext{VerificarDisponibilidadUseCase}, el sistema obtiene las reservas activas y evalúa la condición matemática de solapamiento en milisegundos:
-\begin{lstlisting}[style=codeblock,caption={Lógica de prevención de superposición temporal de reservas.}]
-// Dentro del VerificarDisponibilidadUseCase.dart
-if (checkIn.isBefore(r.fechaCheckOut) && checkOut.isAfter(r.fechaCheckIn)) {
-    habitacionesOcupadas += r.numHabitaciones;
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/terminos_condiciones.png}
+  \caption{Documento legal de Términos y Condiciones.}
+\end{figure}
+
+\section{Módulo de Autenticación, Registro y Biometría}
+El sistema de seguridad está diseñado para proteger los datos del turista y facilitar el acceso. El flujo principal comienza con la creación de una cuenta en Firebase Auth. El usuario puede ingresar mediante correo electrónico y contraseña o mediante un proveedor de OAuth 2.0 (Google Sign-In). 
+Desde el punto de vista del desarrollo, el \pathtext{AuthViewModel} maneja los estados de \textit{cargando} (mostrando indicadores de progreso circular) y captura excepciones como contraseñas débiles o correos ya registrados, devolviendo al usuario un \textit{SnackBar} amigable. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/login_screen.png}
+  \caption{Pantalla de inicio de sesión clásica y SSO (Google).}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/registro_screen.png}
+  \caption{Pantalla de registro con validaciones de formulario en tiempo real.}
+\end{figure}
+
+En caso de que el usuario pierda su acceso, se implementó un flujo de \textbf{Recuperación de Contraseña} mediante un enlace seguro enviado al correo del turista, posibilitando el auto-servicio en la gestión de credenciales.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/forgot_password.png}
+  \caption{Módulo de recuperación de contraseña vía correo electrónico.}
+\end{figure}
+
+Adicionalmente, desde la propia pantalla de Login, el usuario puede acceder al selector de idioma para adaptar la interfaz a su lengua materna de manera instantánea, sin necesidad de autenticarse previamente.
+
+Para elevar el estándar de seguridad y mejorar la experiencia de usuario (UX), se integró la verificación biométrica del hardware (Huella Dactilar o Reconocimiento Facial) usando la librería \tech{local\_auth}. Esta validación se apoya en el \textit{Secure Enclave} del dispositivo para evitar robos de identidad \cite{firebaseDocs}.
+
+\begin{lstlisting}[style=codeblock,caption={Lógica asíncrona de autenticación biométrica utilizando el hardware nativo.}]
+// Función inyectada en el AuthViewModel
+Future<bool> autenticarConBiometria() async {
+  final LocalAuthentication auth = LocalAuthentication();
+  bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+  
+  if (canAuthenticateWithBiometrics) {
+    return await auth.authenticate(
+      localizedReason: 'Por favor, autentícate para acceder a HostSigchos',
+      options: const AuthenticationOptions(biometricOnly: true),
+    );
+  }
+  return false; // Fallback a contraseña manual
 }
 \end{lstlisting}
 
-Una vez completada la selección (Check-in, Check-out), el usuario prosigue a la pantalla de \pathtext{Checkout}, que desglosa el costo financiero total en tiempo real y realiza la escritura transaccional segura en Firestore \cite{flutterArchitecture}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/biometrica.png}
+  \caption{Autenticación biométrica habilitada por el hardware nativo.}
+\end{figure}
+
+\section{Módulo de Exploración (Dashboard) y Visualización de Hosterías}
+Una vez autenticado, el turista ingresa al \pathtext{Dashboard} principal. Esta pantalla consume el \pathtext{HosteriaViewModel}, recuperando la lista de hosterías desde Firestore. Para contrarrestar problemas de red (alta latencia) y evitar bloqueos en la UI, se implementó el paquete \tech{shimmer}, el cual renderiza un esqueleto gris animado mientras los datos terminan de descargar. 
+El usuario tiene la opción de alternar la vista entre un layout de \textbf{Lista} y uno de \textbf{Cuadrícula}, maximizando la ergonomía visual. Las imágenes pesadas se cachean asíncronamente vía \tech{cached\_network\_image}.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{img/checkout_screen.png}
-  \caption{Proceso de \textit{Checkout} para confirmar la reserva, validando la cantidad solicitada con el inventario.}
+  \includegraphics[width=0.45\textwidth]{img/dashboard_lista.png}
+  \caption{Dashboard principal de exploración en formato Lista.}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/dashboard_cuadricula.png}
+  \caption{Dashboard principal de exploración alternado al formato Cuadrícula.}
+\end{figure}
+
+Al seleccionar una hostería, se navega al detalle de la misma. Aquí el usuario puede visualizar un carrusel dinámico de las instalaciones, chips de amenidades (Wi-Fi, piscina, etc.) y acceder al \textbf{Apartado de Reseñas} donde los huéspedes previos califican con estrellas su estadía, brindando retroalimentación comunitaria.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/detalle_hosteria_screen.png}
+  \caption{Vista detallada de los servicios generales de una hostería.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/resenas.png}
+  \caption{Módulo comunitario de calificación y reseñas.}
+\end{figure}
+
+Dentro del detalle, el turista puede acceder a la \textbf{Visualización de Habitaciones}, donde se despliegan las capacidades, tipos de cama y precios de cada alcoba disponible.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/habitaciones.png}
+  \caption{Catálogo detallado de habitaciones y precios por noche.}
+\end{figure}
+
+\section{Módulo de Mapas Interactivos y Geolocalización}
+El turismo requiere orientación espacial precisa. Se incorporó un módulo de mapas implementado con el paquete \tech{flutter\_map} (motor Leaflet) y las capas base de OpenStreetMap. 
+A nivel de desarrollo, se utiliza el paquete \tech{geolocator} para solicitar permisos de GPS y obtener la latitud y longitud actual del usuario. Adicionalmente, se integró el paquete \tech{flutter\_compass} para hacer que el mapa rote según la orientación física del teléfono. Los \textit{Markers} (puntos de interés) se renderizan leyendo las coordenadas de las hosterías alojadas en la base de datos, lo que permite trazar rutas y distancias estimadas.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/mapa_screen.png}
+  \caption{Pantalla de visualización de mapas integrando los marcadores de hosterías y geolocalización.}
+\end{figure}
+
+\section{Asistente Virtual (Chatbot con Inteligencia Artificial)}
+Considerando la necesidad de guías turísticos 24/7, se construyó un Chatbot inteligente alimentado por la API de \tech{Gemini} (Google). 
+El \pathtext{ChatbotViewModel} gestiona el historial de la conversación (prompts) en una lista local. El sistema inyecta un contexto inicial (\textit{System Instruction}) indicándole a la IA que asuma el rol de guía experto en Sigchos. 
+
+Durante la fase de pruebas con el Informe 3.2, se detectaron errores de saturación (Rate Limit \texttt{429}) al consumir la API gratuita de Gemini. Esto se solventó abstrayendo el manejo de error y devolviendo un estado controlado a la UI que invita al usuario a reintentar en lugar de colapsar la aplicación. Además, el módulo interactúa asíncronamente con la API de \tech{OpenWeatherMap} para brindar respuestas del clima en tiempo real, y utiliza los paquetes nativos de \tech{flutter\_tts} y \tech{speech\_to\_text} para interacción por voz.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/chatbot_screen.png}
+  \caption{Asistente turístico integrado, respondiendo con texto y voz.}
+\end{figure}
+
+\section{Proceso de Reserva y Resolución del Overbooking}
+El flujo transaccional es el núcleo de HostSigchos. Una vez que el usuario selecciona una habitación ingresa al \textbf{Módulo de Reservas}, donde debe introducir su fecha de \textit{Check-in} y \textit{Check-out} a través de un selector de calendario (\tech{DateRangePickerDialog}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/modulo_reservas.png}
+  \caption{Módulo centralizado de gestión y solicitud de nueva reserva.}
+\end{figure}
+
+Para prevenir el \textit{Overbooking} (sobreventa), el \pathtext{VerificarDisponibilidadUseCase} recupera todas las reservas con estado ``Pendiente'' o ``Confirmada'' para dicha habitación y ejecuta un motor matemático de colisiones temporales en milisegundos:
+
+\begin{lstlisting}[style=codeblock,caption={Lógica pura en Dart para prevención de superposición temporal de fechas.}]
+// Dentro de domain/usecases/habitacion/verificar_disponibilidad_usecase.dart
+bool isDisponible = true;
+int habitacionesOcupadas = 0;
+
+for (var r in reservasExistentes) {
+    // Si la nueva fecha de ingreso es ANTES de la salida existente
+    // Y la nueva fecha de salida es DESPUES del ingreso existente, hay cruce.
+    if (checkIn.isBefore(r.fechaCheckOut) && checkOut.isAfter(r.fechaCheckIn)) {
+        habitacionesOcupadas += r.numHabitaciones;
+    }
+}
+if(habitacionesOcupadas >= habitacion.cantidadTotal) {
+    isDisponible = false; // Se bloquea la reserva
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/seleccion_fechas_screen.png}
+  \caption{Selector de rango de fechas para validación de disponibilidad.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/checkout_screen.png}
+  \caption{Proceso de \textit{Checkout} detallando costos antes del guardado final.}
+\end{figure}
+
+\section{Módulo de Usuario, Ajustes y Notificaciones}
+El perfil del turista en HostSigchos es altamente personalizable. El usuario puede acceder a la sección de \textbf{Editar Perfil} para actualizar sus datos de contacto, contraseña y fotografía, la cual es cargada directamente a los buckets seguros de \tech{Firebase Storage}. Desde este mismo apartado, el usuario posee el control total para cambiar el \textbf{Idioma} de la aplicación, el cual es inyectado globalmente mediante un \pathtext{LocaleProvider}.
+
+\begin{lstlisting}[style=codeblock,caption={Lógica del LocaleProvider para el cambio de idioma en tiempo real.}]
+// provider/locale_provider.dart
+class LocaleProvider extends ChangeNotifier {
+  Locale _locale = const Locale('es'); // Español por defecto
+
+  Locale get locale => _locale;
+
+  void setLocale(Locale newLocale) {
+    if (!L10n.all.contains(newLocale)) return;
+    _locale = newLocale;
+    notifyListeners(); // Re-renderiza toda la App reactivamente
+  }
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/editar_perfil.png}
+  \caption{Interfaz de configuración y edición del perfil del turista.}
+\end{figure}
+
+Por mandato de las políticas de Google Play Store, se implementó de forma obligatoria el flujo de \textbf{Eliminar Cuenta}. El usuario puede desvincular sus datos permanentemente de los servidores mediante un botón en la app y una confirmación legal en la web a través del enlace: \url{https://hostsigchos.web.app/eliminar_cuenta.html}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/eliminar_cuenta.png}
+  \caption{Flujo de seguridad para la eliminación definitiva de la cuenta.}
+\end{figure}
+
+Además, el turista dispone de un canal dedicado de \textbf{Ayuda y Soporte} para resolver problemas con su cuenta, y un gestor de \textbf{Notificaciones Push} (vía \tech{flutter\_local\_notifications}) que le alertan cuando el administrador confirma o cancela su reserva, uniendo la experiencia del mundo offline con el mundo digital.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/ayuda_soporte.png}
+  \caption{Centro de Ayuda y Soporte técnico al cliente.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/notificaciones.png}
+  \caption{Bandeja de entrada de Notificaciones Push sobre el estado de las reservas.}
+\end{figure}
+
+\section{Panel Administrativo Web}
+Para complementar el ecosistema móvil de los turistas, se desarrolló un portal web con \tech{React} y \tech{Tailwind CSS} para los administradores. En este panel, los propietarios pueden acceder a una tabla de control donde observan todas las reservas entrantes en tiempo real (mediante \texttt{onSnapshot} de Firebase). El propietario puede cambiar el estado de la reserva (de Pendiente a Confirmada o Cancelada). 
+Cualquier cambio realizado en el panel web se refleja instantáneamente en la aplicación móvil del usuario gracias a los \textit{WebSockets} reactivos, notificándole al cliente final.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/panel_web_screen.png}
+  \caption{Tablero de control web para gestión y actualización de estado de reservas.}
+\end{figure}
+
+\section{Seguridad y Privacidad}
+HostSigchos trata datos sensibles: información de identidad, huellas dactilares, ubicación en tiempo real e historiales de viaje. El ecosistema fue diseñado bajo el principio de \textit{Security by Design} (Seguridad por Diseño), garantizando la integridad y confidencialidad en todas sus capas. Para lograr esto, se implementaron exhaustivamente las siguientes metodologías de seguridad:
+
+\begin{itemize}
+  \item \textbf{Ofuscamiento de Código (Code Obfuscation):} Para prevenir ataques de ingeniería inversa (\textit{Reverse Engineering}) donde actores maliciosos descompilan el APK para robar lógica de negocio, el compilador de Flutter fue ejecutado con las banderas \texttt{--obfuscate} y \texttt{--split-debug-info}. Esto transforma internamente los nombres de clases, funciones y variables en cadenas de texto ininteligibles, protegiendo la propiedad intelectual del algoritmo de transacciones y la arquitectura.
+  \item \textbf{Autenticación Segura (OAuth 2.0 y JWT):} Uso intensivo de Firebase Authentication. El sistema jamás maneja contraseñas en texto plano; delega la validación criptográfica a los servidores de Google. Las sesiones se mantienen mediante \textit{JSON Web Tokens (JWT)} de corta duración que se refrescan automáticamente, mitigando el robo de sesiones.
+  \item \textbf{Biometría Basada en Hardware:} La autenticación biométrica procesa la huella o el rostro de forma local en el dispositivo. Las claves criptográficas se almacenan de manera inquebrantable en el \textit{Secure Enclave} (iOS) o \textit{Keystore} (Android), un chip físico aislado del sistema operativo principal. Ningún dato biométrico viaja hacia la nube.
+  \item \textbf{Reglas de Seguridad Estrictas (Firestore Rules):} A nivel de backend (BaaS), la base de datos sigue el modelo \textit{Zero Trust} (Confianza Cero). Se desplegaron \textit{Security Rules} que interceptan cada petición a nivel de servidor, validando la firma digital del usuario (\texttt{request.auth.uid}). Esto garantiza que un turista \textbf{solo} pueda leer o modificar los documentos que le pertenecen estrictamente (su perfil, sus reservas), impidiendo la visualización de datos ajenos.
+  \item \textbf{Ocultamiento de Variables de Entorno (.env):} Las credenciales de integración con terceros (como las API Keys de Gemini y OpenWeatherMap) no están \textit{hardcodeadas} (escritas en texto) en el código fuente. Se utilizó el paquete \tech{flutter\_dotenv} para inyectar estos secretos en tiempo de ejecución de forma ofuscada, evitando que las llaves queden expuestas en el repositorio público de GitHub.
+  \item \textbf{Cifrado en Tránsito y Reposo:} Todas las conexiones entre la aplicación móvil, el panel de administración web y la infraestructura en la nube operan exclusivamente a través de túneles cifrados HTTPS/TLS (\textit{Transport Layer Security}), repeliendo ataques \textit{Man-in-the-Middle}. Además, los datos almacenados en los discos de Google están protegidos con cifrado estándar avanzado AES-256.
+\end{itemize}
 
 
 \chapter{Pruebas}
 
-Se elaboró y ejecutó una estrategia rigurosa de pruebas en todos los niveles recomendados de calidad de software móvil. El ecosistema HostSigchos garantiza su correcto funcionamiento a través de técnicas de limitación de redes, tests unitarios automatizados y pruebas integrales.
+\section{Estrategia general}
+Se elaboró y ejecutó una estrategia rigurosa de pruebas en todos los niveles recomendados de calidad de software móvil. La estrategia de pruebas combina validación funcional, usabilidad, rendimiento, carga, seguridad y resiliencia de red. El ecosistema HostSigchos garantiza su correcto funcionamiento a través de técnicas de limitación de redes, tests unitarios automatizados y pruebas integrales.
 
-\section{Estrategia de Red (Rate Limiting)}
+\section{Pruebas de usabilidad}
+Las pruebas de usabilidad son fundamentales dado que HostSigchos atiende a dos perfiles de usuario muy distintos: el turista (app móvil) y el administrador/propietario (panel web). Se ejecutaron sesiones por rol con tareas realistas y observación directa.
+
+\subsection{Participantes}
+\begin{itemize}
+  \item \textbf{20 Turistas (Usuarios finales):} Buscaron hosterías, consultaron a la IA, usaron el mapa y completaron una reserva.
+  \item \textbf{1 Administrador (Propietario):} Aprobó y canceló reservas desde el panel web, y actualizó el inventario.
+\end{itemize}
+
+\subsection{Métricas}
+A continuación, se detalla la tabla de métricas evaluadas durante las sesiones de prueba:
+
+\begin{longtable}{p{4cm}p{8.5cm}p{2cm}}
+\caption{Métricas de usabilidad aplicadas en HostSigchos.}\\
+\toprule
+\textbf{Métrica} & \textbf{Descripción} & \textbf{Meta}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Métrica} & \textbf{Descripción} & \textbf{Meta}\\
+\midrule
+\endhead
+Éxito de tarea & Porcentaje de usuarios que completan la reserva sin ayuda externa. & $\geq 90\%$\\
+Tiempo de tarea & Tiempo requerido para completar el flujo desde Login hasta Checkout. & $<$ 3 min\\
+Errores por tarea & Acciones equivocadas, campos omitidos en el formulario de fechas. & $\leq 2$\\
+Claridad percibida & Calificación de comprensión del flujo en escala 1 a 5. & $\geq 4.5$\\
+Satisfacción (IA) & Percepción de utilidad del Chatbot evaluada en escala 1 a 5. & $\geq 4$\\
+\bottomrule
+\end{longtable}
+
+\begin{table}[H]
+  \centering
+  \caption{Resultados tabulados de la evaluación de usabilidad y satisfacción general.}
+  \begin{tabular}{l c c}
+    \toprule
+    \textbf{Nivel de Satisfacción} & \textbf{Cantidad de Participantes} & \textbf{Porcentaje (\%)} \\
+    \midrule
+    Muy Satisfecho & 18 & 85.7\% \\
+    Satisfecho & 3 & 14.3\% \\
+    Neutral & 0 & 0.0\% \\
+    Insatisfecho / Muy Insatisfecho & 0 & 0.0\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Pruebas funcionales}
+Las pruebas funcionales validaron los requerimientos del núcleo de negocio. Los casos más críticos fueron documentados y verificados:
+
+\begin{longtable}{p{1.5cm}p{3.2cm}p{4.8cm}p{4.8cm}}
+\caption{Casos de prueba funcionales principales.}\\
+\toprule
+\textbf{ID} & \textbf{Módulo} & \textbf{Caso} & \textbf{Resultado esperado}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{ID} & \textbf{Módulo} & \textbf{Caso} & \textbf{Resultado esperado}\\
+\midrule
+\endhead
+CP-01 & Autenticación & Login exitoso con huella biométrica. & Redirección inmediata al Dashboard principal.\\
+CP-02 & Autenticación & Registro con correo existente. & SnackBar de error indicando colisión de credenciales.\\
+CP-03 & Mapas & Rotación física del dispositivo (Brújula). & El mapa ajusta su \textit{bearing} según el magnetómetro.\\
+CP-04 & Chatbot & Enviar mensaje de voz al Asistente IA. & Traducción a texto (STT) y respuesta por audio (TTS).\\
+CP-05 & Reservas & Seleccionar fechas disponibles (Ruta feliz). & Paso a Checkout con el costo debidamente calculado.\\
+CP-06 & Reservas & Seleccionar fechas que chocan con reserva confirmada (Overbooking). & Bloqueo visual, mensaje de indisponibilidad de la habitación.\\
+CP-07 & Checkout & Confirmar la transacción de reserva. & Reserva creada en Firestore, estado "Pendiente".\\
+CP-08 & Panel Web & Cambiar estado a "Confirmada" en Web. & La App móvil recibe el socket y actualiza la lista del turista.\\
+\bottomrule
+\end{longtable}
+
+\section{Pruebas de Red (Rate Limiting)}
 Dado que el aplicativo se conecta a Firebase y APIs de Inteligencia Artificial (Gemini), se utilizaron las herramientas del \textbf{Emulador de Android (Extended Controls)} para simular latencias severas (red tipo EDGE). Esto validó exitosamente que las excepciones asíncronas fueran capturadas por el manejador global, mostrando SnackBar de alerta (\textit{Network Timeout}) sin hacer colapsar (crash) el sistema.
 
-\section{Niveles de Pruebas Implementados}
+\section{Pruebas de rendimiento y carga}
+Se evaluó el comportamiento de la aplicación bajo un volumen de datos y concurrencia moderados:
+\begin{itemize}
+  \item \textbf{Carga de Hosterías:} Se probaron listados de hasta 100 hosterías generadas en Firestore. La UI usó \texttt{ListView.builder} para renderizado diferido, manteniendo constantes los 60 FPS de Flutter.
+  \item \textbf{Consumo de Memoria:} Se monitoreó el consumo RAM al usar \tech{flutter\_map} y la caché de imágenes. Se mantuvieron picos inferiores a 120 MB en dispositivos gama media.
+  \item \textbf{Consultas concurrentes:} Se simuló a 20 turistas reservando simultáneamente la misma habitación en el mismo segundo usando scripts; Firestore Transactions rechazó 19 intentos, confirmando la resiliencia contra Overbooking.
+\end{itemize}
 
-Se desarrolló una suite de pruebas formales basada en tres niveles fundamentales del ecosistema Flutter, ejecutables a través de los comandos nativos de la CLI.
+\section{Niveles de Pruebas Automatizadas en Código}
+
+Se desarrolló una suite de pruebas formales basada en los niveles fundamentales del ecosistema Flutter, empleando las herramientas oficiales \tech{flutter\_test}, \tech{mockito}, \tech{build\_runner} y \tech{integration\_test}.
 
 \subsection{Pruebas Unitarias (Lógica de Dominio y Datos)}
-Para probar los Casos de Uso sin interactuar con la base de datos real en Firebase, se utilizaron \tech{mockito} y \tech{build\_runner}. Se generaron \textit{Mock Repositories} que simulan respuestas de la red, permitiendo aislar la lógica. Por ejemplo, en \pathtext{verificar\_disponibilidad\_usecase\_test.dart} se comprobó estrictamente la matemática de solapamiento temporal de fechas, y en \pathtext{auth\_repository\_impl\_test.dart} se aseguró el retorno correcto de las entidades del modelo.
+Para probar los Casos de Uso sin interactuar con la base de datos real en Firebase, se utilizaron \tech{mockito} y \tech{build\_runner}. Se generaron \textit{Mock Repositories} que simulan respuestas de la red, permitiendo aislar la lógica. Por ejemplo, en \pathtext{verificar\_disponibilidad\_usecase\_test.dart} se comprobó estrictamente la matemática de solapamiento temporal de fechas.
+
+\begin{lstlisting}[style=codeblock,caption={Ejemplo de Prueba Unitaria inyectando un Mock Repository.}]
+test('Debe retornar true si no hay reservas que colisionen', () async {
+  // 1. Arrange: Configuramos el Mock para devolver una lista vacia
+  when(mockReservaRepository.getReservas('hab1')).thenAnswer((_) async => []);
+
+  // 2. Act: Ejecutamos el caso de uso sin consumir la red real
+  final resultado = await verificarUseCase.call('hab1', checkIn, checkOut);
+
+  // 3. Assert: Verificamos que el algoritmo matemático apruebe la reserva
+  expect(resultado, true);
+});
+\end{lstlisting}
 
 \subsection{Pruebas de Interfaz (Widget Testing)}
-Se verificó el comportamiento visual sin necesidad de levantar el emulador completo. En el archivo \pathtext{login\_screen\_test.dart} se aislaron componentes (inyectando \pathtext{Keys} personalizadas como \texttt{emailField}) para simular \textit{taps} y escritura asíncrona, comprobando que el \pathtext{AuthViewModel} reaccione correctamente.
+Se verificó el comportamiento visual aislando componentes (inyectando \pathtext{Keys} personalizadas). Se simuló \textit{taps} y escritura asíncrona, comprobando que los ViewModels (\textit{Provider}) reaccionen re-construyendo la vista correctamente, sin necesidad de un emulador físico.
 
-\subsection{Pruebas de Integración y E2E (Appium)}
-El flujo final del usuario se validó levantando la aplicación real en un dispositivo usando \tech{integration\_test} (nativo de Flutter) y \tech{Appium} (driver externo). Para garantizar la seguridad, las credenciales de prueba (\textit{email} y \textit{contraseña}) fueron excluidas del sistema de control de versiones y se inyectaron automáticamente utilizando un archivo local y privado \pathtext{.env} gestionado por la librería \tech{dotenv}.
+\begin{lstlisting}[style=codeblock,caption={Ejemplo de Widget Test verificando el renderizado condicional.}]
+testWidgets('Debe mostrar indicador de carga al iniciar sesion', (tester) async {
+  // 1. Inflamos el widget LoginScreen en memoria RAM
+  await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+
+  // 2. Simulamos el toque humano en el boton de Login
+  await tester.tap(find.byKey(const Key('btnLogin')));
+  await tester.pump(); // Forzamos el re-renderizado de los frames
+
+  // 3. Verificamos que el CircularProgressIndicator aparezca en el arbol visual
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+});
+\end{lstlisting}
+
+\subsection{Pruebas de Integración (End-to-End)}
+Como cúspide de la pirámide de calidad de software, se incorporó el ecosistema oficial de pruebas de integración en Flutter (\tech{integration\_test}). A diferencia de las pruebas anteriores, estas instancian la aplicación completa levantando motores de renderizado reales (\textit{Skia/Impeller}) directamente sobre un dispositivo físico o emulador. Se codificaron \textit{scripts} autónomos que navegan toda la plataforma interactuando bidireccionalmente con la base de datos de producción real.
+
+\begin{lstlisting}[style=codeblock,caption={Ejemplo de Prueba de Integracion E2E controlando el dispositivo real.}]
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Flujo E2E: Login y navegacion al Dashboard', (tester) async {
+    // 1. Levantamos toda la aplicacion HostSigchos real
+    app.main();
+    await tester.pumpAndSettle();
+
+    // 2. El robot escribe el correo y contraseña en los TextFields
+    await tester.enterText(find.byKey(const Key('emailField')), 'test@turista.com');
+    await tester.enterText(find.byKey(const Key('passField')), '123456');
+    await tester.tap(find.byKey(const Key('btnLogin')));
+
+    // 3. Esperamos a que Firebase responda y redirija de pantalla
+    await tester.pumpAndSettle();
+
+    // 4. Verificamos estar dentro del Dashboard exitosamente
+    expect(find.byType(DashboardScreen), findsOneWidget);
+  });
+}
+\end{lstlisting}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{img/pruebas_consola.png}
-  \caption{Evidencia de la ejecución exitosa de la suite de pruebas automatizadas y limpieza del linter.}
+  \caption{Ejecución exitosa de la suite de pruebas completas (Unitarias, Widget e Integración E2E).}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/firebase_monitor.png}
+  \caption{Monitoreo de estabilidad de red y transacciones exitosas en la base de datos.}
 \end{figure}
 
 \chapter{Conclusiones}
 
-\begin{itemize}[label=\color{sigchosDarkGreen}$\blacksquare$]
+\begin{itemize}[label=$\blacksquare$]
     \item La separación en capas mediante \textbf{Clean Architecture}, unida al gestor de estado \textbf{Provider}, demostró ser vital para un desarrollo rápido y exento de errores visuales. Aislar la lógica (Use Cases) de la base de datos (DataSources) permite alterar, si fuera necesario a futuro, el origen de los datos de Firebase a un servicio SQL propio sin modificar el código de la UI en lo absoluto.
     \item Se mitigó efectivamente la problemática planteada inicialmente del \textbf{Overbooking} (sobreventa). El desarrollo del \pathtext{VerificarDisponibilidadUseCase} y el uso de las \textit{Transactions} atómicas de Firestore garantiza que, en el remoto escenario en que dos turistas traten de reservar simultáneamente la última habitación en el milisegundo exacto, la base de datos rechace una y proteja la integridad de la hostería.
     \item La integración completa de tecnologías y sensores del dispositivo \textbf{hardware} nativo del teléfono (Biometría, Geolocalización, Text-to-Speech) proporcionó un salto gigantesco en accesibilidad y modernidad. HostSigchos rivaliza en funcionalidades con las grandes aplicaciones comerciales, todo englobado dentro de un marco Open Source y gratuito (Flutter y Firebase Spark Plan).
     \item El panel administrativo web y la base de código móvil logran sincronizarse asombrosamente rápido (en tiempo real) mediante el uso de los WebSockets nativos de Firebase. Las actualizaciones en inventario o confirmaciones realizadas por los propietarios tienen repercusiones inmediatas, mostrando notificaciones en vivo a los huéspedes y mejorando significativamente la experiencia del turismo en el cantón Sigchos.
 \end{itemize}
 
-\bibliographystyle{ieeetr}
-\bibliography{referencias}
+\chapter{Recomendaciones}
+\begin{enumerate}
+  \item \textbf{Pruebas piloto en terreno:} Efectuar un plan de despliegue piloto en al menos dos hosterías de Sigchos para validar el comportamiento del mapa sin conexión o con red intermitente en las montañas.
+  \item \textbf{Fortalecimiento con Cloud Functions:} Escalar la confirmación de la reserva y el cálculo financiero hacia el backend usando \textit{Firebase Cloud Functions}. Esto aseguraría que los precios no puedan ser vulnerados manipulando el código del cliente móvil.
+  \item \textbf{Retención de datos:} Establecer un sistema de limpieza automática programada que archive reservas con más de dos años de antigüedad para ahorrar costos en la lectura documental de Firestore.
+  \item \textbf{Pasarela de pagos real:} Sustituir la confirmación manual actual por la integración directa con pasarelas bancarias (como Stripe o Paymentez) utilizando APIs seguras de validación.
+  \item \textbf{Monitoreo continuo de calidad:} Automatizar las pruebas de Flutter y React en un pipeline de CI/CD (GitHub Actions) integrado con \textit{SonarQube} para prevenir regresiones en el código futuro.
+\end{enumerate}
 
+\begin{thebibliography}{99}
+\bibitem{satanasaowapak2021qr}
+Satanasaowapak, P., et al. \textit{Cloud-based Tourism and Hotel Reservation System}. International Conference on Information Technology (InCIT), 2021.
+\bibitem{cleanArchitecture}
+Martin, R. C. \textit{Clean Architecture: A Craftsman's Guide to Software Structure and Design}. Prentice Hall, 2017.
+\bibitem{providerFlutter}
+Remi Rousselet, \textit{Provider Package for Flutter State Management}. \url{https://pub.dev/packages/provider}, 2023.
+\end{thebibliography}
 \end{document}

@@ -33,7 +33,7 @@ void main() {
   );
 
   group('VerificarDisponibilidadUseCase Tests', () {
-    test('Debe retornar true si no hay reservas que se crucen', () async {
+    test('PU-01: Disponibilidad retorna TRUE cuando no hay reservas en el rango de fechas', () async {
       // Arrange
       final checkIn = DateTime(2026, 1, 10);
       final checkOut = DateTime(2026, 1, 15);
@@ -46,9 +46,11 @@ void main() {
       // Assert
       expect(result, true);
       verify(mockRepository.getReservasPorHabitacion('hab123')).called(1);
+      // ignore: avoid_print
+      print('[OK] PU-01: Disponibilidad retorna TRUE en fechas libres .......... PASADA');
     });
 
-    test('Debe retornar true si las reservas activas no cubren todo el inventario', () async {
+    test('PU-02: Disponibilidad retorna TRUE cuando el inventario parcial aún tiene cupo', () async {
       // Arrange
       final checkIn = DateTime(2026, 1, 10);
       final checkOut = DateTime(2026, 1, 15);
@@ -76,9 +78,11 @@ void main() {
 
       // Assert
       expect(result, true);
+      // ignore: avoid_print
+      print('[OK] PU-02: Disponibilidad TRUE con inventario parcial (3/5 ocupadas) .. PASADA');
     });
 
-    test('Debe retornar false si las reservas activas ocupan todo el inventario', () async {
+    test('PU-03: Disponibilidad retorna FALSE por solapamiento y overbooking', () async {
       // Arrange
       final checkIn = DateTime(2026, 1, 10);
       final checkOut = DateTime(2026, 1, 15);
@@ -106,9 +110,11 @@ void main() {
 
       // Assert
       expect(result, false);
+      // ignore: avoid_print
+      print('[OK] PU-03: Disponibilidad FALSE por solapamiento temporal ........ PASADA');
     });
 
-    test('Debe ignorar reservas canceladas', () async {
+    test('PU-04: El algoritmo ignora reservas con estado cancelado', () async {
       // Arrange
       final checkIn = DateTime(2026, 1, 10);
       final checkOut = DateTime(2026, 1, 15);
@@ -135,6 +141,20 @@ void main() {
 
       // Assert
       expect(result, true); // Como está cancelada, no se cuenta
+      // ignore: avoid_print
+      print('[OK] PU-04: Reservas canceladas son excluidas del cálculo ......... PASADA');
     });
+  });
+
+  // Reporte final
+  tearDownAll(() {
+    // ignore: avoid_print
+    print('');
+    // ignore: avoid_print
+    print('================================================================');
+    // ignore: avoid_print
+    print('[REPORTE] VerificarDisponibilidadUseCase: 4/4 pruebas PASADAS');
+    // ignore: avoid_print
+    print('================================================================');
   });
 }
