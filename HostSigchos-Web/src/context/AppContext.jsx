@@ -179,19 +179,41 @@ export const AppProvider = ({ children }) => {
       setRooms(roomsData);
     });
 
+    // Función para evaluar cancelación automática
+    const evaluateAutoCancel = (docId, data) => {
+      const status = data.estado || 'pendiente';
+      if (status === 'pendiente' || status === 'en_revision') {
+        const creationDate = data.fechaCreacion?.toDate ? data.fechaCreacion.toDate() : (data.fechaCreacion ? new Date(data.fechaCreacion) : null);
+        if (creationDate) {
+          const diffHours = (new Date() - creationDate) / (1000 * 60 * 60);
+          if (diffHours >= 48) {
+            updateDoc(doc(db, 'reservas', docId), { 
+              estado: 'cancelada',
+              notas: (data.notas ? data.notas + ' | ' : '') + 'Cancelada automáticamente tras 48h sin confirmación.'
+            }).catch(console.error);
+            return 'cancelada';
+          }
+        }
+      }
+      return status;
+    };
+
     // Listen Reservations (Reservas)
     const resRef = collection(db, 'reservas');
     const qRes = query(resRef, where('hosteriaId', '==', hosteria.id));
     const unsubRes = onSnapshot(qRes, async (snapshot) => {
-      // 1. Mostrar información base INMEDIATAMENTE para que los números carguen rápido
       const basicResData = snapshot.docs.map(docSnapshot => {
         const data = docSnapshot.data();
         let clientName = data.esParaOtraPersona && data.nombreOtraPersona 
           ? data.nombreOtraPersona 
           : 'Usuario Registrado';
+        
+        const evaluatedStatus = evaluateAutoCancel(docSnapshot.id, data);
+
         return {
           id: docSnapshot.id,
           ...data,
+          estado: evaluatedStatus,
           resolvedClientName: clientName
         };
       });
@@ -256,7 +278,27 @@ export const AppProvider = ({ children }) => {
     // Listen to all Reservations
     const resRef = collection(db, 'reservas');
     const unsubRes = onSnapshot(resRef, (snapshot) => {
-      setAllReservations(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setAllReservations(snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        let status = data.estado || 'pendiente';
+        
+        // Auto-cancel logic
+        if (status === 'pendiente' || status === 'en_revision') {
+          const creationDate = data.fechaCreacion?.toDate ? data.fechaCreacion.toDate() : (data.fechaCreacion ? new Date(data.fechaCreacion) : null);
+          if (creationDate) {
+            const diffHours = (new Date() - creationDate) / (1000 * 60 * 60);
+            if (diffHours >= 48) {
+              updateDoc(doc(db, 'reservas', docSnap.id), { 
+                estado: 'cancelada',
+                notas: (data.notas ? data.notas + ' | ' : '') + 'Cancelada automáticamente tras 48h sin confirmación.'
+              }).catch(console.error);
+              status = 'cancelada';
+            }
+          }
+        }
+        
+        return { id: docSnap.id, ...data, estado: status };
+      }));
     });
 
     // Listen to all Users
