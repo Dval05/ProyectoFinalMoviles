@@ -10,6 +10,7 @@ import ReservationsManager from './pages/ReservationsManager';
 import PromotionsManager from './pages/PromotionsManager';
 import ClientsManager from './pages/ClientsManager';
 import SettingsManager from './pages/SettingsManager';
+import PropietarioStats from './pages/PropietarioStats';
 import AdminLayout from './pages/AdminLayout';
 import SystemAdminDashboard from './pages/SystemAdminDashboard';
 import ManageAdmins from './pages/ManageAdmins';
@@ -59,6 +60,7 @@ function AppRoutes() {
         <Route path="reservas" element={<ReservationsManager />} />
         <Route path="promociones" element={<PromotionsManager />} />
         <Route path="clientes" element={<ClientsManager />} />
+        <Route path="estadisticas" element={<PropietarioStats />} />
         <Route path="configuracion" element={<SettingsManager />} />
       </Route>
       <Route 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Home, Calendar, Users, Settings, LogOut, BedDouble, Tag } from 'lucide-react';
+import { Home, Calendar, Users, Settings, LogOut, BedDouble, Tag, BarChart2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import logoUrl from '../assets/logo.png';
 import './Dashboard.css';
@@ -38,6 +38,9 @@ const DashboardPropietario = () => {
           </NavLink>
           <NavLink to="/dashboard/clientes" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
             <Users size={20}/> Clientes
+          </NavLink>
+          <NavLink to="/dashboard/estadisticas" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+            <BarChart2 size={20}/> Estadísticas
           </NavLink>
           <NavLink to="/dashboard/configuracion" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
             <Settings size={20}/> Configuración
