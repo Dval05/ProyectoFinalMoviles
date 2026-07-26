@@ -129,13 +129,18 @@ export const AppProvider = ({ children }) => {
         const userData = userDocSnap.data();
         setUser({ uid: firebaseUser.uid, ...userData });
         
-        // Find the hosteria by owner's name using a more flexible approach (includes and lowercase)
+        // Find the hosteria by owner's name using a more flexible approach (includes, lowercase, and removing accents/ñ)
         const hosteriasRef = collection(db, 'hosterias');
         const querySnapshot = await getDocs(hosteriasRef);
         
+        const normalize = (str) => {
+          if (!str) return "";
+          return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        };
+
         const matchedDoc = querySnapshot.docs.find(d => {
-          const hName = (d.data().nombre || "").toLowerCase();
-          const uName = (userData.nombre || "").toLowerCase();
+          const hName = normalize(d.data().nombre);
+          const uName = normalize(userData.nombre);
           return hName.includes(uName) || uName.includes(hName);
         });
         
