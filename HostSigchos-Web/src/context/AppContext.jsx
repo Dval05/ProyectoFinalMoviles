@@ -129,16 +129,21 @@ export const AppProvider = ({ children }) => {
         const userData = userDocSnap.data();
         setUser({ uid: firebaseUser.uid, ...userData });
         
-        // Find the hosteria by owner's name
+        // Find the hosteria by owner's name using a more flexible approach (includes and lowercase)
         const hosteriasRef = collection(db, 'hosterias');
-        const q = query(hosteriasRef, where('nombre', '==', userData.nombre));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(hosteriasRef);
         
-        if (querySnapshot.empty) {
+        const matchedDoc = querySnapshot.docs.find(d => {
+          const hName = (d.data().nombre || "").toLowerCase();
+          const uName = (userData.nombre || "").toLowerCase();
+          return hName.includes(uName) || uName.includes(hName);
+        });
+        
+        if (!matchedDoc) {
           console.warn("No hosteria found for this owner name:", userData.nombre);
         } else {
-          const hosteriaData = querySnapshot.docs[0].data();
-          setHosteria({ id: querySnapshot.docs[0].id, ...hosteriaData });
+          const hosteriaData = matchedDoc.data();
+          setHosteria({ id: matchedDoc.id, ...hosteriaData });
         }
       }
     } catch (error) {
